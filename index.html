@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="../styles/style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GradCap
@@ -104,28 +104,217 @@
                     <p>Status:</p>
                 </div>
             </div>
-            <div class="student_course_container">
-
-                 <!-- an attempt to use a spinner -->
-                 <div class="custom-select">
-                    <select id="dropdown-options">
-                        <option value="Summary">Summary</option>
-                        <option value="Freshman">Freshman</option>
-                        <option value="Sophomore">Sophomore</option>
-                        <option value="Junior">Junior</option>
-                        <option value="Senior">Senior</option>
-                        <option value="History">History</option>
-                    </select>
-                    <span class="custom-arrow"></span>
-                    
-                    <!-- Data Panels -->
-                  
-                    
+            
+            <!-- an attempt to use a spinner -->
+            <div class="custom-select">
+                <select id="dropdown-options">
+                    <option value="Summary">Graduation Requirement Summary</option>
+                    <option value="Freshman">Freshman</option>
+                    <option value="Sophomore">Sophomore</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Senior">Senior</option>
+                    <option value="Transcript">Transcript</option>
+                </select>
+                <!-- <span class="custom-arrow"></span> -->
+            </div>
+            <!-- Data Panels -->
+            <!-- <div class="student_course_container"> -->
                     <div class="outer-wrapper">
-                    Historical Course Data
-                    <button onclick="getSelectedRow()">Snatch Data</button>
-                    <div id="history-content" class="content-pane">
-                            <table id="mytable">
+                        <div id="summary-content" class="content-pane">
+                            <table id="gradreq_table">
+                                <!-- <caption>
+                                    Graduation Requirement Summary
+                                </caption> -->
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Code</th>
+                                        <th scope="col">Earned</th>
+                                        <th scope="col">Required</th>
+                                        <th scope="col">Needed</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <th scope="row">English</th>
+                                        <td>ENG</td>
+                                        <td>2.0</td>
+                                        <td>4.0</td>
+                                        <td>2.0</td>
+                                    </tr>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <th scope="row">Math</th>
+                                        <td>MATH</td>
+                                        <td>2.0</td>
+                                        <td>3.0</td>
+                                        <td>1.0</td>
+                                    </tr>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <th scope="row">History</th>
+                                        <td>HIST</td>
+                                        <td>2.0</td>
+                                        <td>3.0</td>
+                                        <td>1.0</td>
+                                    </tr>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <th scope="row">Science</th>
+                                        <td>SCI</td>
+                                        <td>1.0</td>
+                                        <td>3.0</td>
+                                        <td>2.0</td>
+                                    </tr>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <th scope="row">Language</th>
+                                        <td>WL</td>
+                                        <td>1.0</td>
+                                        <td>2.0</td>
+                                        <td>1.0</td>
+                                    </tr>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <th scope="row">Visual or Performing Art</th>
+                                        <td>VPA</td>
+                                        <td>0.0</td>
+                                        <td>1.0</td>
+                                        <td>1.0</td>
+                                    </tr>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <th scope="row">Personal Financial Literacy</th>
+                                        <td>PFL</td>
+                                        <td>0.0</td>
+                                        <td>0.5</td>
+                                        <td>0.5</td>
+                                    </tr>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <th scope="row">Practical Art</th>
+                                        <td>PA</td>
+                                        <td>1.0</td>
+                                        <td>2.0</td>
+                                        <td>1.0</td>
+                              </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th scope="row" colspan="4">Total Needed</th>
+                                    <td>9.5</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        
+                    </div>
+                
+                <div id="freshman-content" class="content-pane">
+                    Freshman Year Courses
+                    <table id="freshman-course_table">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Course Name</th>
+                                <th>Code</th>
+                                <th>Req Met</th>
+                                <th>Or</th>
+                                <th>Points</th>
+                                <th>Credits</th>
+                                <th>Avg</th>
+                                <th>Teacher</th>
+                                <th>Sect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="highlight_course(this);">
+                                <td>9</td>
+                                <td>Honors Comp Sci</td>
+                                <td>MA6404</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td>Uhl</td>
+                                <td>2</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>10</td>
+                                <td>AP Comp Sci</td>
+                                <td>MA6504</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td>Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>11</td>
+                                <td>Advanced Topics in Comp Sci</td>
+                                <td>MA6704</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td>Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>12</td>
+                                <td>More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td>Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>12</td>
+                                <td>More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td>Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>14</td>
+                                <td>More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td>Uhl</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    </div>
+
+                    <div id="sophomore-content" class="content-pane">
+                        Sophomore Year Courses
+                    </div>
+
+                    <div id="junior-content" class="content-pane">
+                        Junior Year Courses
+                    </div>
+
+                    <div id="senior-content" class="content-pane">
+                        Senior Year Courses
+                    </div>
+
+
+                    <div id="transcript-content" class="content-pane">
+                        Historical Course Data
+                        <button onclick="getSelectedRow()">Snatch Data</button>
+                            <table id="transcript-course_table">
                                 <thead>
                                     <tr>
                                         <th>Year</th>
@@ -141,7 +330,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr onclick="highlight(this);">
+                                    <tr onclick="highlight_course(this);">
                                         <td>9</td>
                                         <td>Honors Comp Sci</td>
                                         <td>MA6404</td>
@@ -153,7 +342,7 @@
                                         <td>Uhl</td>
                                         <td>2</td>
                                     </tr>
-                                    <tr onclick="highlight(this);">
+                                    <tr onclick="highlight_course(this);">
                                         <td>10</td>
                                         <td>AP Comp Sci</td>
                                         <td>MA6504</td>
@@ -165,7 +354,7 @@
                                         <td>Uhl</td>
                                         <td>1</td>
                                     </tr>
-                                    <tr onclick="highlight(this);">
+                                    <tr onclick="highlight_course(this);">
                                         <td>11</td>
                                         <td>Advanced Topics in Comp Sci</td>
                                         <td>MA6704</td>
@@ -177,14 +366,47 @@
                                         <td>Uhl</td>
                                         <td>1</td>
                                     </tr>
+                                    <tr onclick="highlight_course(this);">
+                                        <td>12</td>
+                                        <td>More Comp Sci</td>
+                                        <td>MA6804</td>
+                                        <td>PA</td>
+                                        <td></td>
+                                        <td>1.0</td>
+                                        <td>5.0</td>
+                                        <td>95.0</td>
+                                        <td>Uhl</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr onclick="highlight_course(this);">
+                                        <td>12</td>
+                                        <td>More Comp Sci</td>
+                                        <td>MA6804</td>
+                                        <td>PA</td>
+                                        <td></td>
+                                        <td>1.0</td>
+                                        <td>5.0</td>
+                                        <td>95.0</td>
+                                        <td>Uhl</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr onclick="highlight_course(this);">
+                                        <td>13</td>
+                                        <td>More Comp Sci</td>
+                                        <td>MA6804</td>
+                                        <td>PA</td>
+                                        <td></td>
+                                        <td>1.0</td>
+                                        <td>5.0</td>
+                                        <td>95.0</td>
+                                        <td>Uhl</td>
+                                        <td>1</td>
+                                    </tr>
                                 </tbody>
                             </table>
                     </div>
-                    </div>
-                    
-                 </div>
                  
-            </div>
+            </div> 
         </div>
     </div>
 </body>
@@ -213,46 +435,75 @@
     for(var i = 0; i < contentpanes.length; i++)
         contentpanes[i].style.display = "none";
     
+    // Default is the Summary tab
     var summary = document.getElementById("summary-content");
-    var hist = document.getElementById("history-content");
+    // var hist = document.getElementById("transcript-content");
     var dataselection = document.getElementById("dropdown-options");
     summary.style.display = "block";
     
     dataselection.addEventListener("change", function() {
         for(var i = 0; i < contentpanes.length; i++)
-            contentpanes[i].style.display = "none";
-        
-        console.log(dataselection.options[dataselection.selectedIndex]);
+        contentpanes[i].style.display = "none";
+    
+    console.log("Selection: " + dataselection.options[dataselection.selectedIndex].value.toLowerCase());
+
+    let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
+    currentId += "-content";
+    var current_pane = document.getElementById(currentId);
+    current_pane.style.display = "block";
+});
+
+
+
+// Selecting a row of a table of course objects
+var selectedRow_courseTable = "";
+
+function highlight_course(row) {
+    selectedRow_courseTable=row.cells[2].textContent;
+    deHighlight_course();
+    row.style.backgroundColor = '#004aff';
+    row.style.color = 'white';
+    row.classList.toggle("selectedRow");
+}
+
+function deHighlight_course() { 
+        var dataselection = document.getElementById("dropdown-options");
         let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
-        currentId += "-content";
-        var current_pane = document.getElementById(currentId);
-        current_pane.style.display = "block";
-    });
+        currentId += "-course_table";
+        let courseTable = document.getElementById(currentId);
+        let rows = courseTable.rows;
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.backgroundColor = "transparent";
+            rows[i].style.color = "black";
+        }
+    }
 
+    function selectedRow_courseTable() {
+        alert(selectedRow_courseTable);
+    }
 
+    // Selecting a row of a table of Grad Requirements
+    var selectedRow_ReqTable = "";
 
-    // Selecting a row of a table
-    var selectedRow = "";
-
-    function highlight(row) {
-        selectedRow=row.cells[2].textContent;
-        deHighlight();
+    function highlight_gradReq(row) {
+        selectedRow_ReqTable=row.cells[2].textContent;
+        deHighlight_gradReq();
         row.style.backgroundColor = '#004aff';
         row.style.color = 'white';
         row.classList.toggle("selectedRow");
     }
 
-    function deHighlight() { 
-        let table = document.getElementById("mytable");
-        let rows = table.rows;
+    function deHighlight_gradReq() { 
+        let gradTable = document.getElementById("gradreq_table");
+        let rows = gradTable.rows;
         for (let i = 0; i < rows.length; i++) {
             rows[i].style.backgroundColor = "transparent";
             rows[i].style.color = "black";
         }   
     }
 
-    function getSelectedRow() {
-        alert(selectedRow);
+    function selectedRow_ReqTable() {
+        alert(selectedRow_ReqTable);
     }
 
 </script>
