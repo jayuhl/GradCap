@@ -33,7 +33,7 @@ body{
     border:1px solid #000;
     font-family:arial;
     min-width:200px;
-    background: green;
+    /* background-color: linen; */
 }
 
 
@@ -158,12 +158,12 @@ li{
     /* overflow:auto; */
     padding:0;
     text-indent:10px;
-    background-color: cyan;
+    /* background-color:antiquewhite */
 }
 
 /* STUDENT SUMMARY AND ANNUAL COURSES TABS */
 .student_course_container {
-    background-color: blueviolet;
+    background-color:cadetblue;
     /* max-width: fit-content; */
 }
 .outer-wrapper {
@@ -175,14 +175,14 @@ li{
     box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
     max-width: fit-content;
     max-height: fit-content;
-    background-color: blueviolet;
+    /* background-color: blueviolet; */
 }
 .content-pane {
-    /* max-height: 300px; */
+    max-height: 300px;
     overflow-x: scroll;
     overflow-y: scroll;
     margin: 20px;
-    background-color: chartreuse;
+    /* background-color: chartreuse; */
 }
 /* .content-pane {
     /* position: relative; */
@@ -193,16 +193,21 @@ li{
     /* background: magenta; */
     /* border: 1px solid #ccc; */
     /* font-size: 1.1rem; */
-/* } */ */
+    /* } */
+/* caption {
+    border: 1px solid black;
+    border-radius: 4px 4px 0px 0px;
+    background-color: bisque;
+} */
   
 /* Dropdown selector */
 select {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
     font-size: 1.1rem;
     padding: 0.4em 0.5em 0.5em 0.5em;
-    background-color: gray;
-    color: white;
-    border: 0;
+    background-color:rgb(232, 232, 232);
+    color: black;
+    border: 1px solid blue;
 }
 
 /* .custom-arrow {
@@ -215,6 +220,7 @@ select {
 } */
 
 .custom-select {
+    /* background-color: green; */
     /* position: relative; */
     /* margin-top: 100px; */
 }
