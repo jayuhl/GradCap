@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../styles/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GradCap
+    </title>
+</head>
+<body>
+    <div class="main_container">
+        <div class="counselor_column">
+            <div class="counselor_list_container">
+                <p id="title_area">Counselors</p>
+                <ul id="counselor_list_item_container">
+                    <li>Counselor 1</li>
+                    <li>Counselor 2</li>
+                    <li>Counselor 3</li>
+                    <li>Counselor 4</li>
+                    <li>Counselor 5</li>
+                    <li>Counselor 6</li>
+                    <li>Counselor 7</li>
+                    <li>Counselor 8</li>
+                    <li>Counselor 9</li>
+                    <li>Counselor 10</li>
+                    <li>Counselor 11</li>
+                    <li>Counselor 12</li>
+                    <li>Counselor 13</li>
+                    <li>Counselor 14</li>
+                    <li>Counselor 15</li>
+                    <li>Counselor 16</li>
+                    <li>Counselor 17</li>
+                    <li>Counselor 18</li>
+                    <li>Counselor 19</li>
+                    <li>Counselor 20</li>
+                </ul>
+            </div>
+            <div class="counselor_totals_container">
+                <p id="title_area">School Totals</p>
+                <ul id="counselor_totals_item_container">
+                    <li>Total Students=766</li>
+                    <li>  Freshmen=215</li>
+                    <li>  Sophomores=179</li>
+                    <li>  Juniors=179</li>
+                    <li>  Seniors=193</li>
+                    <li>    Warnings=115</li>
+                    <li>    Overrides=0</li>
+                </ul>
+            </div>
+        </div>
+        <div class="student_column">
+            <div class="student_list_container">
+                <p id="title_area">Students</p>
+                <ul id="student_list_item_container">
+                    <li>Student 1</li>
+                    <li>Student 2</li>
+                    <li>Student 3</li>
+                    <li>Student 4</li>
+                    <li>Student 5</li>
+                    <li>Student 6</li>
+                    <li>Student 7</li>
+                    <li>Student 8</li>
+                    <li>Student 9</li>
+                    <li>Student 10</li>
+                    <li>Student 11</li>
+                    <li>Student 12</li>
+                    <li>Student 13</li>
+                    <li>Student 14</li>
+                    <li>Student 15</li>
+                    <li>Student 16</li>
+                    <li>Student 17</li>
+                    <li>Student 18</li>
+                    <li>Student 19</li>
+                    <li>Student 20</li>
+                </ul>
+            </div>
+            <div class="student_radios_container">
+                <div id="student_sort_options_container">
+                    <p id="title_area">Sort Options</p>
+                    <label for="alphabetical"><input type="radio" id="alphabetical" name="sort_options_group" value="alphabetical" checked><span>Alphabetically</span></label><br>
+                    <label for="grad_reqs"><input type="radio" id="grad_reqs" name="sort_options_group" value="grad_reqs"><span>By Grad Reqs</span></label><br>
+                    <label for="credit_total"><input type="radio" id="credit_total" name="sort_options_group" value="credit_total"><span>By Credits</span></label>
+                </div>
+                <div id="student_filter_options_container">
+                    <p id="title_area">Filter Options:</p>
+                    <label for="all_students"><input type="radio" id="all_students" name="filter_options_group" value="all_students" checked><span>All Years</span></label><br>
+                    <label for="freshmen"><input type="radio" id="freshmen" name="filter_options_group" value="freshmen"><span>Freshmen</span></label><br>
+                    <label for="sophomores"><input type="radio" id="sophomores" name="filter_options_group" value="sophomores"><span>Sophomores</span></label><br>
+                    <label for="juniors"><input type="radio" id="juniors" name="filter_options_group" value="juniors"><span>Juniors</span></label><br>
+                    <label for="seniors"><input type="radio" id="seniors" name="filter_options_group" value="seniors"><span>Seniors</span></label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="student_info_general_container">
+            <div class="student_top_container">
+                <div id="student_info">
+                    <p id="title_area">Student Data</p>
+                    <p>Name:</p>
+                    <p>Grade Level: </p>
+                    <p>ID:</p>
+                    <p>Counselor:</p>
+                    <p>Status:</p>
+                </div>
+            </div>
+            <div class="student_course_container">
+
+                 <!-- an attempt to use a spinner -->
+                 <div class="custom-select">
+                    <select id="dropdown-options">
+                        <option value="Summary">Summary</option>
+                        <option value="Freshman">Freshman</option>
+                        <option value="Sophomore">Sophomore</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Senior">Senior</option>
+                        <option value="History">History</option>
+                    </select>
+                    <span class="custom-arrow"></span>
+                    
+                    <!-- Data Panels -->
+                  
+                    
+                    <div class="outer-wrapper">
+                    Historical Course Data
+                    <button onclick="getSelectedRow()">Snatch Data</button>
+                    <div id="history-content" class="content-pane">
+                            <table id="mytable">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Course Name</th>
+                                        <th>Code</th>
+                                        <th>Req Met</th>
+                                        <th>Or</th>
+                                        <th>Points</th>
+                                        <th>Credits</th>
+                                        <th>Avg</th>
+                                        <th>Teacher</th>
+                                        <th>Sect</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr onclick="highlight(this);">
+                                        <td>9</td>
+                                        <td>Honors Comp Sci</td>
+                                        <td>MA6404</td>
+                                        <td>PA</td>
+                                        <td></td>
+                                        <td>1.0</td>
+                                        <td>5.0</td>
+                                        <td>93.0</td>
+                                        <td>Uhl</td>
+                                        <td>2</td>
+                                    </tr>
+                                    <tr onclick="highlight(this);">
+                                        <td>10</td>
+                                        <td>AP Comp Sci</td>
+                                        <td>MA6504</td>
+                                        <td>PA</td>
+                                        <td></td>
+                                        <td>1.0</td>
+                                        <td>5.0</td>
+                                        <td>93.0</td>
+                                        <td>Uhl</td>
+                                        <td>1</td>
+                                    </tr>
+                                    <tr onclick="highlight(this);">
+                                        <td>11</td>
+                                        <td>Advanced Topics in Comp Sci</td>
+                                        <td>MA6704</td>
+                                        <td>PA</td>
+                                        <td></td>
+                                        <td>1.0</td>
+                                        <td>5.0</td>
+                                        <td>93.0</td>
+                                        <td>Uhl</td>
+                                        <td>1</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                    </div>
+                    
+                 </div>
+                 
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    // For changing color of selected counselor/student
+    document.getElementById('counselor_list_item_container').addEventListener('click', function(e) {   // 1.
+        var selected;
+        if(e.target.tagName === 'LI') {                                      // 2.
+            selected= document.querySelector('li.selected_counselor');                   // 2a.
+            if(selected) selected.className= '';                               // "
+            e.target.className= 'selected_counselor';                                    // 2b.
+        }
+    });
+    document.getElementById('student_list_item_container').addEventListener('click', function(e) {   // 1.
+        var selected;
+        if(e.target.tagName === 'LI') {                                      // 2.
+            selected= document.querySelector('li.selected_student');                   // 2a.
+            if(selected) selected.className= '';                               // "
+            e.target.className= 'selected_student';                                    // 2b.
+        }
+    });
+
+    //Selecting the proper data to display using the dropdown
+    var contentpanes = document.getElementsByClassName("content-pane");
+    for(var i = 0; i < contentpanes.length; i++)
+        contentpanes[i].style.display = "none";
+    
+    var summary = document.getElementById("summary-content");
+    var hist = document.getElementById("history-content");
+    var dataselection = document.getElementById("dropdown-options");
+    summary.style.display = "block";
+    
+    dataselection.addEventListener("change", function() {
+        for(var i = 0; i < contentpanes.length; i++)
+            contentpanes[i].style.display = "none";
+        
+        console.log(dataselection.options[dataselection.selectedIndex]);
+        let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
+        currentId += "-content";
+        var current_pane = document.getElementById(currentId);
+        current_pane.style.display = "block";
+    });
+
+
+
+    // Selecting a row of a table
+    var selectedRow = "";
+
+    function highlight(row) {
+        selectedRow=row.cells[2].textContent;
+        deHighlight();
+        row.style.backgroundColor = '#004aff';
+        row.style.color = 'white';
+        row.classList.toggle("selectedRow");
+    }
+
+    function deHighlight() { 
+        let table = document.getElementById("mytable");
+        let rows = table.rows;
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].style.backgroundColor = "transparent";
+            rows[i].style.color = "black";
+        }   
+    }
+
+    function getSelectedRow() {
+        alert(selectedRow);
+    }
+
+</script>
+</html>
