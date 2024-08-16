@@ -41,7 +41,7 @@ body{
     border:1px solid #000;
     font-family:arial;
     height:100%;
-    overflow: auto;
+    overflow:hidden;
     width:160px;
 }
 #counselor_list_item_container {
@@ -51,9 +51,6 @@ body{
     overflow:auto;
     padding:0;
     text-indent:10px;
-}
-li{
-    line-height:25px;
 }
 /* #counselor_list_item_container li:nth-child(even){
     background: #ccc;
@@ -79,7 +76,7 @@ li{
     font-family:arial;
     /* height:350px; */
     height:100%;
-    overflow: auto;
+    overflow: hidden;
     width:160px;
 }
 #student_list_item_container {
@@ -166,7 +163,7 @@ li{
     background-color:cadetblue;
     /* max-width: fit-content; */
 }
-.outer-wrapper {
+.table-outer-wrapper {
     margin: 10px;
     margin-left: 20px;
     margin-right: 20px;
@@ -183,6 +180,7 @@ li{
     overflow-y: scroll;
     margin: 20px;
     /* background-color: chartreuse; */
+    scroll-snap-type: y mandatory;
 }
 /* .content-pane {
     /* position: relative; */
@@ -201,13 +199,22 @@ li{
 } */
   
 /* Dropdown selector */
-select {
+.dropdown-wrapper {
+    background-color: aqua;
+    width:100%;
+}
+
+#dropdown-options {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
     font-size: 1.1rem;
     padding: 0.4em 0.5em 0.5em 0.5em;
     background-color:rgb(232, 232, 232);
     color: black;
     border: 1px solid blue;
+    width: 100%;
+    min-width:fit-content;
+    /* margin-left: 20px;
+    margin-right: 20px; */
 }
 
 /* .custom-arrow {
@@ -240,6 +247,12 @@ table {
     /* min-width:max-content;  this will stop text wrapping in each table cell*/
 }
 
+th {
+    position: sticky;
+    top: 0px;
+    background-color: rgb(228 240 245);
+}
+
 caption {
     caption-side: top;
     padding: 10px;
@@ -259,6 +272,10 @@ caption {
   
   td:last-of-type {
     text-align: center;
+  }
+
+  table tr {
+    scroll-snap-align: start;
   }
   
   tbody > tr:nth-of-type(even) {
