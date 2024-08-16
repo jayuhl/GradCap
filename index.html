@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="../styles/style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GradCap
@@ -106,7 +106,7 @@
             </div>
             
             <!-- an attempt to use a spinner -->
-            <div class="custom-select">
+            <div class="dropdown-wrapper">
                 <select id="dropdown-options">
                     <option value="Summary">Graduation Requirement Summary</option>
                     <option value="Freshman">Freshman</option>
@@ -119,7 +119,7 @@
             </div>
             <!-- Data Panels -->
             <!-- <div class="student_course_container"> -->
-                    <div class="outer-wrapper">
+                    <div class="table-outer-wrapper">
                         <div id="summary-content" class="content-pane">
                             <table id="gradreq_table">
                                 <!-- <caption>
@@ -136,61 +136,61 @@
                                 </thead>
                                 <tbody>
                                     <tr onclick="highlight_gradReq(this);">
-                                        <th scope="row">English</th>
+                                        <td>English</td>
                                         <td>ENG</td>
                                         <td>2.0</td>
                                         <td>4.0</td>
                                         <td>2.0</td>
                                     </tr>
                                     <tr onclick="highlight_gradReq(this);">
-                                        <th scope="row">Math</th>
+                                        <td>Math</td>
                                         <td>MATH</td>
                                         <td>2.0</td>
                                         <td>3.0</td>
                                         <td>1.0</td>
                                     </tr>
                                     <tr onclick="highlight_gradReq(this);">
-                                        <th scope="row">History</th>
+                                        <td>History</td>
                                         <td>HIST</td>
                                         <td>2.0</td>
                                         <td>3.0</td>
                                         <td>1.0</td>
                                     </tr>
                                     <tr onclick="highlight_gradReq(this);">
-                                        <th scope="row">Science</th>
+                                        <td>Science</td>
                                         <td>SCI</td>
                                         <td>1.0</td>
                                         <td>3.0</td>
                                         <td>2.0</td>
                                     </tr>
                                     <tr onclick="highlight_gradReq(this);">
-                                        <th scope="row">Language</th>
+                                        <td>Language</td>
                                         <td>WL</td>
                                         <td>1.0</td>
                                         <td>2.0</td>
                                         <td>1.0</td>
                                     </tr>
                                     <tr onclick="highlight_gradReq(this);">
-                                        <th scope="row">Visual or Performing Art</th>
+                                        <td>Visual or Performing Art</td>
                                         <td>VPA</td>
                                         <td>0.0</td>
                                         <td>1.0</td>
                                         <td>1.0</td>
                                     </tr>
                                     <tr onclick="highlight_gradReq(this);">
-                                        <th scope="row">Personal Financial Literacy</th>
+                                        <td>Practical Art</td>
+                                        <td>PA</td>
+                                        <td>1.0</td>
+                                        <td>2.0</td>
+                                        <td>1.0</td>
+                                    </tr>
+                                    <tr onclick="highlight_gradReq(this);">
+                                        <td>Personal Financial Literacy</td>
                                         <td>PFL</td>
                                         <td>0.0</td>
                                         <td>0.5</td>
                                         <td>0.5</td>
                                     </tr>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <th scope="row">Practical Art</th>
-                                        <td>PA</td>
-                                        <td>1.0</td>
-                                        <td>2.0</td>
-                                        <td>1.0</td>
-                              </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
