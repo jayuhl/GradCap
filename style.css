@@ -5,12 +5,12 @@
 }
 
 body{
-    overflow: hidden; /* The page is not scrollable */
+    overflow: hidden;
 }
 .main_container {
     /* background-color: lightgrey; */
     display: flex;
-    flex-direction: row; /* default is row */
+    /* flex-direction: row; default is row */
     height: 98vh;
     /* overflow: hidden; */
     /* justify-content:flex-start; main axis alignment */
@@ -28,11 +28,12 @@ body{
 }
 .student_info_general_container {
     display: flex;
-    /* height: 100%; */
     flex-direction: column;
     border:1px solid #000;
     font-family:arial;
-    min-width:200px;
+    min-width: 350px;
+    max-width: 750px;
+    /* min-height: 200px; */
     /* background-color: linen; */
 }
 
@@ -42,7 +43,7 @@ body{
     font-family:arial;
     height:100%;
     overflow:hidden;
-    width:160px;
+    width:180px;
 }
 #counselor_list_item_container {
     list-style:none;
@@ -50,6 +51,7 @@ body{
     margin:0;
     overflow:auto;
     padding:0;
+    padding-bottom: 24px;
     text-indent:10px;
 }
 /* #counselor_list_item_container li:nth-child(even){
@@ -59,7 +61,7 @@ body{
     border:1px solid #000;
     font-family:arial;
     /* height:326px; */
-    width:160px;
+    width:180px;
     /* margin-bottom: 10px; */
 }
 #counselor_totals_item_container {
@@ -77,7 +79,7 @@ body{
     /* height:350px; */
     height:100%;
     overflow: hidden;
-    width:160px;
+    width:180px;
 }
 #student_list_item_container {
     list-style:none;
@@ -87,6 +89,7 @@ body{
     overflow:auto;
     padding:0;
     text-indent:10px;
+    padding-bottom: 24px;
 }
 /* #student_list_item_container li:nth-child(even){
     background: #ccc;
@@ -99,7 +102,7 @@ li{
     border:1px solid #000;
     font-family:arial;
     /* height: 350px; */
-    width:160px;
+    width:180px;
     /* margin-bottom: 10px; */
 }
 #student_sort_options_container {
@@ -148,21 +151,40 @@ li{
 
 /* Student Data Panel */
 .student_top_container {
-    /* border:1px solid #000; */
     list-style:none;
-    /* max-height:220px; */
     margin:0;
-    /* overflow:auto; */
     padding:0;
-    text-indent:10px;
-    /* background-color:antiquewhite */
+    /* text-indent:10px; */
+    /* background-color:antiquewhite; */
+}
+
+.student-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    font-size: 20px;
+}
+.grid-item {
+    height: 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 150px;
+    text-indent: 10px;
+}
+.grid-item-data {
+    height: 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    min-width: 200px;
+}
+.studentdata-dropdown-options {
+    /* margin: 5px 0px 5px 0px; */
+    font-size: 20px;
+    margin-top: 5px;
+    width: 80%;
+    height: 40px;
 }
 
 /* STUDENT SUMMARY AND ANNUAL COURSES TABS */
-.student_course_container {
-    background-color:cadetblue;
-    /* max-width: fit-content; */
-}
 .table-outer-wrapper {
     margin: 10px;
     margin-left: 20px;
@@ -171,16 +193,22 @@ li{
     border-radius: 4px;
     box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
     max-width: fit-content;
-    max-height: fit-content;
+    height: fit-content;
+    /* height: calc(45vh - 20% + 70px); */
     /* background-color: blueviolet; */
+    height: 350px;
 }
 .content-pane {
-    max-height: 300px;
+    max-height: 85%;
     overflow-x: scroll;
     overflow-y: scroll;
     margin: 20px;
     /* background-color: chartreuse; */
     scroll-snap-type: y mandatory;
+    /* height: 250px; */
+    /* height: calc(45vh - 10%); */
+    /* height: calc(80%); */
+    max-width: fit-content;
 }
 /* .content-pane {
     /* position: relative; */
@@ -200,19 +228,27 @@ li{
   
 /* Dropdown selector */
 .dropdown-wrapper {
-    background-color: aqua;
-    width:100%;
+    background-color: #fff;
+    /* background-color: aqua; */
+    width:96%;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 #dropdown-options {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
     font-size: 1.1rem;
-    padding: 0.4em 0.5em 0.5em 0.5em;
-    background-color:rgb(232, 232, 232);
-    color: black;
-    border: 1px solid blue;
+    font-weight: bold;
+    padding: 5px 1px;
+    background-color: red;
+    /* background-color:rgb(232, 232, 232); */
+    color: #fff;
+    /* color: black; */
+    border: 1px solid black;
+    border-radius: 20px;
     width: 100%;
     min-width:fit-content;
+    text-align: center;
     /* margin-left: 20px;
     margin-right: 20px; */
 }
@@ -239,15 +275,24 @@ li{
 
 /* SUMMARY TABLE */
 table {
+    display: block;
+    /* height: 100%; */
+    /* overflow-y: scroll; */
     border-collapse: collapse;
-    border: 2px solid rgb(140 140 140);
+    /* border: 2px solid rgb(140 140 140); */
     font-family: sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     letter-spacing: 1px;
     /* min-width:max-content;  this will stop text wrapping in each table cell*/
+    /* max-height: fit-content; */
 }
 
-th {
+#gradreq_table {
+    /* background-color: red; */
+    /* height: 100%; */
+}
+
+thead {
     position: sticky;
     top: 0px;
     background-color: rgb(228 240 245);
@@ -267,7 +312,7 @@ caption {
   th,
   td {
     border: 1px solid rgb(160 160 160);
-    padding: 8px 10px;
+    padding: 7px 6px;
   }
   
   td:last-of-type {
@@ -288,4 +333,13 @@ caption {
   
   tfoot td {
     font-weight: bold;
+  }
+
+
+  #csv-student-button {
+    font-size: 20px;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: rgb(50,150,200);
+    color: white;
   }
