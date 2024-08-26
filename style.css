@@ -199,7 +199,7 @@ li{
     height: 350px;
 }
 .content-pane {
-    max-height: 85%;
+    max-height: 90%;
     overflow-x: scroll;
     overflow-y: scroll;
     margin: 20px;
