@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GradCap
     </title>
+    <script src="GradCapClasses.js"></script>
 </head>
 <body>
     <div class="main_container">
@@ -14,7 +15,7 @@
                 <p id="title_area">Counselors</p>
                 <ul id="counselor_list_item_container">
                     <li>Counselor 1</li>
-                    <li>Counselor 2</li>
+                    <!-- <li>Counselor 2</li>
                     <li>Counselor 3</li>
                     <li>Counselor 4</li>
                     <li>Counselor 5</li>
@@ -32,7 +33,7 @@
                     <li>Counselor 17</li>
                     <li>Counselor 18</li>
                     <li>Counselor 19</li>
-                    <li>Counselor 20</li>
+                    <li>Counselor 20</li> -->
                 </ul>
             </div>
             <div class="counselor_totals_container">
@@ -53,7 +54,7 @@
                 <p id="title_area">Students</p>
                 <ul id="student_list_item_container">
                     <li>Student 1</li>
-                    <li>Student 2</li>
+                    <!-- <li>Student 2</li>
                     <li>Student 3</li>
                     <li>Student 4</li>
                     <li>Student 5</li>
@@ -71,7 +72,7 @@
                     <li>Student 17</li>
                     <li>Student 18</li>
                     <li>Student 19</li>
-                    <li>Student 20</li>
+                    <li>Student 20</li> -->
                 </ul>
             </div>
             <div class="student_radios_container">
@@ -95,13 +96,44 @@
 
         <div class="student_info_general_container">
             <div class="student_top_container">
-                <div id="student_info">
-                    <p id="title_area">Student Data</p>
-                    <p>Name:</p>
-                    <p>Grade Level: </p>
-                    <p>ID:</p>
-                    <p>Counselor:</p>
-                    <p>Status:</p>
+                <p id="title_area">Student Data</p>
+                <div class="student-info-grid">
+                    <div class="grid-item">Name:</div>
+
+                    <div class="studentdata-dropdown-wrapper">
+                        <select id="student-names-dropdown" class="studentdata-dropdown-options">
+                            <option value="s1">Spongebob Squarepants</option>
+                            <option value="s2">Sandy Cheeks</option>
+                            <option value="s3">Squidward Tentacles</option>
+                            <option value="s4">Mr. Krabs</option>
+                            <option value="s5">Plankton</option>
+                            <option value="s6">Gary Snail</option>
+                        </select>
+                        <!-- <span class="custom-arrow"></span> -->
+                    </div>        
+
+
+                    <div class="grid-item">Grade Level: </div>
+                    <div id="student-grade-level" class="grid-item-data">10</div>
+                    <div class="grid-item">ID:</div>
+                    <div id="student-id" class="grid-item-data">810432</div>
+                    <div class="grid-item">Counselor:</div>
+
+                    <div class="studentdata-dropdown-wrapper">
+                        <select id="counselor-names-dropdown" class="studentdata-dropdown-options">
+                            <option value="s1">Steve Casamento</option>
+                            <option value="s2">Valerie DelRusso</option>
+                            <option value="s3">Marin Donnelly</option>
+                            <option value="s4">Jenna Howard</option>
+                            <option value="s5">Cristina Schneider</option>
+                            <option value="s6">All Students</option>
+                        </select>
+                        <!-- <span class="custom-arrow"></span> -->
+                    </div>
+
+
+                    <div class="grid-item">Status:</div>
+                    <div class="grid-item-data">Requirements are on track.</div>
                 </div>
             </div>
             
@@ -109,101 +141,100 @@
             <div class="dropdown-wrapper">
                 <select id="dropdown-options">
                     <option value="Summary">Graduation Requirement Summary</option>
-                    <option value="Freshman">Freshman</option>
-                    <option value="Sophomore">Sophomore</option>
-                    <option value="Junior">Junior</option>
-                    <option value="Senior">Senior</option>
-                    <option value="Transcript">Transcript</option>
+                    <option value="Freshman">Freshman Year</option>
+                    <option value="Sophomore">Sophomore Year</option>
+                    <option value="Junior">Junior Year</option>
+                    <option value="Senior">Senior Year</option>
+                    <option value="Transcript">Full Transcript</option>
                 </select>
                 <!-- <span class="custom-arrow"></span> -->
             </div>
             <!-- Data Panels -->
             <!-- <div class="student_course_container"> -->
-                    <div class="table-outer-wrapper">
-                        <div id="summary-content" class="content-pane">
-                            <table id="gradreq_table">
-                                <!-- <caption>
-                                    Graduation Requirement Summary
-                                </caption> -->
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Category</th>
-                                        <th scope="col">Code</th>
-                                        <th scope="col">Earned</th>
-                                        <th scope="col">Required</th>
-                                        <th scope="col">Needed</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <td>English</td>
-                                        <td>ENG</td>
-                                        <td>2.0</td>
-                                        <td>4.0</td>
-                                        <td>2.0</td>
-                                    </tr>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <td>Math</td>
-                                        <td>MATH</td>
-                                        <td>2.0</td>
-                                        <td>3.0</td>
-                                        <td>1.0</td>
-                                    </tr>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <td>History</td>
-                                        <td>HIST</td>
-                                        <td>2.0</td>
-                                        <td>3.0</td>
-                                        <td>1.0</td>
-                                    </tr>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <td>Science</td>
-                                        <td>SCI</td>
-                                        <td>1.0</td>
-                                        <td>3.0</td>
-                                        <td>2.0</td>
-                                    </tr>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <td>Language</td>
-                                        <td>WL</td>
-                                        <td>1.0</td>
-                                        <td>2.0</td>
-                                        <td>1.0</td>
-                                    </tr>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <td>Visual or Performing Art</td>
-                                        <td>VPA</td>
-                                        <td>0.0</td>
-                                        <td>1.0</td>
-                                        <td>1.0</td>
-                                    </tr>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <td>Practical Art</td>
-                                        <td>PA</td>
-                                        <td>1.0</td>
-                                        <td>2.0</td>
-                                        <td>1.0</td>
-                                    </tr>
-                                    <tr onclick="highlight_gradReq(this);">
-                                        <td>Personal Financial Literacy</td>
-                                        <td>PFL</td>
-                                        <td>0.0</td>
-                                        <td>0.5</td>
-                                        <td>0.5</td>
-                                    </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th scope="row" colspan="4">Total Needed</th>
-                                    <td>9.5</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                        
-                    </div>
+            <div class="table-outer-wrapper">
+                <div id="summary-content" class="content-pane">
+                    <table id="gradreq_table">
+                        <!-- <caption>
+                            Graduation Requirement Summary
+                        </caption> -->
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)" scope="col">Category</th>
+                                <th onclick="sortTable(1)" scope="col">Code</th>
+                                <th onclick="sortTable(2)" scope="col">Earned</th>
+                                <th onclick="sortTable(3)" scope="col">Required</th>
+                                <th onclick="sortTable(4)" scope="col">Needed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td>English</td>
+                                <td>ENG</td>
+                                <td>2.0</td>
+                                <td>4.0</td>
+                                <td>2.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td>Math</td>
+                                <td>MATH</td>
+                                <td>2.0</td>
+                                <td>3.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td>History</td>
+                                <td>HIST</td>
+                                <td>2.0</td>
+                                <td>3.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td>Science</td>
+                                <td>SCI</td>
+                                <td>1.0</td>
+                                <td>3.0</td>
+                                <td>2.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td>Language</td>
+                                <td>WL</td>
+                                <td>1.0</td>
+                                <td>2.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td>Visual or Performing Art</td>
+                                <td>VPA</td>
+                                <td>0.0</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td>Practical Art</td>
+                                <td>PA</td>
+                                <td>1.0</td>
+                                <td>2.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td>Personal Financial Literacy</td>
+                                <td>PFL</td>
+                                <td>0.0</td>
+                                <td>0.5</td>
+                                <td>0.5</td>
+                            </tr>
+                    </tbody>
+                    <!-- <tfoot>
+                        <tr>
+                            <th scope="row" colspan="4">Total Needed</th>
+                            <td>9.5</td>
+                        </tr>
+                    </tfoot> -->
+                </table>
+                
+            </div>
                 
                 <div id="freshman-content" class="content-pane">
-                    Freshman Year Courses
                     <table id="freshman-course_table">
                         <thead>
                             <tr>
@@ -407,18 +438,202 @@
                     </div>
                  
             </div> 
+            <!-- To read in csv files as JSON -->
+            <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">
+            </script>
+
+            <div id="testingstuff-container">
+                <!-- <button id="csv-counselor-button">Populate Counselor Data</button> -->
+                <!-- <button id="csv-requirement-button">Populate Grad Reqmt Data</button> -->
+                <!-- <div> -->
+                    <p>Select local CSV File with Student Data:</p>
+                    <input id="csv" type="file" accept=".csv" onChange="fileNameChange()">
+                    <button id="csv-student-button" style="visibility:hidden">Populate Student Data</button>
+                <!-- </div> -->
+                <!-- <div> -->
+                    <!-- <pre id="out">
+                        <p>File contents will appear here</p>
+                    </pre> -->
+                <!-- </div> -->
+            </div>
+
+
         </div>
-    </div>
-</body>
+        </div>
+        </body>
+        
+
+        <style>
+            #testingstuff-container {
+                padding: 20px;
+            }
+        </style>
 
 <script>
-    // For changing color of selected counselor/student
+
+// Student Reader - Populate Student data from csv
+const uploadConfirm = document.getElementById('csv-student-button').addEventListener('click', () => {
+    Papa.parse(document.getElementById('csv').files[0],
+    {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            // const myObj = JSON.parse(results.data[2]);
+            // var keyss = Object.keys(results.data[0]);
+            
+            // console.log(keyss);
+            // console.log("NAME: " + results.data[0]['Last Name']);
+
+            populateStudentArrayFromJSON(results);
+            populateStudentLI();
+            
+            populateRequirementsForPVRHSD();
+            populateCounselorListForPH();
+            populateCounselorLI();
+            
+            //   console.log(results.data[0]);
+            //   console.log(studentList[0]);
+            document.getElementById("csv-student-button").style.visibility = "hidden";
+        }
+    });
+});
+
+function fileNameChange() {
+    // console.log('file was selected');
+    document.getElementById("csv-student-button").style.visibility = "visible";
+}
+
+//USE THIS WHEN LOADING COUNSELOR DATA FROM A LOCAL CSV
+// Counselor Reader - Populate Counselor data from csv
+// const uploadCounselorConfirm = document.getElementById('csv-counselor-button').addEventListener('click', () => {
+//     Papa.parse(document.getElementById('csv').files[0],
+//     {
+//         download: true,
+//         header: true,
+//         skipEmptyLines: true,
+//         complete: function(results) {
+//             //     var ul = document.getElementById("counselor_list_item_container");
+//             //     for (var i = 0; i < results.data.length; i++)
+//             //     {
+//                 //         var li = document.createElement("li");
+//                 //         li.className = "counselor-container";
+                
+//                 //         li.innerHTML = results.data[i]['Last Name'];
+                
+//                 //         ul.appendChild(li);
+//                 //   }
+//                 populateCounselorArrayFromJSON(results);
+//                 populateCounselorLI();
+//                 console.log(counselorList[0].getLastName());
+//         }
+//     });
+// });
+
+//USE THIS WHEN LOADING GRAD REQUIREMENT DATA FROM A LOCAL CSV
+// Grad Requirement Reader - Populate graduation requirement data from csv
+// const uploadRequirementConfirm = document.getElementById('csv-requirement-button').addEventListener('click', () => {
+//     Papa.parse(document.getElementById('csv').files[0],
+//     {
+//         download: true,
+//         header: true,
+//         skipEmptyLines: true,
+//         complete: function(results) {
+//         //     var ul = document.getElementById("counselor_list_item_container");
+//         //     for (var i = 0; i < results.data.length; i++)
+//         //     {
+//         //         var li = document.createElement("li");
+//         //         li.className = "counselor-container";
+
+//         //         li.innerHTML = results.data[i]['Last Name'];
+
+//         //         ul.appendChild(li);
+//         //   }
+//           populateRequirementsFromJSON(results);
+//           console.log(graduationRequirementList[0].getRequirementName());
+//         }
+//     });
+// });
+
+//Populate student list - currently for all students (not a subset)
+function populateStudentLI() {
+    var ul = document.getElementById("student_list_item_container");
+    for (var i = 0; i < studentList.length; i++)
+    {
+        var li = document.createElement("li");  
+        li.className = "student-container";
+
+        // var a = document.createElement("a");
+        li.innerHTML = studentList[i].getNameLastFirst();
+        li.id = studentList[i].id;
+
+        // li.appendChild(a);
+        ul.appendChild(li);
+    }
+}
+
+//Populate counselor list for all counselors
+function populateCounselorLI() {
+    var ul = document.getElementById("counselor_list_item_container");
+    for (var i = 0; i < counselorList.length; i++)
+    {
+        var li = document.createElement("li");
+        li.className = "counselor-container";
+
+        li.innerHTML = counselorList[i].getNameLastFirst();
+
+        ul.appendChild(li);
+    }
+}
+
+//THE MAIN UPDATING FUNCTION FOR WHEN A NEW STUDENT IS SELECTED OR DEFAULTED
+function setCurrentStudentDataFields() {
+    if(currentStudent.completedCourses.length > 0) {
+        // console.log(currentStudent.completedCourses[0]);
+        createSummaryTable(currentStudent);
+        createHistoryTable(currentStudent);
+    }
+
+    //Set selected student name
+    var nstudentNameContainer = document.getElementById('student-names-dropdown');
+    nstudentNameContainer.options[0].remove(); //so the list doen't buid up
+    var studentOptionElement = document.createElement('option');
+    studentOptionElement.value = 's0';
+    // option.onclick=function(){sortTable(0);}
+    var studentOptionText = document.createTextNode(currentStudent.getNameLastFirst());
+    studentOptionElement.appendChild(studentOptionText);
+    nstudentNameContainer.insertBefore(studentOptionElement, nstudentNameContainer.firstChild);
+    nstudentNameContainer.selectedIndex = 0;
+
+    //Set selected student counselor name
+    var counselorNameContainer = document.getElementById('counselor-names-dropdown');
+    counselorNameContainer.options[0].remove(); //so the list doen't buid up
+    var counselorOptionElement = document.createElement('option');
+    counselorOptionElement.value = 's0';
+    // option.onclick=function(){sortTable(0);}
+    var counselorOptionText = document.createTextNode(currentStudent.getCounselorName());
+    counselorOptionElement.appendChild(counselorOptionText);
+    counselorNameContainer.insertBefore(counselorOptionElement, counselorNameContainer.firstChild);
+    counselorNameContainer.selectedIndex = 0;
+
+    //Set selected student grade level name
+    var gradeLevelContainer = document.getElementById('student-grade-level');
+    gradeLevelContainer.innerHTML = currentStudent.getGradeLevel();
+    
+    //Set selected student grade level name
+    var idContainer = document.getElementById('student-id');
+    idContainer.innerHTML = currentStudent.getId();
+    
+}
+
+    //For selection and changing color of selected counselor/student
     document.getElementById('counselor_list_item_container').addEventListener('click', function(e) {   // 1.
         var selected;
         if(e.target.tagName === 'LI') {                                      // 2.
             selected= document.querySelector('li.selected_counselor');                   // 2a.
             if(selected) selected.className= '';                               // "
             e.target.className= 'selected_counselor';                                    // 2b.
+            console.log("SELECTED COUNSELOR: " + e.target.innerHTML);
         }
     });
     document.getElementById('student_list_item_container').addEventListener('click', function(e) {   // 1.
@@ -427,10 +642,17 @@
             selected= document.querySelector('li.selected_student');                   // 2a.
             if(selected) selected.className= '';                               // "
             e.target.className= 'selected_student';                                    // 2b.
+            console.log("SELECTED STUDENT: " + e.target.innerHTML);
+            //Determine the selected student and get their object reference
+            //Students list items are assigned an id of the student id... clever?
+            const studentIndex = studentList.findIndex(el => el.id === e.target.id);
+            currentStudent = studentList[studentIndex];
+            
+            setCurrentStudentDataFields();
         }
     });
 
-    //Selecting the proper data to display using the dropdown
+    //Selecting the proper data to display using student info dropdown selector
     var contentpanes = document.getElementsByClassName("content-pane");
     for(var i = 0; i < contentpanes.length; i++)
         contentpanes[i].style.display = "none";
@@ -445,13 +667,13 @@
         for(var i = 0; i < contentpanes.length; i++)
         contentpanes[i].style.display = "none";
     
-    console.log("Selection: " + dataselection.options[dataselection.selectedIndex].value.toLowerCase());
+        console.log("Selection: " + dataselection.options[dataselection.selectedIndex].value.toLowerCase());
 
-    let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
-    currentId += "-content";
-    var current_pane = document.getElementById(currentId);
-    current_pane.style.display = "block";
-});
+        let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
+        currentId += "-content";
+        var current_pane = document.getElementById(currentId);
+        current_pane.style.display = "block";
+    });
 
 
 
@@ -462,6 +684,7 @@ function highlight_course(row) {
     selectedRow_courseTable=row.cells[2].textContent;
     deHighlight_course();
     row.style.backgroundColor = '#004aff';
+    // row.style.backgroundColor = 'red';
     row.style.color = 'white';
     row.classList.toggle("selectedRow");
 }
@@ -506,5 +729,61 @@ function deHighlight_course() {
         alert(selectedRow_ReqTable);
     }
 
+    //Sort table by header
+    function sortTable(n) {
+        console.log("SORTING...");
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("gradreq_table");
+        switching = true;
+        // Set the sorting direction to ascending:
+        dir = "asc";
+        /* Make a loop that will continue until
+        no switching has been done: */
+        while (switching) {
+            // Start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /* Loop through all table rows (except the
+            first, which contains table headers): */
+            for (i = 1; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                // If so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+                }
+            } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                // If so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+                }
+            }
+            }
+            if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            // Each time a switch is done, increase this count by 1:
+            switchcount ++;
+            } else {
+                /* If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again. */
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
 </script>
 </html>
