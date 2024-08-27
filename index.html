@@ -42,13 +42,13 @@
             <div class="counselor_totals_container">
                 <p id="title_area">School Totals</p>
                 <ul id="counselor_totals_item_container">
-                    <li>Total Students=766</li>
-                    <li>  Freshmen=215</li>
-                    <li>  Sophomores=179</li>
-                    <li>  Juniors=179</li>
-                    <li>  Seniors=193</li>
-                    <li>    Warnings=115</li>
-                    <li>    Overrides=0</li>
+                    <li>Total Students = 0</li>
+                    <li>Freshmen = 0</li>
+                    <li>Sophomores = 0</li>
+                    <li>Juniors = 0</li>
+                    <li>Seniors = 0</li>
+                    <li>Warnings = 0</li>
+                    <li>Overrides = 0</li>
                 </ul>
             </div>
         </div>
@@ -81,9 +81,9 @@
             <div class="student_radios_container">
                 <div id="student_sort_options_container">
                     <p id="title_area">Sort Options</p>
-                    <label for="alphabetical"><input type="radio" id="alphabetical" name="sort_options_group" value="alphabetical" checked><span>Alphabetically</span></label><br>
-                    <label for="grad_reqs"><input type="radio" id="grad_reqs" name="sort_options_group" value="grad_reqs"><span>By Grad Reqs</span></label><br>
-                    <label for="credit_total"><input type="radio" id="credit_total" name="sort_options_group" value="credit_total"><span>By Credits</span></label>
+                    <label for="alphabetical"><input type="radio" id="alphabetical" name="sort_options_group" value="alphabetical" checked onclick="setSortValue('alpha')"><span>Alphabetically</span></label><br>
+                    <label for="grad_reqs"><input type="radio" id="grad_reqs" name="sort_options_group" value="grad_reqs" onclick="setSortValue('gradreqs')"><span>By Grad Reqs</span></label><br>
+                    <label for="credit_total"><input type="radio" id="credit_total" name="sort_options_group" value="credit_total" onclick="setSortValue('credits')"><span>By Credits</span></label>
                 </div>
                 <div id="student_filter_options_container">
                     <p id="title_area">Filter Options:</p>
@@ -578,7 +578,10 @@ function populateStudentLI() {
 
         li.innerHTML = currentStudentList[i].getNameLastFirst();
         li.id = currentStudentList[i].id;
-
+        
+        if(!currentStudentList[i].hasMetAllGradRequirements())
+            li.classList.add("gradrequirement-warning");
+        // console.log(currentStudentList[i] + " " + currentStudentList[i].hasMetAllGradRequirements())
         ul.appendChild(li);
     }
 }
@@ -695,8 +698,8 @@ function clearStudentDataFields() {
         var selected;
         if(e.target.tagName === 'LI') {                                      // 2.
             selected= document.querySelector('li.selected_counselor');                   // 2a.
-            if(selected) selected.className= '';                               // "
-            e.target.className= 'selected_counselor';                                    // 2b.
+            if(selected) selected.classList.remove('selected_counselor');                               // "
+            e.target.classList.add('selected_counselor');                                    // 2b.
             // console.log("SELECTED COUNSELOR: " + e.target.innerHTML);
             // console.log("SELECTED COUNSELOR ID: " + e.target.id);
 
@@ -717,9 +720,10 @@ function clearStudentDataFields() {
         var selected;
         if(e.target.tagName === 'LI') {                                      // 2.
             selected= document.querySelector('li.selected_student');                   // 2a.
-            if(selected) selected.className= '';                               // "
-            e.target.className= 'selected_student';                                    // 2b.
-            console.log("SELECTED STUDENT: " + e.target.innerHTML);
+            // console.log("CURRENT STUDENT: " + e.target.innerHTML + " classes: " + selected.classList);
+            if(selected) selected.classList.remove('selected_student');                               // "
+            e.target.classList.add('selected_student');                                    // 2b.
+            console.log("SELECTED STUDENT: " + e.target.innerHTML + " classes: " + e.target.classList);
             //Determine the selected student and get their object reference
             //Students list items are assigned an id of the student id... clever?
             const studentIndex = currentStudentList.findIndex(el => el.id === e.target.id);
@@ -744,11 +748,11 @@ function clearStudentDataFields() {
         if(ul.firstChild) { //as long as there is at least one student
             //deselect current selected student
             selected= document.querySelector('li.selected_student');
-            if(selected) selected.className= '';
+            if(selected) selected.classList.remove('selected_student');
             //Highlight first student
             var studentUL = document.getElementById('student_list_item_container');
             var currentStudentLI = studentUL.getElementsByTagName('li')[0];
-            currentStudentLI.className = 'selected_student';
+            currentStudentLI.classList.add('selected_student');
 
             //Determine the selected student and get their object reference
             //Students list items are assigned an id of the student id... clever?
@@ -768,11 +772,11 @@ function clearStudentDataFields() {
     function setFirstCounselorAsCurrent() {
         //deselect current selected counselor
         selected= document.querySelector('li.selected_counselor');
-        if(selected) selected.className= '';
+        if(selected) selected.classList.remove('selected_counselor');
         //Highlight first counselor
         var counselorUL = document.getElementById('counselor_list_item_container');
         var currentCounselorLI = counselorUL.getElementsByTagName('li')[0];
-        currentCounselorLI.className = 'selected_counselor';
+        currentCounselorLI.classList.add('selected_counselor');
 
         //Determine the selected counselor and get their object reference
         //Counselor list items are assigned an id of the counselor id... clever?
@@ -782,7 +786,7 @@ function clearStudentDataFields() {
             currentCounselor = counselorList[0];
         else
             currentCounselor = counselorList[counselorIndex];
-        console.log("FIRST COUNSELOR IS " + selectedCounselorID + " " + currentCounselor + " index= " + counselorIndex);
+        // console.log("FIRST COUNSELOR IS " + selectedCounselorID + " " + currentCounselor + " index= " + counselorIndex);
     }
 
     //Selecting the proper data to display using student info dropdown selector
@@ -981,12 +985,12 @@ function deHighlight_course() {
             //Watch for out of bounds
             if(studentIndex >= 0 && studentIndex <= currentStudentList.length-1) {
                 selected= document.querySelector('li.selected_student');
-                if(selected) selected.className= '';
+                if(selected) selected.classList.remove('selected_student');
                 var studentUL = document.getElementById('student_list_item_container');
                 
                 //Select and highlight next student
                 var currentStudentLI = studentUL.getElementsByTagName('li')[studentIndex];
-                currentStudentLI.className = 'selected_student';
+                currentStudentLI.classList.add('selected_student');
                 
                 //Determine the selected student and get their object reference
                 //Students list items are assigned an id of the student id... clever?
@@ -995,20 +999,69 @@ function deHighlight_course() {
                 currentStudent = currentStudentList[studentIndex];
                 
                 //automate the scroll in the list
-                var elDistanceToTop = window.pageYOffset + currentStudentLI.getBoundingClientRect().top
-                console.log(studentUL.scrollTop);
+                var elDistanceToTop = window.pageYOffset + currentStudentLI.getBoundingClientRect().top;
+                var elDistanceToBottom = window.pageYOffset + currentStudentLI.getBoundingClientRect().bottom;
+                var ulTop = window.pageYOffset + studentUL.getBoundingClientRect().top;
+                var ulBottom = window.pageYOffset + studentUL.getBoundingClientRect().bottom;
+
                 var list = studentUL, targetLi = currentStudentLI; // id tag of the <li> element
-                if(event.keyCode == 38)
+                if(event.keyCode == 38) // && ulTop > elDistanceToTop)
                     studentUL.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - 25);
                 else
                     studentUL.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) + 25);
-                console.log("ScrollTop= " + elDistanceToTop);
+                console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
 
 
                 setCurrentStudentDataFields();
             }
         }
     });
+
+    var currentSortValue = 'alpha'; //options: alpha, gradreqs, credits
+    function setSortValue(value) {
+        currentSortValue = value;
+        sortCurrentStudentList();
+    }
+
+    function sortCurrentStudentList() {
+        if(currentSortValue === 'alpha')
+            currentStudentList.sort(compareUsingLastNameAlphabetical)
+        else if(currentSortValue === 'gradreqs')
+            currentStudentList.sort(compareUsingMissingRequirements)
+        else if(currentSortValue === 'credits')
+            currentStudentList.sort(compareUsingMissingCredits)
+
+        populateStudentLI();
+        setFirstStudentAsCurrent();
+    }
+
+    function compareUsingLastNameAlphabetical( a, b ) {
+        if ( a.getLastName() < b.getLastName() ){
+            return -1;
+        }
+        if ( a.getLastName() > b.getLastName() ){
+            return 1;
+        }
+        return 0;
+    }
+    function compareUsingMissingRequirements( a, b ) {
+        if ( a.getTotalNumMissingRequirements() > b.getTotalNumMissingRequirements() ){
+            return -1;
+        }
+        if ( a.getTotalNumMissingRequirements() < b.getTotalNumMissingRequirements() ){
+            return 1;
+        }
+        return 0;
+    }
+    function compareUsingMissingCredits( a, b ) {
+        if ( a.getCreditsNeeded() > b.getCreditsNeeded() ){
+            return -1;
+        }
+        if ( a.getCreditsNeeded() < b.getCreditsNeeded() ){
+            return 1;
+        }
+        return 0;
+    }
 
 </script>
 </html>
