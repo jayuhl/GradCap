@@ -55,10 +55,14 @@ class Student {
         var points = 0;
         for(var j = 0; j < this.completedCourses.length; j++) {
             var pointsForNext = this.completedCourses[j].getRequirementPointValue();
-            if(this.completedCourses[j].currentRequirementCode.includes('/'))
-                pointsForNext = pointsForNext / 2;
-            if(this.completedCourses[j].currentRequirementCode.includes(gradReq))
+            if(this.completedCourses[j].currentRequirementCode.includes('/')) {
+                //se includes when there is a / but not if there is not since VPA includes PA
+                if(this.completedCourses[j].currentRequirementCode.includes(gradReq))
+                    pointsForNext = pointsForNext / 2;
+            }
+            else if(this.completedCourses[j].currentRequirementCode === gradReq) {
                 points += pointsForNext;
+            }
         }
         return points;
     }
@@ -73,6 +77,35 @@ class Student {
             return obj.code === 'CREDITS';
         });
         return creditRequirement.getRequiredTotalPoints() - this.getCreditTotal();
+    }
+    hasMetGradRequirement(reqCode) {
+        var gradReq = graduationRequirementList.find(obj => {
+            return obj.code === reqCode;
+        });
+        return this.getPointsEarnedFor(reqCode) >= gradReq.getRequiredTotalPoints();
+    }
+    hasMetAllGradRequirements() {
+        var metAllRequirements = true;
+        for(var i=0; i<graduationRequirementList.length; i++) {
+            if(graduationRequirementList[i].code !== 'CREDITS') {
+                if(!this.hasMetGradRequirement(graduationRequirementList[i].code))
+                    metAllRequirements = false;
+                // if(this.lastName === 'Friend')
+                //     console.log(this.lastName + " " + graduationRequirementList[i].code + " " + this.hasMetGradRequirement(graduationRequirementList[i].code));
+            }
+        }
+        return metAllRequirements;
+    }
+    getTotalNumMissingRequirements() {
+        var total = 0;
+        for(var i=0; i<graduationRequirementList.length; i++) {
+            if(graduationRequirementList[i].code !== 'CREDITS') {
+                var pts = this.getPointsNeededToMeetRequirement(graduationRequirementList[i].code);
+                if(pts > 0)
+                    total += pts;
+            }
+        }
+        return total;
     }
 }
 
