@@ -1,8 +1,9 @@
 var studentList = [];
 var counselorList = [];
 var graduationRequirementList = []
-const creditsRequiredToGraduate = 120;
-var currentStudent;
+
+var currentStudent, currentCounselor;
+var currentStudentList = [];
 
 
 class Student {
@@ -10,7 +11,7 @@ class Student {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
-        this.gradeLevel = gradeLevel;
+        this.gradeLevel = Number(gradeLevel);
         this.counselorName = counselorName;
         this.completedCourses = completedCourses;
         // console.log("COMPLETED: " + completedCourses);
@@ -43,19 +44,45 @@ class Student {
     setCompletedCourses(cc) {
         this.completedCourses = cc;
     }
-    // getPointsEarnedFor(gradCode) {
-    //     var count = 0;
-    //     for(var i = 0; i < this.completedCourses.length; i++)
-    //         if(completedCourses[i].getCode === gradCode)
-    //             count++;
-    //     return count;
-    // }
+    getPointsNeededToMeetRequirement(gradReq) {
+        var requirement = graduationRequirementList.find(obj => {
+            return obj.code === gradReq;
+        });
+        var reqPoints = requirement.getRequiredTotalPoints();
+        return reqPoints - this.getPointsEarnedFor(gradReq);
+    }
+    getPointsEarnedFor(gradReq) {
+        var points = 0;
+        for(var j = 0; j < this.completedCourses.length; j++) {
+            var pointsForNext = this.completedCourses[j].getRequirementPointValue();
+            if(this.completedCourses[j].currentRequirementCode.includes('/'))
+                pointsForNext = pointsForNext / 2;
+            if(this.completedCourses[j].currentRequirementCode.includes(gradReq))
+                points += pointsForNext;
+        }
+        return points;
+    }
+    getCreditTotal() {
+        var total = 0;
+        for(var i = 0; i < this.completedCourses.length; i++)
+            total += this.completedCourses[i].getNumCredits();
+        return total;
+    }
+    getCreditsNeeded() {
+        var creditRequirement = graduationRequirementList.find(obj => {
+            return obj.code === 'CREDITS';
+        });
+        return creditRequirement.getRequiredTotalPoints() - this.getCreditTotal();
+    }
 }
 
 class Counselor {
+    static #nextID = 1001;
     constructor(lastName, firstName) {
         this.lastName = lastName;
         this.firstName = firstName;
+        this.id = Counselor.getNextID();
+        Counselor.advanceID();
     }
     getLastName() {
         return this.lastName;
@@ -65,6 +92,12 @@ class Counselor {
     }
     getNameLastFirst() {
         return this.lastName + ", " + this.firstName;
+    }
+    static advanceID() {
+        Counselor.#nextID++;
+    }
+    static getNextID() {
+        return Counselor.#nextID;
     }
 }
 
@@ -98,7 +131,7 @@ class CourseRecord {
         this.courseName = courseName;
         this.schoolYearCourseWasTaken = schoolYearCourseWasTaken;
         this.studentGradeLevelWhenTaken = studentGradeLevelWhenTaken;
-        this.numCredits = credits;
+        this.numCredits = Number(credits);
         this.requirementPointValue = requirementPointValue;
         // this.possibleRequirementCodes = requirementCode.split("\\s*;\\s*");
         this.possibleRequirementCodes = [];
@@ -177,10 +210,12 @@ function populateStudentArrayFromJSON(json) {
         var rawRequirement = json.data[i]['Course Primary Subj'];
         var requirementCode = getReqCodeFromRawName(rawRequirement);
         var requirementPointValue = credits / 5;
+        if(credits == 6)
+            requirementPointValue = 1;
         
         var courseRecord = new CompletedCourseRecord(studentName, courseCode, section, courseName, courseLetterGrade, courseNumberGrade, teacherName, schoolYearCourseWasTaken, studentGradeLevelWhenTaken, credits, requirementCode, requirementPointValue, completedCourses);
+
         var completedCourses = [courseRecord]; 
-        // nextStudent.addCompletedCourse('4');
 
         var nextStudent = new Student(json.data[i]['ID'], json.data[i]['Last Name'], json.data[i]['First Name'], json.data[i]['GR'], json.data[i]['Counselor Name'], completedCourses);
         
@@ -199,9 +234,12 @@ function populateStudentArrayFromJSON(json) {
     //Sort courses by grade taken
     for(var i = 0; i < studentList.length; i++)
         studentList[i].completedCourses.sort(dynamicSort("studentGradeLevelWhenTaken"));
+
+    currentStudentList = studentList;
 }
 
 function getReqCodeFromRawName(reqName) {
+    if(reqName == 'English/History') return 'ENG/HIST';
     if(reqName == 'English') return 'ENG';
     if(reqName == 'Math') return 'MATH';
     if(reqName == 'Science') return 'SCI';
@@ -245,11 +283,12 @@ function populateCounselorArrayFromJSON(json) {
 }
 
 function populateCounselorListForPH() {
-    var counselorLastNames = ['Casamento','Del Russo','Donnelly','Howard','Petzold','Schneider'];
-    var counselorFirstNames = ['Steven P','Valerie','Marin','Jenna','Alexa','Cristina'];
+    var counselorLastNames = ['All Students','Casamento','Del Russo','Donnelly','Howard','Petzold','Schneider','Unassigned'];
+    var counselorFirstNames = ['','Steven P','Valerie','Marin','Jenna','Alexa','Cristina',''];
     for (var i = 0; i < counselorLastNames.length; i++) {
         counselorList.push(new Counselor(counselorLastNames[i], counselorFirstNames[i]));
     }
+    currentCounselor = counselorList[0];
 }
 
 function populateRequirementsFromJSON(json) {
@@ -268,9 +307,10 @@ function populateRequirementsForPVRHSD() {
     }
 }
 
-function createSummaryTable(currentStudent) {
+function createSummaryTable() {
 
-    var table = document.getElementById("gradreq_table");
+    var tableID = 'gradreq_table';
+    var table = document.getElementById(tableID);
     table.remove();
     var newTable = document.createElement("table");
     newTable.id = "gradreq_table";
@@ -281,31 +321,31 @@ function createSummaryTable(currentStudent) {
 
     var th0 = document.createElement('th');
     th0.scope = 'col';
-    th0.onclick=function(){sortTable(0);}
+    th0.onclick=function(){sortTable(0,tableID,1,false);}
     var thText0 = document.createTextNode('Category');
     th0.appendChild(thText0);
     
     var th1 = document.createElement('th');
     th1.scope = 'col';
-    th1.onclick=function(){sortTable(1);}
+    th1.onclick=function(){sortTable(1,tableID,1,false);}
     var thText1 = document.createTextNode('Code');
     th1.appendChild(thText1);
     
     var th2 = document.createElement('th');
     th2.scope = 'col';
-    th2.onclick=function(){sortTable(2);}
+    th2.onclick=function(){sortTable(2,tableID,1,true);}
     var thText2 = document.createTextNode('Earned');
     th2.appendChild(thText2);
     
     var th3 = document.createElement('th');
     th3.scope = 'col';
-    th3.onclick=function(){sortTable(3);}
+    th3.onclick=function(){sortTable(3,tableID,1,true);}
     var thText3 = document.createTextNode('Required');
     th3.appendChild(thText3);
     
     var th4 = document.createElement('th');
     th4.scope = 'col';
-    th4.onclick=function(){sortTable(4);}
+    th4.onclick=function(){sortTable(4,tableID,1,true);}
     var thText4 = document.createTextNode('Needed');
     th4.appendChild(thText4);
 
@@ -323,6 +363,7 @@ function createSummaryTable(currentStudent) {
         var tr = document.createElement('tr');
         
         var td0 = document.createElement('td');
+        td0.className = 'table-item-left-justify';
         var td1 = document.createElement('td');
         var td2 = document.createElement('td');
         var td3 = document.createElement('td');
@@ -337,17 +378,18 @@ function createSummaryTable(currentStudent) {
 
         var text1 = document.createTextNode(gradCode);
 
-        var points = 0;
-        for(var j = 0; j < currentStudent.completedCourses.length; j++) {
-            // console.log("COMPARING: " + currentStudent.completedCourses[j].currentRequirementCode + " vs " + gradCode);
-            // console.log(currentStudent.completedCourses[j]);
-            if(currentStudent.completedCourses[j].currentRequirementCode === gradCode)
-                points++;
-        }
+        var pointsEarned = currentStudent.getPointsEarnedFor(gradCode);
+        if(gradCode === 'CREDITS')
+            pointsEarned = currentStudent.getCreditTotal();
         
-        var text2 = document.createTextNode(points);
+        var text2 = document.createTextNode(pointsEarned);
         var text3 = document.createTextNode(reqPoints);
-        var text4 = document.createTextNode('-1');
+        var pointsNeeded = currentStudent.getPointsNeededToMeetRequirement(gradCode)
+        if(gradCode === 'CREDITS')
+            pointsNeeded = currentStudent.getCreditsNeeded();
+        if(pointsNeeded <= 0)
+            pointsNeeded = '';
+        var text4 = document.createTextNode(pointsNeeded);
         
         td0.appendChild(text0);
         td1.appendChild(text1);
@@ -365,11 +407,23 @@ function createSummaryTable(currentStudent) {
         newTable.appendChild(tr);
     }
     tablearea.appendChild(newTable);
+    sortTable(4,tableID,-1,false);
 }
 
-function createHistoryTable(currentStudent) {
+function clearSummaryTable() {
+    
+    var tableID = 'gradreq_table';
+    var table = document.getElementById(tableID);
+    table.remove();
+    var newTable = document.createElement("table");
+    newTable.id = "gradreq_table";
+    var tablearea = document.getElementById('summary-content');
+    tablearea.appendChild(newTable);
+}
 
-    var table = document.getElementById("transcript-course_table");
+function createHistoryTable() {
+    var tableID = 'transcript-course_table';
+    var table = document.getElementById(tableID);
     table.remove();
     var newTable = document.createElement("table");
     newTable.id = "transcript-course_table";
@@ -380,55 +434,55 @@ function createHistoryTable(currentStudent) {
 
     var th0 = document.createElement('th');
     th0.scope = 'col';
-    th0.onclick=function(){sortTable(0);}
+    th0.onclick=function(){sortTable(0,tableID,1,true);}
     var thText0 = document.createTextNode('Yr');
     th0.appendChild(thText0);
     
     var th1 = document.createElement('th');
     th1.scope = 'col';
-    th1.onclick=function(){sortTable(1);}
+    th1.onclick=function(){sortTable(1,tableID,1,false);}
     var thText1 = document.createTextNode('Course Name');
     th1.appendChild(thText1);
     
     var th2 = document.createElement('th');
     th2.scope = 'col';
-    th2.onclick=function(){sortTable(2);}
+    th2.onclick=function(){sortTable(2,tableID,1,false);}
     var thText2 = document.createTextNode('Code');
     th2.appendChild(thText2);
     
     var th3 = document.createElement('th');
     th3.scope = 'col';
-    th3.onclick=function(){sortTable(3);}
+    th3.onclick=function(){sortTable(3,tableID,1,false);}
     var thText3 = document.createTextNode('Req Met');
     th3.appendChild(thText3);
     
     var th4 = document.createElement('th');
     th4.scope = 'col';
-    th4.onclick=function(){sortTable(4);}
+    th4.onclick=function(){sortTable(4,tableID,1,true);}
     var thText4 = document.createTextNode('Pts');
     th4.appendChild(thText4);
 
     var th5 = document.createElement('th');
     th5.scope = 'col';
-    th5.onclick=function(){sortTable(5);}
+    th5.onclick=function(){sortTable(5,tableID,1,true);}
     var thText5 = document.createTextNode('Credits');
     th5.appendChild(thText5);
 
     var th6 = document.createElement('th');
     th6.scope = 'col';
-    th6.onclick=function(){sortTable(5);}
+    th6.onclick=function(){sortTable(6,tableID,1,true);}
     var thText6 = document.createTextNode('Avg');
     th6.appendChild(thText6);
 
     var th7 = document.createElement('th');
     th7.scope = 'col';
-    th7.onclick=function(){sortTable(5);}
+    th7.onclick=function(){sortTable(7,tableID,1,false);}
     var thText7 = document.createTextNode('Teacher');
     th7.appendChild(thText7);
 
     var th8 = document.createElement('th');
     th8.scope = 'col';
-    th8.onclick=function(){sortTable(5);}
+    th8.onclick=function(){sortTable(8,tableID,1,true);}
     var thText8 = document.createTextNode('Sect');
     th8.appendChild(thText8);
 
@@ -451,12 +505,14 @@ function createHistoryTable(currentStudent) {
         
         var td0 = document.createElement('td');
         var td1 = document.createElement('td');
+        td1.className = 'table-item-left-justify';
         var td2 = document.createElement('td');
         var td3 = document.createElement('td');
         var td4 = document.createElement('td');
         var td5 = document.createElement('td');
         var td6 = document.createElement('td');
         var td7 = document.createElement('td');
+        td7.className = 'table-item-left-justify';
         var td8 = document.createElement('td');
         
         var text0 = document.createTextNode(currentStudent.completedCourses[i].getStudentGradeLevelWhenTaken());
@@ -492,5 +548,15 @@ function createHistoryTable(currentStudent) {
         
         newTable.appendChild(tr);
     }
+    tablearea.appendChild(newTable);
+}
+
+function clearHistoryTable() {
+    var tableID = 'transcript-course_table';
+    var table = document.getElementById(tableID);
+    table.remove();
+    var newTable = document.createElement("table");
+    newTable.id = "transcript-course_table";
+    var tablearea = document.getElementById('transcript-content');
     tablearea.appendChild(newTable);
 }
