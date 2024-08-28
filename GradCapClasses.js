@@ -78,6 +78,9 @@ class Student {
         });
         return creditRequirement.getRequiredTotalPoints() - this.getCreditTotal();
     }
+    hasMetCreditRequirement() {
+        return this.getCreditsNeeded() <= 0;
+    }
     hasMetGradRequirement(reqCode) {
         var gradReq = graduationRequirementList.find(obj => {
             return obj.code === reqCode;
@@ -591,5 +594,169 @@ function clearHistoryTable() {
     var newTable = document.createElement("table");
     newTable.id = "transcript-course_table";
     var tablearea = document.getElementById('transcript-content');
+    tablearea.appendChild(newTable);
+}
+
+function createYearTable(gradeLevel) {
+    var yearName = "";
+    if(gradeLevel == 9)
+        yearName = "freshman";
+    if(gradeLevel == 10)
+        yearName = "sophomore";
+    else if(gradeLevel == 11)
+        yearName = "junior";
+    else if(gradeLevel == 12)
+        yearName = "senior";
+
+    var tableID = yearName + '-course_table';
+    var table = document.getElementById(tableID);
+    table.remove();
+    var newTable = document.createElement('table');
+    newTable.id = yearName + '-course_table';
+    var tablearea = document.getElementById(yearName + '-content');
+    
+    var thead = document.createElement('thead');
+    var headRow = document.createElement('tr');
+
+    var th0 = document.createElement('th');
+    th0.scope = 'col';
+    th0.onclick=function(){sortTable(0,tableID,1,true);}
+    var thText0 = document.createTextNode('Yr');
+    th0.appendChild(thText0);
+    
+    var th1 = document.createElement('th');
+    th1.scope = 'col';
+    th1.onclick=function(){sortTable(1,tableID,1,false);}
+    var thText1 = document.createTextNode('COURSE NAME');
+    th1.appendChild(thText1);
+    
+    var th2 = document.createElement('th');
+    th2.scope = 'col';
+    th2.onclick=function(){sortTable(2,tableID,1,false);}
+    var thText2 = document.createTextNode('Code');
+    th2.appendChild(thText2);
+    
+    var th3 = document.createElement('th');
+    th3.scope = 'col';
+    th3.onclick=function(){sortTable(3,tableID,1,false);}
+    var thText3 = document.createTextNode('Req Met');
+    th3.appendChild(thText3);
+    
+    var th4 = document.createElement('th');
+    th4.scope = 'col';
+    th4.onclick=function(){sortTable(4,tableID,1,true);}
+    var thText4 = document.createTextNode('Pts');
+    th4.appendChild(thText4);
+
+    var th5 = document.createElement('th');
+    th5.scope = 'col';
+    th5.onclick=function(){sortTable(5,tableID,1,true);}
+    var thText5 = document.createTextNode('Credits');
+    th5.appendChild(thText5);
+
+    var th6 = document.createElement('th');
+    th6.scope = 'col';
+    th6.onclick=function(){sortTable(6,tableID,1,true);}
+    var thText6 = document.createTextNode('Avg');
+    th6.appendChild(thText6);
+
+    var th7 = document.createElement('th');
+    th7.scope = 'col';
+    th7.onclick=function(){sortTable(7,tableID,1,false);}
+    var thText7 = document.createTextNode('Teacher');
+    th7.appendChild(thText7);
+
+    var th8 = document.createElement('th');
+    th8.scope = 'col';
+    th8.onclick=function(){sortTable(8,tableID,1,true);}
+    var thText8 = document.createTextNode('Sect');
+    th8.appendChild(thText8);
+
+    headRow.appendChild(th0);
+    headRow.appendChild(th1);
+    headRow.appendChild(th2);
+    headRow.appendChild(th3);
+    headRow.appendChild(th4);
+    headRow.appendChild(th5);
+    headRow.appendChild(th6);
+    headRow.appendChild(th7);
+    headRow.appendChild(th8);
+
+    thead.appendChild(headRow);
+    newTable.appendChild(thead);
+
+    var currentYearCourses = currentStudent.getCompletedCourses().filter(obj => {
+        return obj.getStudentGradeLevelWhenTaken === gradeLevel;
+    });
+    console.log("NUM COURSES: " + currentYearCourses.length)
+    for (var i = 0; i < currentYearCourses.length; i++) {
+
+        var tr = document.createElement('tr');
+        
+        var td0 = document.createElement('td');
+        var td1 = document.createElement('td');
+        td1.className = 'table-item-left-justify';
+        var td2 = document.createElement('td');
+        var td3 = document.createElement('td');
+        var td4 = document.createElement('td');
+        var td5 = document.createElement('td');
+        var td6 = document.createElement('td');
+        var td7 = document.createElement('td');
+        td7.className = 'table-item-left-justify';
+        var td8 = document.createElement('td');
+        
+        var text0 = document.createTextNode(currentYearCourses.getStudentGradeLevelWhenTaken());
+        var text1 = document.createTextNode(currentYearCourses.getCourseName());
+        var text2 = document.createTextNode(currentYearCourses.getCourseCode());
+        var text3 = document.createTextNode(currentYearCourses.getCurrentRequirementCode());
+        var text4 = document.createTextNode(currentYearCourses.getRequirementPointValue());
+        var text5 = document.createTextNode(currentYearCourses.getNumCredits());
+        var text6 = document.createTextNode(currentYearCourses.getCourseNumberGrade());
+        var text7 = document.createTextNode(currentYearCourses.getTeacherName());
+        var text8 = document.createTextNode(currentYearCourses.getCourseSection());
+        
+        td0.appendChild(text0);
+        td1.appendChild(text1);
+        td2.appendChild(text2);
+        td3.appendChild(text3);
+        td4.appendChild(text4);
+        td5.appendChild(text5);
+        td6.appendChild(text6);
+        td7.appendChild(text7);
+        td8.appendChild(text8);
+
+        tr.appendChild(td0);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tr.appendChild(td5);
+        tr.appendChild(td6);
+        tr.appendChild(td7);
+        tr.appendChild(td8);
+        tr.onclick=function(){highlight_course(this);}
+        
+        newTable.appendChild(tr);
+    }
+    tablearea.appendChild(newTable);
+}
+
+function clearYearTable(gradeLevel) {
+    var yearName = "";
+    if(gradeLevel == 9)
+        yearName = "freshman";
+    if(gradeLevel == 10)
+        yearName = "sophomore";
+    else if(gradeLevel == 11)
+        yearName = "junior";
+    else if(gradeLevel == 12)
+        yearName = "senior";
+
+    var tableID = yearName + '-course_table';
+    var table = document.getElementById(tableID);
+    table.remove();
+    var newTable = document.createElement("table");
+    newTable.id = yearName + '-course_table';
+    var tablearea = document.getElementById(yearName + '-content');
     tablearea.appendChild(newTable);
 }
