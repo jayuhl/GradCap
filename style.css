@@ -148,14 +148,6 @@ li{
     border-bottom: 1px solid #000;
 }
 
-/* SELECTING ITEMS FROM THE LISTS */
-#counselor_list_item_container .selected_counselor {
-    background: lightgreen;
-}
-#student_list_item_container .selected_student {
-    background: lightskyblue;
-}
-
 
 /* Student Data Panel */
 .student_top_container {
@@ -373,6 +365,35 @@ caption {
     /* font-weight: bold; */
   }
 
+
+  /* THE STUDENTS LIST ITEMS */
+
   .gradrequirement-warning {
     color: red;
+  }
+  .creditsLow-warning {
+    color: yellow;
+  }
+  .gradrequirement-met {
+    color: green;
+  }
+
+  /* SELECTING ITEMS FROM THE LISTS */
+  #counselor_list_item_container .selected_counselor {
+    background: lightgreen;
+  }
+  /* #student_list_item_container .selected_student {
+    background: lightskyblue;
+  } */
+  .student-container.creditsLow-warning.selected_student {
+    background: yellow;
+    color: white
+  }
+  .student-container.gradrequirement-warning.selected_student {
+    background: red;
+    color: white
+  }
+  .student-container.gradrequirement-met.selected_student {
+    background: green;
+    color: white
   }
