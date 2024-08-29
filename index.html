@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="../styles/style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GradCap
@@ -15,7 +15,7 @@
     <div class="main_container">
         <div class="counselor_column">
             <div class="counselor_list_container">
-                <p id="title_area">Counselors</p>
+                <p class="title_area">Counselors</p>
                 <ul id="counselor_list_item_container">
                     <li id="1000" class='selected_counselor'>All Students</li>
                     <!-- <li>Counselor 2</li>
@@ -40,21 +40,21 @@
                 </ul>
             </div>
             <div class="counselor_totals_container">
-                <p id="title_area">School Totals</p>
+                <p class="title_area" id="totals_title_school">School Totals</p>
                 <ul id="counselor_totals_item_container">
-                    <li>Total Students = 0</li>
-                    <li>Freshmen = 0</li>
-                    <li>Sophomores = 0</li>
-                    <li>Juniors = 0</li>
-                    <li>Seniors = 0</li>
-                    <li>Warnings = 0</li>
-                    <li>Overrides = 0</li>
+                    <li>Total Students = <span id="total-students">0</span></li>
+                    <li>Freshmen = <span id="total-freshmen">0</span></li>
+                    <li>Sophomores = <span id="total-sophomores">0</span></li>
+                    <li>Juniors = <span id="total-juniors">0</span></li>
+                    <li>Seniors = <span id="total-seniors">0</span></li>
+                    <li>Warnings = <span id="total-warnings">0</span></li>
+                    <li>Overrides = <span id="total-overrides">0</span></li>
                 </ul>
             </div>
         </div>
         <div class="student_column">
             <div class="student_list_container">
-                <p id="title_area">Students</p>
+                <p class="title_area">Students</p>
                 <ul id="student_list_item_container">
                     <li class='selected_student'>Student 1</li>
                     <!-- <li>Student 2</li>
@@ -80,13 +80,13 @@
             </div>
             <div class="student_radios_container">
                 <div id="student_sort_options_container">
-                    <p id="title_area">Sort Options</p>
+                    <p class="title_area">Sort Options</p>
                     <label for="alphabetical"><input type="radio" id="alphabetical" name="sort_options_group" value="alphabetical" checked onclick="setSortValue('alpha')"><span>Alphabetically</span></label><br>
                     <label for="grad_reqs"><input type="radio" id="grad_reqs" name="sort_options_group" value="grad_reqs" onclick="setSortValue('gradreqs')"><span>By Grad Reqs</span></label><br>
                     <label for="credit_total"><input type="radio" id="credit_total" name="sort_options_group" value="credit_total" onclick="setSortValue('credits')"><span>By Credits</span></label>
                 </div>
                 <div id="student_filter_options_container">
-                    <p id="title_area">Filter Options:</p>
+                    <p class="title_area">Filter Options:</p>
                     <label for="all_students"><input type="radio" id="all_students" name="filter_options_group" value="all_students" checked onclick="setGradeLevelFilterValue(0)"><span>All Years</span></label><br>
                     <label for="freshmen"><input type="radio" id="freshmen" name="filter_options_group" value="freshmen" onclick="setGradeLevelFilterValue(9)"><span>Freshmen</span></label><br>
                     <label for="sophomores"><input type="radio" id="sophomores" name="filter_options_group" value="sophomores" onclick="setGradeLevelFilterValue(10)"><span>Sophomores</span></label><br>
@@ -99,7 +99,7 @@
 
         <div class="student_info_general_container">
             <div class="student_top_container">
-                <p id="title_area">Student Data</p>
+                <p class="title_area">Student Data</p>
                 <div class="student-info-grid">
                     <div class="grid-item">Name:</div>
 
@@ -502,8 +502,15 @@ const uploadConfirm = document.getElementById('csv-student-button').addEventList
             setFirstCounselorAsCurrent(); //The first counselor is "All Students"
 
             populateStudentArrayFromJSON(results);
+
+            //Adjust req codes if needed
+            for(var i=0; i < studentList.length; i++)
+                assignOptimalMultiCodeRequirementCourses(studentList[i], false);
+
             populateStudentLI();
             setFirstStudentAsCurrent();
+
+            updateTotalsArea();
             
             //   console.log(results.data[0]);
             //   console.log(studentList[0]);
@@ -729,6 +736,7 @@ function clearStudentDataFields() {
 
             filterStudentsUsingCurrentValues();
             // setFirstStudentAsCurrent();  //This is done in the filter method
+            updateTotalsArea();
         }
     });
     //For selection and changing color of selected student
@@ -745,6 +753,9 @@ function clearStudentDataFields() {
             const studentIndex = currentStudentList.findIndex(el => el.id === e.target.id);
             currentStudent = currentStudentList[studentIndex];
             
+            // assignOptimalMultiCodeRequirementCourses(currentStudent, false);
+            // console.log(currentStudent.getCompletedCourses().length);
+
             setCurrentStudentDataFields();
         }
     });
@@ -812,14 +823,37 @@ function clearStudentDataFields() {
         for(var i = 0; i < contentpanes.length; i++)
         contentpanes[i].style.display = "none";
     
-        console.log("Selection: " + dataselection.options[dataselection.selectedIndex].value.toLowerCase());
+    console.log("Selection: " + dataselection.options[dataselection.selectedIndex].value.toLowerCase());
+    
+    let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
+    currentId += "-content";
+    var current_pane = document.getElementById(currentId);
+    current_pane.style.display = "block";
+});
 
-        let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
-        currentId += "-content";
-        var current_pane = document.getElementById(currentId);
-        current_pane.style.display = "block";
-    });
 
+function updateTotalsArea() {
+    var elementWithTitle = document.getElementById("totals_title_school");
+    if(currentCounselor.getLastName() === 'All Students')
+        elementWithTitle.innerHTML = 'School Totals';
+    else
+        elementWithTitle.innerHTML = currentCounselor.getLastName() + ' Totals';
+
+    var elementWithTotal = document.getElementById("total-students");
+    elementWithTotal.innerHTML = currentStudentList.length;
+    elementWithTotal = document.getElementById("total-freshmen");
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(9);
+    elementWithTotal = document.getElementById("total-sophomores");
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(10);
+    elementWithTotal = document.getElementById("total-juniors");
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(11);
+    elementWithTotal = document.getElementById("total-seniors");
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(12);
+    elementWithTotal = document.getElementById("total-warnings");
+    elementWithTotal.innerHTML = getCurrentTotalStudentsWithWarnings();
+    elementWithTotal = document.getElementById("total-overrides");
+    elementWithTotal.innerHTML = getCurrentTotalStudentsWithOverrides();
+}
 
 
 // Selecting a row of a table of course objects
@@ -979,6 +1013,7 @@ function deHighlight_course() {
         //make GUI changes based on the filter result
         populateStudentLI();
         setFirstStudentAsCurrent();
+        sortCurrentStudentList();
     }
 
     document.addEventListener('keydown', function(event){
