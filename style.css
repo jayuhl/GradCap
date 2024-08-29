@@ -81,6 +81,10 @@ body{
     padding:0;
     text-indent:10px;
 }
+#counselor_totals_item_container li {
+    padding: 4px;;
+    line-height:20px;
+}
 .student_list_container {
     border:1px solid #000;
     font-family:arial;
@@ -102,9 +106,10 @@ body{
 /* #student_list_item_container li:nth-child(even){
     background: #ccc;
 } */
-li{
-    line-height:25px;
+li {
+    line-height: 25px;
 }
+
 
 .student_radios_container {
     border:1px solid #000;
@@ -113,6 +118,7 @@ li{
     width:180px;
     /* margin-bottom: 10px; */
 }
+
 #student_sort_options_container {
     /* border:1px solid #000; */
     font-family:arial;
@@ -134,7 +140,7 @@ li{
 }
 
 /* ALL TITLE AREAS USE THIS FORMATTING */
-#title_area {
+.title_area {
     background-color: red;
     color: white;
     font-size: 16px;
