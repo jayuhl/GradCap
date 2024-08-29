@@ -391,7 +391,7 @@ function populateRequirementsForPVRHSD() {
 }
 
 function createSummaryTable() {
-    console.log("SUMMARY TABLE FOR: " + currentStudent.getNameLastFirst());
+    // console.log("SUMMARY TABLE FOR: " + currentStudent.getNameLastFirst());
     var tableID = 'gradreq_table';
     var table = document.getElementById(tableID);
     table.remove();
@@ -402,89 +402,52 @@ function createSummaryTable() {
     var thead = document.createElement("thead");
     var headRow = document.createElement('tr');
 
-    var th0 = document.createElement('th');
-    th0.scope = 'col';
-    th0.onclick=function(){sortTable(0,tableID,1,false);}
-    var thText0 = document.createTextNode('Category');
-    th0.appendChild(thText0);
-    
-    var th1 = document.createElement('th');
-    th1.scope = 'col';
-    th1.onclick=function(){sortTable(1,tableID,1,false);}
-    var thText1 = document.createTextNode('Code');
-    th1.appendChild(thText1);
-    
-    var th2 = document.createElement('th');
-    th2.scope = 'col';
-    th2.onclick=function(){sortTable(2,tableID,1,true);}
-    var thText2 = document.createTextNode('Earned');
-    th2.appendChild(thText2);
-    
-    var th3 = document.createElement('th');
-    th3.scope = 'col';
-    th3.onclick=function(){sortTable(3,tableID,1,true);}
-    var thText3 = document.createTextNode('Required');
-    th3.appendChild(thText3);
-    
-    var th4 = document.createElement('th');
-    th4.scope = 'col';
-    th4.onclick=function(){sortTable(4,tableID,1,true);}
-    var thText4 = document.createTextNode('Needed');
-    th4.appendChild(thText4);
+    // var th = [];
+    var thHeaders = ['Category','Code','Earned','Required','Needed'];
 
-    headRow.appendChild(th0);
-    headRow.appendChild(th1);
-    headRow.appendChild(th2);
-    headRow.appendChild(th3);
-    headRow.appendChild(th4);
+    for(var i=0; i<thHeaders.length; i++) {
+        var nextTH = document.createElement('th');
+        nextTH.scope = 'col';
+        nextTH.onclick=function(){sortTable(i,tableID,1,false);}
+        var thText = document.createTextNode(thHeaders[i]);
+        nextTH.appendChild(thText);
+        headRow.appendChild(nextTH);
+    }
 
     thead.appendChild(headRow);
     newTable.appendChild(thead);
 
     for (var i = 0; i < graduationRequirementList.length; i++) {
         // console.log("Creating summary table for " + currentStudent.getNameLastFirst() + " " + graduationRequirementList[i].code);
+
         var tr = document.createElement('tr');
-        
-        var td0 = document.createElement('td');
-        td0.className = 'table-item-left-justify';
-        var td1 = document.createElement('td');
-        var td2 = document.createElement('td');
-        var td3 = document.createElement('td');
-        var td4 = document.createElement('td');
+
+        var cellText = [];
         
         var reqName = graduationRequirementList[i].getRequirementName();
         var reqPoints = graduationRequirementList[i].getRequiredTotalPoints();
-
-        var text0 = document.createTextNode(reqName);
-
         var gradCode = graduationRequirementList[i].code;
-
-        var text1 = document.createTextNode(gradCode);
-
         var pointsEarned = currentStudent.getPointsEarnedFor(gradCode);
         if(gradCode === 'CREDITS')
             pointsEarned = currentStudent.getCreditTotal();
-        
-        var text2 = document.createTextNode(pointsEarned);
-        var text3 = document.createTextNode(reqPoints);
         var pointsNeeded = currentStudent.getPointsNeededToMeetRequirement(gradCode)
         if(gradCode === 'CREDITS')
             pointsNeeded = currentStudent.getCreditsNeeded();
         if(pointsNeeded <= 0)
             pointsNeeded = '';
-        var text4 = document.createTextNode(pointsNeeded);
-        
-        td0.appendChild(text0);
-        td1.appendChild(text1);
-        td2.appendChild(text2);
-        td3.appendChild(text3);
-        td4.appendChild(text4);
 
-        tr.appendChild(td0);
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        tr.appendChild(td3);
-        tr.appendChild(td4);
+        cellText.push(document.createTextNode(reqName));
+        cellText.push(document.createTextNode(gradCode));
+        cellText.push(document.createTextNode(pointsEarned));
+        cellText.push(document.createTextNode(reqPoints));
+        cellText.push(document.createTextNode(pointsNeeded));
+
+        for(var j=0; j<thHeaders.length; j++) {
+            var nextData = document.createElement('td');
+            nextData.appendChild(cellText[j]);
+            if(j == 0) nextData.className = 'table-item-left-justify';
+            tr.appendChild(nextData);
+        }
         tr.onclick=function(){highlight_gradReq(this);}
         
         newTable.appendChild(tr);
@@ -504,156 +467,19 @@ function clearSummaryTable() {
     tablearea.appendChild(newTable);
 }
 
-function createHistoryTable() {
-    var tableID = 'transcript-course_table';
-    var table = document.getElementById(tableID);
-    table.remove();
-    var newTable = document.createElement("table");
-    newTable.id = "transcript-course_table";
-    var tablearea = document.getElementById('transcript-content');
-    
-    var thead = document.createElement("thead");
-    var headRow = document.createElement('tr');
 
-    var th0 = document.createElement('th');
-    th0.scope = 'col';
-    th0.onclick=function(){sortTable(0,tableID,1,true);}
-    var thText0 = document.createTextNode('Yr');
-    th0.appendChild(thText0);
-    
-    var th1 = document.createElement('th');
-    th1.scope = 'col';
-    th1.onclick=function(){sortTable(1,tableID,1,false);}
-    var thText1 = document.createTextNode('Course Name');
-    th1.appendChild(thText1);
-    
-    var th2 = document.createElement('th');
-    th2.scope = 'col';
-    th2.onclick=function(){sortTable(2,tableID,1,false);}
-    var thText2 = document.createTextNode('Code');
-    th2.appendChild(thText2);
-    
-    var th3 = document.createElement('th');
-    th3.scope = 'col';
-    th3.onclick=function(){sortTable(3,tableID,1,false);}
-    var thText3 = document.createTextNode('Req Met');
-    th3.appendChild(thText3);
-    
-    var th4 = document.createElement('th');
-    th4.scope = 'col';
-    th4.onclick=function(){sortTable(4,tableID,1,true);}
-    var thText4 = document.createTextNode('Pts');
-    th4.appendChild(thText4);
-
-    var th5 = document.createElement('th');
-    th5.scope = 'col';
-    th5.onclick=function(){sortTable(5,tableID,1,true);}
-    var thText5 = document.createTextNode('Credits');
-    th5.appendChild(thText5);
-
-    var th6 = document.createElement('th');
-    th6.scope = 'col';
-    th6.onclick=function(){sortTable(6,tableID,1,true);}
-    var thText6 = document.createTextNode('Avg');
-    th6.appendChild(thText6);
-
-    var th7 = document.createElement('th');
-    th7.scope = 'col';
-    th7.onclick=function(){sortTable(7,tableID,1,false);}
-    var thText7 = document.createTextNode('Teacher');
-    th7.appendChild(thText7);
-
-    var th8 = document.createElement('th');
-    th8.scope = 'col';
-    th8.onclick=function(){sortTable(8,tableID,1,true);}
-    var thText8 = document.createTextNode('Sect');
-    th8.appendChild(thText8);
-
-    headRow.appendChild(th0);
-    headRow.appendChild(th1);
-    headRow.appendChild(th2);
-    headRow.appendChild(th3);
-    headRow.appendChild(th4);
-    headRow.appendChild(th5);
-    headRow.appendChild(th6);
-    headRow.appendChild(th7);
-    headRow.appendChild(th8);
-
-    thead.appendChild(headRow);
-    newTable.appendChild(thead);
-
-    for (var i = 0; i < currentStudent.completedCourses.length; i++) {
-
-        var tr = document.createElement('tr');
-        
-        var td0 = document.createElement('td');
-        var td1 = document.createElement('td');
-        td1.className = 'table-item-left-justify';
-        var td2 = document.createElement('td');
-        var td3 = document.createElement('td');
-        var td4 = document.createElement('td');
-        var td5 = document.createElement('td');
-        var td6 = document.createElement('td');
-        var td7 = document.createElement('td');
-        td7.className = 'table-item-left-justify';
-        var td8 = document.createElement('td');
-        
-        var text0 = document.createTextNode(currentStudent.completedCourses[i].getStudentGradeLevelWhenTaken());
-        var text1 = document.createTextNode(currentStudent.completedCourses[i].getCourseName());
-        var text2 = document.createTextNode(currentStudent.completedCourses[i].getCourseCode());
-        var text3 = document.createTextNode(currentStudent.completedCourses[i].getCurrentRequirementCode());
-        var text4 = document.createTextNode(currentStudent.completedCourses[i].getRequirementPointValue());
-        var text5 = document.createTextNode(currentStudent.completedCourses[i].getNumCredits());
-        var text6 = document.createTextNode(currentStudent.completedCourses[i].getCourseNumberGrade());
-        var text7 = document.createTextNode(currentStudent.completedCourses[i].getTeacherName());
-        var text8 = document.createTextNode(currentStudent.completedCourses[i].getCourseSection());
-        
-        td0.appendChild(text0);
-        td1.appendChild(text1);
-        td2.appendChild(text2);
-        td3.appendChild(text3);
-        td4.appendChild(text4);
-        td5.appendChild(text5);
-        td6.appendChild(text6);
-        td7.appendChild(text7);
-        td8.appendChild(text8);
-
-        tr.appendChild(td0);
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        tr.appendChild(td3);
-        tr.appendChild(td4);
-        tr.appendChild(td5);
-        tr.appendChild(td6);
-        tr.appendChild(td7);
-        tr.appendChild(td8);
-        tr.onclick=function(){highlight_course(this);}
-        
-        newTable.appendChild(tr);
-    }
-    tablearea.appendChild(newTable);
-}
-
-function clearHistoryTable() {
-    var tableID = 'transcript-course_table';
-    var table = document.getElementById(tableID);
-    table.remove();
-    var newTable = document.createElement("table");
-    newTable.id = "transcript-course_table";
-    var tablearea = document.getElementById('transcript-content');
-    tablearea.appendChild(newTable);
-}
-
+//Use gradeLevel = 0 for a full history table (called 'transcript')
 function createYearTable(gradeLevel) {
-    var yearName = "";
+
+    var yearName = 'transcript';    
     if(gradeLevel == 9)
-        yearName = "freshman";
-    if(gradeLevel == 10)
-        yearName = "sophomore";
+        yearName = 'freshman';
+    else if(gradeLevel == 10)
+        yearName = 'sophomore';
     else if(gradeLevel == 11)
-        yearName = "junior";
+        yearName = 'junior';
     else if(gradeLevel == 12)
-        yearName = "senior";
+        yearName = 'senior';
 
     var tableID = yearName + '-course_table';
     var table = document.getElementById(tableID);
@@ -664,125 +490,58 @@ function createYearTable(gradeLevel) {
     
     var thead = document.createElement('thead');
     var headRow = document.createElement('tr');
-
-    var th0 = document.createElement('th');
-    th0.scope = 'col';
-    th0.onclick=function(){sortTable(0,tableID,1,true);}
-    var thText0 = document.createTextNode('Yr');
-    th0.appendChild(thText0);
     
-    var th1 = document.createElement('th');
-    th1.scope = 'col';
-    th1.onclick=function(){sortTable(1,tableID,1,false);}
-    var thText1 = document.createTextNode('COURSE NAME');
-    th1.appendChild(thText1);
-    
-    var th2 = document.createElement('th');
-    th2.scope = 'col';
-    th2.onclick=function(){sortTable(2,tableID,1,false);}
-    var thText2 = document.createTextNode('Code');
-    th2.appendChild(thText2);
-    
-    var th3 = document.createElement('th');
-    th3.scope = 'col';
-    th3.onclick=function(){sortTable(3,tableID,1,false);}
-    var thText3 = document.createTextNode('Req Met');
-    th3.appendChild(thText3);
-    
-    var th4 = document.createElement('th');
-    th4.scope = 'col';
-    th4.onclick=function(){sortTable(4,tableID,1,true);}
-    var thText4 = document.createTextNode('Pts');
-    th4.appendChild(thText4);
+    var thHeaders = ['Yr','Course Name','Code','Req Met','Or','Pts','Credits','Avg','Grd','Teacher','Sect'];
 
-    var th5 = document.createElement('th');
-    th5.scope = 'col';
-    th5.onclick=function(){sortTable(5,tableID,1,true);}
-    var thText5 = document.createTextNode('Credits');
-    th5.appendChild(thText5);
-
-    var th6 = document.createElement('th');
-    th6.scope = 'col';
-    th6.onclick=function(){sortTable(6,tableID,1,true);}
-    var thText6 = document.createTextNode('Avg');
-    th6.appendChild(thText6);
-
-    var th7 = document.createElement('th');
-    th7.scope = 'col';
-    th7.onclick=function(){sortTable(7,tableID,1,false);}
-    var thText7 = document.createTextNode('Teacher');
-    th7.appendChild(thText7);
-
-    var th8 = document.createElement('th');
-    th8.scope = 'col';
-    th8.onclick=function(){sortTable(8,tableID,1,true);}
-    var thText8 = document.createTextNode('Sect');
-    th8.appendChild(thText8);
-
-    headRow.appendChild(th0);
-    headRow.appendChild(th1);
-    headRow.appendChild(th2);
-    headRow.appendChild(th3);
-    headRow.appendChild(th4);
-    headRow.appendChild(th5);
-    headRow.appendChild(th6);
-    headRow.appendChild(th7);
-    headRow.appendChild(th8);
+    for(var i=0; i<thHeaders.length; i++) {
+        nextTH = document.createElement('th');
+        nextTH.scope = 'col';
+        nextTH.onclick=function(){sortTable(i,tableID,1,true);}
+        var thText = document.createTextNode(thHeaders[i]);
+        nextTH.appendChild(thText);
+        headRow.appendChild(nextTH);
+    }
 
     thead.appendChild(headRow);
     newTable.appendChild(thead);
 
-    var coursesTakenByStudent = currentStudent.getCompletedCourses();
+    var currentYearCourses = currentStudent.getCompletedCourses();
 
-    var currentYearCourses = coursesTakenByStudent.filter(obj => {
-        return obj.getStudentGradeLevelWhenTaken() === gradeLevel;
-    });
-    console.log("NUM COURSES: " + currentYearCourses.length)
+    if(gradeLevel !== 0) {
+        currentYearCourses = currentYearCourses.filter(obj => {
+            return obj.getStudentGradeLevelWhenTaken() === gradeLevel;
+        });
+    }
+    // console.log("NUM COURSES: " + currentYearCourses.length)
     for (var i = 0; i < currentYearCourses.length; i++) {
-
+        
         var tr = document.createElement('tr');
-        
-        var td0 = document.createElement('td');
-        var td1 = document.createElement('td');
-        td1.className = 'table-item-left-justify';
-        var td2 = document.createElement('td');
-        var td3 = document.createElement('td');
-        var td4 = document.createElement('td');
-        var td5 = document.createElement('td');
-        var td6 = document.createElement('td');
-        var td7 = document.createElement('td');
-        td7.className = 'table-item-left-justify';
-        var td8 = document.createElement('td');
-        
-        var text0 = document.createTextNode(currentYearCourses[i].getStudentGradeLevelWhenTaken());
-        var text1 = document.createTextNode(currentYearCourses[i].getCourseName());
-        var text2 = document.createTextNode(currentYearCourses[i].getCourseCode());
-        var text3 = document.createTextNode(currentYearCourses[i].getCurrentRequirementCode());
-        var text4 = document.createTextNode(currentYearCourses[i].getRequirementPointValue());
-        var text5 = document.createTextNode(currentYearCourses[i].getNumCredits());
-        var text6 = document.createTextNode(currentYearCourses[i].getCourseNumberGrade());
-        var text7 = document.createTextNode(currentYearCourses[i].getTeacherName());
-        var text8 = document.createTextNode(currentYearCourses[i].getCourseSection());
-        
-        td0.appendChild(text0);
-        td1.appendChild(text1);
-        td2.appendChild(text2);
-        td3.appendChild(text3);
-        td4.appendChild(text4);
-        td5.appendChild(text5);
-        td6.appendChild(text6);
-        td7.appendChild(text7);
-        td8.appendChild(text8);
 
-        tr.appendChild(td0);
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        tr.appendChild(td3);
-        tr.appendChild(td4);
-        tr.appendChild(td5);
-        tr.appendChild(td6);
-        tr.appendChild(td7);
-        tr.appendChild(td8);
+        var cellText = [];
+
+        cellText.push(document.createTextNode(currentYearCourses[i].getStudentGradeLevelWhenTaken()));
+        cellText.push(document.createTextNode(currentYearCourses[i].getCourseName()));
+        cellText.push(document.createTextNode(currentYearCourses[i].getCourseCode()));
+        cellText.push(document.createTextNode(currentYearCourses[i].getCurrentRequirementCode()));
+        var tempText = document.createTextNode('');
+        if(currentYearCourses[i].getPossibleRequirementCodes().length > 1)
+            tempText = document.createTextNode(currentYearCourses[i].getPossibleRequirementCodes()[1]);
+        cellText.push(tempText);
+        cellText.push(document.createTextNode(currentYearCourses[i].getRequirementPointValue()));
+        cellText.push(document.createTextNode(currentYearCourses[i].getNumCredits()));
+        cellText.push(document.createTextNode(currentYearCourses[i].getCourseNumberGrade()));
+        cellText.push(document.createTextNode(currentYearCourses[i].getCourseLetterGrade()));
+        cellText.push(document.createTextNode(currentYearCourses[i].getTeacherName()));
+        cellText.push(document.createTextNode(currentYearCourses[i].getCourseSection()));
+
+        
+        for(var j=0; j<thHeaders.length; j++) {
+            var nextData = document.createElement('td');
+            nextData.appendChild(cellText[j]);
+            if(j == 1 || j == 9) nextData.className = 'table-item-left-justify';
+            tr.appendChild(nextData);
+        }
+        
         tr.onclick=function(){highlight_course(this);}
         
         newTable.appendChild(tr);
@@ -790,21 +549,22 @@ function createYearTable(gradeLevel) {
     tablearea.appendChild(newTable);
 }
 
+//Use gradeLevel = 0 for history table ('transcript')
 function clearYearTable(gradeLevel) {
-    var yearName = "";
+    var yearName = 'transcript';
     if(gradeLevel == 9)
-        yearName = "freshman";
-    if(gradeLevel == 10)
-        yearName = "sophomore";
+        yearName = 'freshman';
+    else if(gradeLevel == 10)
+        yearName = 'sophomore';
     else if(gradeLevel == 11)
-        yearName = "junior";
+        yearName = 'junior';
     else if(gradeLevel == 12)
-        yearName = "senior";
+        yearName = 'senior';
 
     var tableID = yearName + '-course_table';
     var table = document.getElementById(tableID);
     table.remove();
-    var newTable = document.createElement("table");
+    var newTable = document.createElement('table');
     newTable.id = yearName + '-course_table';
     var tablearea = document.getElementById(yearName + '-content');
     tablearea.appendChild(newTable);
@@ -887,7 +647,7 @@ function clearYearTable(gradeLevel) {
          }
          //At this point, currentMaxNeedIndex represents the location of the optimal code to use.
          //Assign the calculated requirement code.
-         console.log('Changing from ' + nextCCRtoProcess.getCurrentRequirementCode() + " to " + codes[currentMaxNeedIndex]);
+        //  console.log('Changing from ' + nextCCRtoProcess.getCurrentRequirementCode() + " to " + codes[currentMaxNeedIndex]);
          nextCCRtoProcess.setCurrentRequirementCode(codes[currentMaxNeedIndex]);
          //Move the processed course to the processed list
          var removed = toBeProcessed[i];
@@ -898,8 +658,8 @@ function clearYearTable(gradeLevel) {
       //Print a message in case something went wrong:
       if(toBeProcessed.length > 0)
          console.log("WARNING!!! Not all couurses were accounted for in the assignOptimalMultiCodeRequirementCourses method of the GraduationTracker class! Skipped... " + toBeProcessed);
-       else
-         console.log('Finished optimization of grad codes.');
+    //    else
+    //      console.log('Finished optimization of grad codes.');
 
    }
    
