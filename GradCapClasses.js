@@ -33,7 +33,7 @@ class Student {
         return this.counselorName;
     }
     getIsApprovedByOverride() {
-        return isApprovedByOverride;
+        return this.isApprovedByOverride;
     }
     getNameLastFirst() {
         return this.lastName + ", " + this.firstName;
@@ -56,9 +56,12 @@ class Student {
         for(var j = 0; j < this.completedCourses.length; j++) {
             var pointsForNext = this.completedCourses[j].getRequirementPointValue();
             if(this.completedCourses[j].currentRequirementCode.includes('/')) {
-                //se includes when there is a / but not if there is not since VPA includes PA
-                if(this.completedCourses[j].currentRequirementCode.includes(gradReq))
-                    pointsForNext = pointsForNext / 2;
+                // includes when there is a / but not if there is not since VPA includes PA
+                if(this.completedCourses[j].currentRequirementCode.includes(gradReq)) {
+                    // if(this.lastName === 'Katz')
+                    //    console.log('Katz: ' + pointsForNext);
+                    points += pointsForNext / 2;
+                }
             }
             else if(this.completedCourses[j].currentRequirementCode === gradReq) {
                 points += pointsForNext;
@@ -99,6 +102,9 @@ class Student {
         }
         return metAllRequirements;
     }
+    hasRequirementWarning() {
+        return !this.hasMetAllGradRequirements() || !this.hasMetCreditRequirement();
+    }
     getTotalNumMissingRequirements() {
         var total = 0;
         for(var i=0; i<graduationRequirementList.length; i++) {
@@ -111,6 +117,31 @@ class Student {
         return total;
     }
 }
+
+//STUDENT GENERAL (static) FUNCTIONS
+function getCurrentTotalInGrade(gradeLevel) {
+    var total = 0;
+    for(var i = 0; i < currentStudentList.length; i++)
+        if(currentStudentList[i].getGradeLevel() == gradeLevel)
+            total++;
+    return total;
+}
+function getCurrentTotalStudentsWithWarnings() {
+    var total = 0;
+    for(var i = 0; i < currentStudentList.length; i++)
+        if(!currentStudentList[i].hasRequirementWarning())
+            total++;
+    return total;
+}
+function getCurrentTotalStudentsWithOverrides() {
+    var total = 0;
+    for(var i = 0; i < currentStudentList.length; i++)
+        if(currentStudentList[i].getIsApprovedByOverride())
+            total++;
+    return total;
+}
+
+
 
 class Counselor {
     static #nextID = 1001;
@@ -170,10 +201,10 @@ class CourseRecord {
         this.numCredits = Number(credits);
         this.requirementPointValue = requirementPointValue;
         // this.possibleRequirementCodes = requirementCode.split("\\s*;\\s*");
-        this.possibleRequirementCodes = [];
+        this.possibleRequirementCodes = requirementCode.split(';');
         //Default to the initial code if there are multiple
         // this.currentRequirementCode = requirementCode;
-        this.currentRequirementCode = requirementCode;
+        this.currentRequirementCode = this.possibleRequirementCodes[0];
     }
     getStudentName() {
         return this.studentName;
@@ -201,6 +232,9 @@ class CourseRecord {
     }
     getCurrentRequirementCode() {
         return this.currentRequirementCode;
+    }
+    setCurrentRequirementCode(reqCode) {
+        this.currentRequirementCode = reqCode;
     }
 }
 
@@ -243,8 +277,14 @@ function populateStudentArrayFromJSON(json) {
         var schoolYearCourseWasTaken = json.data[i]['Course Year'];
         var studentGradeLevelWhenTaken = Number(json.data[i]['Student GR']);
         var credits = json.data[i]['Credits'];
-        var rawRequirement = json.data[i]['Course Primary Subj'];
-        var requirementCode = getReqCodeFromRawName(rawRequirement);
+        var rawRequirementPrimary = json.data[i]['Course Primary Subj'];
+        var rawRequirementSecondary = json.data[i]['CourseSecondarySubj'];
+        
+        //The requirementCode gets sent as a combination of the primary and secondary as long as the secondary is not "Electives"
+        var requirementCode = getCodeFromPrimaryAndSecondarySubjectValues(rawRequirementPrimary, rawRequirementSecondary);
+        // console.log(courseCode + ": " + requirementCode1);
+        // var requirementCode = getReqCodeFromRawName(rawRequirementPrimary);
+
         var requirementPointValue = credits / 5;
         if(credits == 6)
             requirementPointValue = 1;
@@ -286,6 +326,13 @@ function getReqCodeFromRawName(reqName) {
     if(reqName == 'Financial Literacy') return 'PFL';
     if(reqName == 'Visual or Performing Arts') return 'VPA';
     return 'ELECT';
+}
+
+function getCodeFromPrimaryAndSecondarySubjectValues(primary, secondary) {
+   if(secondary.toLowerCase().startsWith("elect") || secondary.toLowerCase() === primary.toLowerCase())
+      return getReqCodeFromRawName(primary);
+   else
+      return getReqCodeFromRawName(primary) + ";" + getReqCodeFromRawName(secondary);
 }
 
 function dynamicSort(property) {
@@ -344,7 +391,7 @@ function populateRequirementsForPVRHSD() {
 }
 
 function createSummaryTable() {
-
+    console.log("SUMMARY TABLE FOR: " + currentStudent.getNameLastFirst());
     var tableID = 'gradreq_table';
     var table = document.getElementById(tableID);
     table.remove();
@@ -685,8 +732,10 @@ function createYearTable(gradeLevel) {
     thead.appendChild(headRow);
     newTable.appendChild(thead);
 
-    var currentYearCourses = currentStudent.getCompletedCourses().filter(obj => {
-        return obj.getStudentGradeLevelWhenTaken === gradeLevel;
+    var coursesTakenByStudent = currentStudent.getCompletedCourses();
+
+    var currentYearCourses = coursesTakenByStudent.filter(obj => {
+        return obj.getStudentGradeLevelWhenTaken() === gradeLevel;
     });
     console.log("NUM COURSES: " + currentYearCourses.length)
     for (var i = 0; i < currentYearCourses.length; i++) {
@@ -705,15 +754,15 @@ function createYearTable(gradeLevel) {
         td7.className = 'table-item-left-justify';
         var td8 = document.createElement('td');
         
-        var text0 = document.createTextNode(currentYearCourses.getStudentGradeLevelWhenTaken());
-        var text1 = document.createTextNode(currentYearCourses.getCourseName());
-        var text2 = document.createTextNode(currentYearCourses.getCourseCode());
-        var text3 = document.createTextNode(currentYearCourses.getCurrentRequirementCode());
-        var text4 = document.createTextNode(currentYearCourses.getRequirementPointValue());
-        var text5 = document.createTextNode(currentYearCourses.getNumCredits());
-        var text6 = document.createTextNode(currentYearCourses.getCourseNumberGrade());
-        var text7 = document.createTextNode(currentYearCourses.getTeacherName());
-        var text8 = document.createTextNode(currentYearCourses.getCourseSection());
+        var text0 = document.createTextNode(currentYearCourses[i].getStudentGradeLevelWhenTaken());
+        var text1 = document.createTextNode(currentYearCourses[i].getCourseName());
+        var text2 = document.createTextNode(currentYearCourses[i].getCourseCode());
+        var text3 = document.createTextNode(currentYearCourses[i].getCurrentRequirementCode());
+        var text4 = document.createTextNode(currentYearCourses[i].getRequirementPointValue());
+        var text5 = document.createTextNode(currentYearCourses[i].getNumCredits());
+        var text6 = document.createTextNode(currentYearCourses[i].getCourseNumberGrade());
+        var text7 = document.createTextNode(currentYearCourses[i].getTeacherName());
+        var text8 = document.createTextNode(currentYearCourses[i].getCourseSection());
         
         td0.appendChild(text0);
         td1.appendChild(text1);
@@ -760,3 +809,123 @@ function clearYearTable(gradeLevel) {
     var tablearea = document.getElementById(yearName + '-content');
     tablearea.appendChild(newTable);
 }
+
+
+
+
+
+
+//OPTIMIZE THE GRAD REQUIREMENT IF OPTIONS EXIST
+   //All CourseRecord objects MUST ALREADY HAVE A GRADUATION REQUIREMENT CODE ASSIGNED (I'm not sure why they wouldn't)
+   //Determines how to assign a code to a course that has two possible codes (or more, eventually... if that's even possible).
+   //A course that has the possibility of VPA;PA will decide the best to use based on the student's current transcript data.
+   //AN ATTEMPT TO INCLUDE REQUEST DATA IN THE PROCESS WITH COMPLETED COURSE DATA
+   //The useRequests parameter is true to include request data and false not to.
+   function assignOptimalMultiCodeRequirementCourses(student, useRequests)
+   {
+      //A list of all records to be analyzed... records will be moved out of this list as they are processed
+      var toBeProcessed = [];
+      for(var i=0; i < student.getCompletedCourses().length; i++) {
+        toBeProcessed.push(student.getCompletedCourses()[i]);
+      }
+      /** THIS IS THE BIG CHANGE... ADD COURSE REQUESTS.  **/
+    //   if(useRequests)
+    //      toBeProcessed.addAll(futureCourses);
+      
+      //A list for records as they get counted toward grad requirement totals
+      var processed = [];
+      
+      //Move single option records to the processed list... correctly accounting for dual-code courses like ENG/HIST is done in getCurrentPointTotalFor
+      for(var i = toBeProcessed.length - 1; i >= 0; i--)
+         if(toBeProcessed[i].getPossibleRequirementCodes().length == 1) {
+            var removed = toBeProcessed[i];
+            toBeProcessed.splice(i, 1);
+            processed.push(removed);
+         }
+    // if(toBeProcessed.length > 0){
+    //     console.log(toBeProcessed[0]);
+    //   console.log("Processing... num left = " + toBeProcessed.length + " " +  toBeProcessed[0].getCourseCode());
+    //     }
+    // else
+    //   console.log("Processing... num left = " + toBeProcessed.length + " " +  toBeProcessed[0]);
+      //At this point, only multi-code courses exist in the toBeProcessed list.
+      //The processed list can be used to analyze the "current" totals of each requirement.
+      //From the multi-code options, the course requirement with the most "need" will be assigned to each course as they get processed.
+      //  - "Need" is based on (requiredPoints - earnedPoints)... the largest difference determines the "neediest".
+      for(var i = toBeProcessed.length - 1; i >= 0; i--)
+      {
+          var nextCCRtoProcess = toBeProcessed[i];
+        //   console.log("Processing... " + nextCCRtoProcess.code + " ... num found = " + toBeProcessed.length);
+         //Get the list of possible grad requirement codes.
+         var codes = nextCCRtoProcess.getPossibleRequirementCodes();
+         //Determine the index of the requirement code with the greatest need.
+         //USE THE PROCESSED LIST for this calculation, NOT the completedCourses list,
+         //  since this algorithm is "building" the requirement assignment values, not using current ones.
+         //Each code is currently assumed to be a single grad req code, not something combined with a "/"
+         //  These were codes separated by ";"
+         var currentMaxNeedPoints = 0;
+         var currentMaxNeedIndex = 0;
+         for(var j = 0; j < codes.length; j++)
+         {
+            var nextCode = codes[j];
+            var pointsEarned = getCurrentPointTotalFor(nextCode, processed);
+
+            var requirement = graduationRequirementList.find(obj => {
+                return obj.code === nextCode;
+            });
+            // console.log("FOUND REQUIREMENT: " + requirement + " from " + nextCode);
+            var pointsRequired = 0;
+            if(typeof requirement !== 'undefined')
+                pointsRequired = requirement.getRequiredTotalPoints();
+
+            var pointsNeeded = pointsRequired - pointsEarned;
+            //Determine if this is current "max need" index
+            if(pointsNeeded > currentMaxNeedPoints) {
+               currentMaxNeedPoints = pointsNeeded;
+               currentMaxNeedIndex = j;
+            }
+         }
+         //At this point, currentMaxNeedIndex represents the location of the optimal code to use.
+         //Assign the calculated requirement code.
+         console.log('Changing from ' + nextCCRtoProcess.getCurrentRequirementCode() + " to " + codes[currentMaxNeedIndex]);
+         nextCCRtoProcess.setCurrentRequirementCode(codes[currentMaxNeedIndex]);
+         //Move the processed course to the processed list
+         var removed = toBeProcessed[i];
+         toBeProcessed.splice(i, 1);
+         processed.push(removed);
+      }
+      //All completed courses should now be completely accounted for and assigned optimal grad requirement codes.
+      //Print a message in case something went wrong:
+      if(toBeProcessed.length > 0)
+         console.log("WARNING!!! Not all couurses were accounted for in the assignOptimalMultiCodeRequirementCourses method of the GraduationTracker class! Skipped... " + toBeProcessed);
+       else
+         console.log('Finished optimization of grad codes.');
+
+   }
+   
+   //A HELPER METHOD for the assignOptimalMultiCodeRequirementCodes algorithm.
+   //This is the EXACT same code as in getMyPointsEarnedFor, BUT this uses a list
+   //  called "processed" that represents a portion of the completedCourses list as they get accounted for.
+   //For the reqCode parameter, the return is the total number of points
+   //CURRENTLY counted in the "processed" array... an array that IS NOT the completedCourses array,
+   //  it is an array that is being populated as codes are assigned to multi-code courses.
+   //The reqCode parameter MUST BE a SINGLE grad requirement code (should NOT contain a ";").
+   //DEALING WITH DUAL-CODE COURSES (like Am. Studies with reqCode=ENG/HIST):
+   //  - If reqCode parameter is "ENG/HIST" count as 1 ENG and 1 HIST, SEPARATELY!
+   function getCurrentPointTotalFor(reqCode, processed) {
+       var total = 0;
+       for(var i=0; i < processed.length; i++)
+       {
+           var ccr = processed[i];
+        //    console.log(ccr);
+         //check for combo FIRST... count the "part" of the code that matches reqCode
+         if(ccr.getCurrentRequirementCode().includes('/') //Slash means it counts for both requirement codes
+               && ccr.getCurrentRequirementCode().toLowerCase().includes(reqCode.toLowerCase()))
+            total += ccr.getRequirementPointValue() / 2.0; //Assumes ONLY DUAL course codes (not more) 
+         //MUST USE ELSE so there is no double-counting of codes with "/"
+         else if(ccr.getCurrentRequirementCode().toLowerCase() === reqCode.toLowerCase())
+            total += ccr.getRequirementPointValue();
+      }
+      return total;
+   }
+   
