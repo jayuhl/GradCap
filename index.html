@@ -136,7 +136,7 @@
 
 
                     <div class="grid-item">Status:</div>
-                    <div class="grid-item-data">Requirements are...</div>
+                    <div class="grid-item-data" id="status-field">Requirements are...</div>
                 </div>
             </div>
             
@@ -241,6 +241,7 @@
             <div id="transcript-content" class="content-pane">
                 <!-- Historical Course Data -->
                 <!-- <button onclick="getSelectedRow()">Snatch Data</button> -->
+                <div id="transcript-placeholder-text"></div>
                     <table id="transcript-course_table">
                         <thead>
                             <tr>
@@ -336,6 +337,7 @@
 
                 
                 <div id="freshman-content" class="content-pane">
+                    <div id="freshman-placeholder-text" style="display: none;">No Freshman Year Courses Found</div>
                     <table id="freshman-course_table">
                         <thead>
                             <tr>
@@ -430,25 +432,26 @@
 
 
                     <div id="sophomore-content" class="content-pane">
+                        <div id="sophomore-placeholder-text">No Sophomore Year Courses Found</div>
                         <table id="sophomore-course_table">
-                            No Sophomore Year Courses Found
                         </table>
                     </div>
 
                     <div id="junior-content" class="content-pane">
+                        <div id="junior-placeholder-text">No Junior Year Courses Found</div>
                         <table id="junior-course_table">
-                            No Junior Year Courses Found
                         </table>
                     </div>
 
                     <div id="senior-content" class="content-pane">
+                        <div id="senior-placeholder-text">No Senior Year Courses Found</div>
                         <table id="senior-course_table">
-                            No Senior Year Courses Found
                         </table>
                     </div>
 
                  
             </div> 
+
             <!-- To read in csv files as JSON -->
             <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">
             </script>
@@ -593,7 +596,9 @@ function populateStudentLI() {
         li.innerHTML = currentStudentList[i].getNameLastFirst();
         li.id = currentStudentList[i].id;
         
-        if(!currentStudentList[i].hasMetAllGradRequirements())
+        if(currentStudentList[i].isApprovedByOverride)
+            li.classList.add("gradrequirement-override");
+        else if(!currentStudentList[i].hasMetAllGradRequirements())
             li.classList.add("gradrequirement-warning");
         else if(!currentStudentList[i].hasMetCreditRequirement())
             li.classList.add("creditsLow-warning");
@@ -636,7 +641,7 @@ function setCurrentStudentDataFields() {
     if(currentStudent.completedCourses.length > 0) {
         // console.log(currentStudent.completedCourses[0]);
         createSummaryTable(currentStudent);
-        createHistoryTable(currentStudent);
+        createYearTable(0); //transcript (history)
         createYearTable(9);
         createYearTable(10);
         createYearTable(11);
@@ -673,13 +678,53 @@ function setCurrentStudentDataFields() {
     var idContainer = document.getElementById('student-id');
     idContainer.innerHTML = currentStudent.getId();
     
+    //Set selected student status
+    var statusContainer = document.getElementById('status-field');
+    statusContainer.innerHTML = '';
+    var checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.name = "override-checkbox";
+    checkbox.value = "value";
+    checkbox.id = "checkbox-override";
+    if(currentStudent.isApprovedByOverride)
+        checkbox.checked = true;
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            currentStudent.isApprovedByOverride = true;
+            var selected= document.querySelector('li.selected_student');
+            var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
+            populateStudentLI();
+            var studentUL = document.getElementById('student_list_item_container');
+            var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
+            currentStudentLI.classList.add('selected_student');
+            console.log("Checkbox is checked..");
+        } else {
+            currentStudent.isApprovedByOverride = false;
+            var selected= document.querySelector('li.selected_student');
+            var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
+            populateStudentLI();
+            var studentUL = document.getElementById('student_list_item_container');
+            var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
+            currentStudentLI.classList.add('selected_student');
+            console.log("Checkbox is not checked..");
+        }
+    });
+
+    var label = document.createElement('label');
+    label.htmlFor = "id";
+    label.appendChild(document.createTextNode('Override Approval of Graduation Requirements'));
+
+    statusContainer.appendChild(checkbox);
+    statusContainer.appendChild(label);
 }
+
 
 //For when there are no students to display
 function clearStudentDataFields() {
     console.log("Clearing student data.");
     clearSummaryTable();
-    clearHistoryTable();
+    clearYearTable(0);
 
     //Set selected student name
     var studentNameContainer = document.getElementById('student-names-dropdown');
@@ -821,7 +866,7 @@ function clearStudentDataFields() {
     
     dataselection.addEventListener("change", function() {
         for(var i = 0; i < contentpanes.length; i++)
-        contentpanes[i].style.display = "none";
+          contentpanes[i].style.display = "none";
     
     console.log("Selection: " + dataselection.options[dataselection.selectedIndex].value.toLowerCase());
     
@@ -858,10 +903,11 @@ function updateTotalsArea() {
 
 // Selecting a row of a table of course objects
 var selectedRow_courseTable = "";
-
+var restoreColorCourse_font = "";
 function highlight_course(row) {
     selectedRow_courseTable=row.cells[2].textContent;
     deHighlight_course();
+    restoreColorCourse_font = row.style.color;
     row.style.backgroundColor = '#004aff';
     // row.style.backgroundColor = 'red';
     row.style.color = 'white';
@@ -869,106 +915,115 @@ function highlight_course(row) {
 }
 
 function deHighlight_course() { 
-        var dataselection = document.getElementById("dropdown-options");
-        let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
-        currentId += "-course_table";
-        let courseTable = document.getElementById(currentId);
-        let rows = courseTable.rows;
-        for (let i = 0; i < rows.length; i++) {
-            rows[i].style.backgroundColor = "transparent";
-            rows[i].style.color = "black";
+    var dataselection = document.getElementById("dropdown-options");
+    let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
+    currentId += "-course_table";
+    let courseTable = document.getElementById(currentId);
+    let rows = courseTable.rows;
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].style.backgroundColor = "transparent";
+        if(rows[i].style.color === '#white')
+            rows[i].style.color = restoreColorCourse_font;
+    // rows[i].style.color = "black";
+}
+}
+
+function selectedRow_courseTable() {
+    alert(selectedRow_courseTable);
+}
+
+// Selecting a row of a table of Grad Requirements
+var selectedRow_ReqTable = "";
+var restoreColorGradReq_font = "";
+
+function highlight_gradReq(row) {
+    selectedRow_ReqTable=row.cells[2].textContent;
+    deHighlight_gradReq();
+    restoreColorGradReq_font = row.style.color;
+    if(restoreColorGradReq_font === 'black')
+        row.style.backgroundColor = '#3263eb'; //'#004aff';
+    else
+       row.style.backgroundColor = row.style.color;
+    row.style.color = 'white';
+    row.classList.toggle("selectedRow");
+}
+
+function deHighlight_gradReq() { 
+    let gradTable = document.getElementById('gradreq_table');
+    let rows = gradTable.rows;
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].style.backgroundColor = 'transparent';
+        if(rows[i].style.color === 'white')
+            rows[i].style.color = restoreColorGradReq_font;
+        // rows[i].style.color = "black";
+    }   
+}
+
+function selectedRow_ReqTable() {
+    alert(selectedRow_ReqTable);
+}
+
+//Sort table by header
+function sortTable(sortCol, tableID, direction, isNumeric) {
+    // console.log("SORTING...");
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById(tableID);
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc";
+    if(direction == -1)
+        dir = "desc";
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 1; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[sortCol];
+            y = rows[i + 1].getElementsByTagName("TD")[sortCol];
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (dir == "asc") {
+                if(isNumeric && Number(x.innerHTML) > Number(y.innerHTML)
+                    || (!isNumeric && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if(isNumeric && Number(x.innerHTML) < Number(y.innerHTML)
+                    || (!isNumeric && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
         }
-    }
-
-    function selectedRow_courseTable() {
-        alert(selectedRow_courseTable);
-    }
-
-    // Selecting a row of a table of Grad Requirements
-    var selectedRow_ReqTable = "";
-
-    function highlight_gradReq(row) {
-        selectedRow_ReqTable=row.cells[2].textContent;
-        deHighlight_gradReq();
-        row.style.backgroundColor = '#004aff';
-        row.style.color = 'white';
-        row.classList.toggle("selectedRow");
-    }
-
-    function deHighlight_gradReq() { 
-        let gradTable = document.getElementById("gradreq_table");
-        let rows = gradTable.rows;
-        for (let i = 0; i < rows.length; i++) {
-            rows[i].style.backgroundColor = "transparent";
-            rows[i].style.color = "black";
-        }   
-    }
-
-    function selectedRow_ReqTable() {
-        alert(selectedRow_ReqTable);
-    }
-
-    //Sort table by header
-    function sortTable(sortCol, tableID, direction, isNumeric) {
-        // console.log("SORTING...");
-        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-        table = document.getElementById(tableID);
+        if (shouldSwitch) {
+        /* If a switch has been marked, make the switch
+        and mark that a switch has been done: */
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
         switching = true;
-        // Set the sorting direction to ascending:
-        dir = "asc";
-        if(direction == -1)
-            dir = "desc";
-        /* Make a loop that will continue until
-        no switching has been done: */
-        while (switching) {
-            // Start by saying: no switching is done:
-            switching = false;
-            rows = table.rows;
-            /* Loop through all table rows (except the
-            first, which contains table headers): */
-            for (i = 1; i < (rows.length - 1); i++) {
-                // Start by saying there should be no switching:
-                shouldSwitch = false;
-                /* Get the two elements you want to compare,
-                one from current row and one from the next: */
-                x = rows[i].getElementsByTagName("TD")[sortCol];
-                y = rows[i + 1].getElementsByTagName("TD")[sortCol];
-                /* Check if the two rows should switch place,
-                based on the direction, asc or desc: */
-                if (dir == "asc") {
-                    if(isNumeric && Number(x.innerHTML) > Number(y.innerHTML)
-                       || (!isNumeric && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())) {
-                        // If so, mark as a switch and break the loop:
-                        shouldSwitch = true;
-                        break;
-                    }
-                } else if (dir == "desc") {
-                    if(isNumeric && Number(x.innerHTML) < Number(y.innerHTML)
-                       || (!isNumeric && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())) {
-                        // If so, mark as a switch and break the loop:
-                        shouldSwitch = true;
-                        break;
-                    }
-                }
-            }
-            if (shouldSwitch) {
-            /* If a switch has been marked, make the switch
-            and mark that a switch has been done: */
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-            switching = true;
-            // Each time a switch is done, increase this count by 1:
-            switchcount ++;
-            } else {
-                /* If no switching has been done AND the direction is "asc",
-                set the direction to "desc" and run the while loop again. */
-                if (switchcount == 0 && dir == "asc") {
-                    dir = "desc";
-                    switching = true;
-                }
+        // Each time a switch is done, increase this count by 1:
+        switchcount ++;
+        } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
             }
         }
-        // console.log("Sorting complete.")
     }
+    // console.log("Sorting complete.")
+}
 
     var filterValue_currentGradeLevel = 0; //0 is for all years
     function setGradeLevelFilterValue(gradeLevel) {
