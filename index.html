@@ -904,6 +904,7 @@ function updateTotalsArea() {
 // Selecting a row of a table of course objects
 var selectedRow_courseTable = "";
 var restoreColorCourse_font = "";
+
 function highlight_course(row) {
     selectedRow_courseTable=row.cells[2].textContent;
     deHighlight_course();
@@ -922,7 +923,7 @@ function deHighlight_course() {
     let rows = courseTable.rows;
     for (let i = 0; i < rows.length; i++) {
         rows[i].style.backgroundColor = "transparent";
-        if(rows[i].style.color === '#white')
+        if(rows[i].style.color === 'white')
             rows[i].style.color = restoreColorCourse_font;
     // rows[i].style.color = "black";
 }
@@ -981,7 +982,10 @@ function sortTable(sortCol, tableID, direction, isNumeric) {
         rows = table.rows;
         /* Loop through all table rows (except the
         first, which contains table headers): */
-        for (i = 1; i < (rows.length - 1); i++) {
+        var startRow = 1;
+        if(tableID === 'gradreq_table')
+            startRow = 2; //leave credits on top of the requirement summary table
+        for (i = startRow; i < (rows.length - 1); i++) {
             // Start by saying there should be no switching:
             shouldSwitch = false;
             /* Get the two elements you want to compare,
@@ -1144,22 +1148,24 @@ function sortTable(sortCol, tableID, direction, isNumeric) {
         return 0;
     }
     function compareUsingMissingRequirements( a, b ) {
-        if ( a.getTotalNumMissingRequirements() > b.getTotalNumMissingRequirements() ){
+        if( a.getTotalNumMissingRequirements() > b.getTotalNumMissingRequirements() ){
             return -1;
         }
-        if ( a.getTotalNumMissingRequirements() < b.getTotalNumMissingRequirements() ){
+        if( a.getTotalNumMissingRequirements() < b.getTotalNumMissingRequirements() ){
             return 1;
         }
         return 0;
     }
     function compareUsingMissingCredits( a, b ) {
+        console.log(a.getCreditsNeeded() + ", " + b.getCreditsNeeded());
         if ( a.getCreditsNeeded() > b.getCreditsNeeded() ){
             return -1;
         }
         if ( a.getCreditsNeeded() < b.getCreditsNeeded() ){
             return 1;
         }
-        return 0;
+        console.log(a.getNameLastFirst() + ", " + b.getNameLastFirst());
+        return compareUsingMissingRequirements( a, b );
     }
 
 </script>
