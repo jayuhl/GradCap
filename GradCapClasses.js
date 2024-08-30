@@ -116,6 +116,12 @@ class Student {
         }
         return total;
     }
+    hasCompletedCourseWithMultipleGradRequirementOptions(reqCode) {
+        for (const ccr of this.completedCourses)
+            if(ccr.getCurrentRequirementCode().toLowerCase() === reqCode.toLowerCase() && ccr.getPossibleRequirementCodes().length > 1)
+                return true;
+        return false;
+    }
 }
 
 //STUDENT GENERAL (static) FUNCTIONS
@@ -402,13 +408,14 @@ function createSummaryTable() {
     var thead = document.createElement("thead");
     var headRow = document.createElement('tr');
 
-    // var th = [];
     var thHeaders = ['Category','Code','Earned','Required','Needed'];
+    var isNumberData = [false, false, true, true, true];
 
     for(var i=0; i<thHeaders.length; i++) {
         var nextTH = document.createElement('th');
         nextTH.scope = 'col';
-        nextTH.onclick=function(){sortTable(i,tableID,1,false);}
+        const col = i;
+        nextTH.onclick=function(){sortTable(col,tableID,1,isNumberData[i]);}
         var thText = document.createTextNode(thHeaders[i]);
         nextTH.appendChild(thText);
         headRow.appendChild(nextTH);
@@ -427,6 +434,7 @@ function createSummaryTable() {
         var reqName = graduationRequirementList[i].getRequirementName();
         var reqPoints = graduationRequirementList[i].getRequiredTotalPoints();
         var gradCode = graduationRequirementList[i].code;
+        var hasRequirementChangeOption = currentStudent.hasCompletedCourseWithMultipleGradRequirementOptions(gradCode);
         var pointsEarned = currentStudent.getPointsEarnedFor(gradCode);
         if(gradCode === 'CREDITS')
             pointsEarned = currentStudent.getCreditTotal();
@@ -437,7 +445,10 @@ function createSummaryTable() {
             pointsNeeded = '';
 
         cellText.push(document.createTextNode(reqName));
-        cellText.push(document.createTextNode(gradCode));
+        var signalText = '';
+        if(hasRequirementChangeOption)
+            signalText = '*';
+        cellText.push(document.createTextNode(gradCode + signalText));
         cellText.push(document.createTextNode(pointsEarned));
         cellText.push(document.createTextNode(reqPoints));
         cellText.push(document.createTextNode(pointsNeeded));
@@ -448,6 +459,10 @@ function createSummaryTable() {
             if(j == 0) nextData.className = 'table-item-left-justify';
             tr.appendChild(nextData);
         }
+        if(pointsNeeded > 0)
+            tr.style.color = 'red';
+        else
+            tr.style.color = 'black';
         tr.onclick=function(){highlight_gradReq(this);}
         
         newTable.appendChild(tr);
@@ -471,7 +486,17 @@ function clearSummaryTable() {
 //Use gradeLevel = 0 for a full history table (called 'transcript')
 function createYearTable(gradeLevel) {
 
-    var yearName = 'transcript';    
+    var currentYearCourses = currentStudent.getCompletedCourses();
+
+    if(gradeLevel !== 0) { //zero is for full transcript (all years)
+        currentYearCourses = currentYearCourses.filter(obj => {
+            return obj.getStudentGradeLevelWhenTaken() === gradeLevel;
+        });
+    }
+    // console.log("NUM COURSES: " + currentYearCourses.length)
+
+    
+    var yearName = 'transcript';
     if(gradeLevel == 9)
         yearName = 'freshman';
     else if(gradeLevel == 10)
@@ -484,69 +509,86 @@ function createYearTable(gradeLevel) {
     var tableID = yearName + '-course_table';
     var table = document.getElementById(tableID);
     table.remove();
+
+    var initialTextDiv = document.getElementById(yearName + '-placeholder-text');
+    initialTextDiv.style.display = 'none';
+
     var newTable = document.createElement('table');
     newTable.id = yearName + '-course_table';
     var tablearea = document.getElementById(yearName + '-content');
-    
-    var thead = document.createElement('thead');
-    var headRow = document.createElement('tr');
-    
-    var thHeaders = ['Yr','Course Name','Code','Req Met','Or','Pts','Credits','Avg','Grd','Teacher','Sect'];
 
-    for(var i=0; i<thHeaders.length; i++) {
-        nextTH = document.createElement('th');
-        nextTH.scope = 'col';
-        nextTH.onclick=function(){sortTable(i,tableID,1,true);}
-        var thText = document.createTextNode(thHeaders[i]);
-        nextTH.appendChild(thText);
-        headRow.appendChild(nextTH);
-    }
-
-    thead.appendChild(headRow);
-    newTable.appendChild(thead);
-
-    var currentYearCourses = currentStudent.getCompletedCourses();
-
-    if(gradeLevel !== 0) {
-        currentYearCourses = currentYearCourses.filter(obj => {
-            return obj.getStudentGradeLevelWhenTaken() === gradeLevel;
-        });
-    }
-    // console.log("NUM COURSES: " + currentYearCourses.length)
-    for (var i = 0; i < currentYearCourses.length; i++) {
+    if(currentYearCourses.length > 0) {
         
-        var tr = document.createElement('tr');
-
-        var cellText = [];
-
-        cellText.push(document.createTextNode(currentYearCourses[i].getStudentGradeLevelWhenTaken()));
-        cellText.push(document.createTextNode(currentYearCourses[i].getCourseName()));
-        cellText.push(document.createTextNode(currentYearCourses[i].getCourseCode()));
-        cellText.push(document.createTextNode(currentYearCourses[i].getCurrentRequirementCode()));
-        var tempText = document.createTextNode('');
-        if(currentYearCourses[i].getPossibleRequirementCodes().length > 1)
-            tempText = document.createTextNode(currentYearCourses[i].getPossibleRequirementCodes()[1]);
-        cellText.push(tempText);
-        cellText.push(document.createTextNode(currentYearCourses[i].getRequirementPointValue()));
-        cellText.push(document.createTextNode(currentYearCourses[i].getNumCredits()));
-        cellText.push(document.createTextNode(currentYearCourses[i].getCourseNumberGrade()));
-        cellText.push(document.createTextNode(currentYearCourses[i].getCourseLetterGrade()));
-        cellText.push(document.createTextNode(currentYearCourses[i].getTeacherName()));
-        cellText.push(document.createTextNode(currentYearCourses[i].getCourseSection()));
-
+        var thead = document.createElement('thead');
+        var headRow = document.createElement('tr');
         
-        for(var j=0; j<thHeaders.length; j++) {
-            var nextData = document.createElement('td');
-            nextData.appendChild(cellText[j]);
-            if(j == 1 || j == 9) nextData.className = 'table-item-left-justify';
-            tr.appendChild(nextData);
+        var thHeaders = ['Yr','Course Name','Code','Req Met','Or','Pts','Credits','Avg','Grd','Teacher','Sect'];
+        var isNumberData = [true,false,false,false,false,true,true,true,false,false,true];
+
+        for(var i=0; i<thHeaders.length; i++) {
+            nextTH = document.createElement('th');
+            nextTH.scope = 'col';
+            const col = i;
+            nextTH.onclick=function(){sortTable(col,tableID,1,isNumberData[i]);}
+            var thText = document.createTextNode(thHeaders[i]);
+            nextTH.appendChild(thText);
+            headRow.appendChild(nextTH);
         }
         
-        tr.onclick=function(){highlight_course(this);}
-        
-        newTable.appendChild(tr);
+        thead.appendChild(headRow);
+        newTable.appendChild(thead);
+
+        for (var i = 0; i < currentYearCourses.length; i++) {
+            
+            var tr = document.createElement('tr');
+
+            var cellText = [];
+
+            cellText.push(document.createTextNode(currentYearCourses[i].getStudentGradeLevelWhenTaken()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseName()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseCode()));
+            var currentReq = currentYearCourses[i].getCurrentRequirementCode();
+            cellText.push(document.createTextNode(currentReq));
+            // if(currentYearCourses[i].getPossibleRequirementCodes().length > 1)
+            //     console.log(currentStudent.getNameLastFirst() + ' ' + currentYearCourses[i].getCourseCode() + ' ' + currentYearCourses[i].getPossibleRequirementCodes());
+            var otherReqOption = '';
+            var reqOption1 = currentYearCourses[i].getPossibleRequirementCodes()[0];
+            var reqOption2 = currentYearCourses[i].getPossibleRequirementCodes()[1];
+            if(currentYearCourses[i].getPossibleRequirementCodes().length > 1) {
+                if(currentReq === reqOption1)
+                    otherReqOption = reqOption2;
+                else
+                    otherReqOption = reqOption1;
+            }
+            cellText.push(document.createTextNode(otherReqOption));
+            cellText.push(document.createTextNode(currentYearCourses[i].getRequirementPointValue()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getNumCredits()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseNumberGrade()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseLetterGrade()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getTeacherName()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseSection()));
+
+            
+            for(var j=0; j<thHeaders.length; j++) {
+                var nextData = document.createElement('td');
+                nextData.appendChild(cellText[j]);
+                if(j == 1 || j == 9)
+                    nextData.className = 'table-item-left-justify';
+                tr.appendChild(nextData);
+            }
+            
+            tr.onclick=function(){highlight_course(this);}
+            
+            newTable.appendChild(tr);
+        }
+        tablearea.appendChild(newTable);
     }
-    tablearea.appendChild(newTable);
+    else { //this student has not courses this gradeLevel
+        tablearea.appendChild(newTable);
+
+        var initialTextDiv = document.getElementById(yearName + '-placeholder-text');
+        initialTextDiv.style.display = 'block';
+    }
 }
 
 //Use gradeLevel = 0 for history table ('transcript')
