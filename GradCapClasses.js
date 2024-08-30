@@ -79,7 +79,10 @@ class Student {
         var creditRequirement = graduationRequirementList.find(obj => {
             return obj.code === 'CREDITS';
         });
-        return creditRequirement.getRequiredTotalPoints() - this.getCreditTotal();
+        var needed = creditRequirement.getRequiredTotalPoints() - this.getCreditTotal();
+        if(needed > 0)
+            return needed;
+        return 0;
     }
     hasMetCreditRequirement() {
         return this.getCreditsNeeded() <= 0;
@@ -372,8 +375,8 @@ function populateCounselorArrayFromJSON(json) {
 }
 
 function populateCounselorListForPH() {
-    var counselorLastNames = ['All Students','Casamento','Del Russo','Donnelly','Howard','Petzold','Schneider','Unassigned'];
-    var counselorFirstNames = ['','Steven P','Valerie','Marin','Jenna','Alexa','Cristina',''];
+    var counselorLastNames = ['All Students','Casamento','Cherichello','Donnelly','Howard','Petzold','Schneider','Unassigned'];
+    var counselorFirstNames = ['','Steven P','Francis','Marin','Jenna','Alexa','Cristina',''];
     for (var i = 0; i < counselorLastNames.length; i++) {
         counselorList.push(new Counselor(counselorLastNames[i], counselorFirstNames[i]));
     }
@@ -385,12 +388,20 @@ function populateRequirementsFromJSON(json) {
     for (var i = 0; i < json.data.length; i++) {
         graduationRequirementList.push(new GraduationRequirement(json.data[i]['Requirement Name'], json.data[i]['Code'], json.data[i]['Points Needed']));
     }
+    //Put the credit requirement on top since it will lock itself into that location of the table
+    for(var i = 0; i < graduationRequirementList.length; i++)
+        if(graduationRequirementList[i].getCode() === 'CREDITS') {
+            var element = graduationRequirementList[i];
+            graduationRequirementList.splice(i, 1);
+            graduationRequirementList.splice(0, 0, element);
+        }
+        console.log("CREDITS REQURIEMENTS: " + graduationRequirementList);
 }
 
 function populateRequirementsForPVRHSD() {
-    var requirementNames = ['English','Math','History','Science','Language','Phys. Ed.','Visual or Performing Art','Practical Art','Personal Financial Literacy','Credits'];
-    var requirementCodes = ['ENG','MATH','HIST','SCI','WL','PE','VPA','PA','PFL','CREDITS'];
-    var requirementPoints = [4,3,3,3,2,4,1,1,0.5,120];
+    var requirementNames = ['Credits','English','Math','History','Science','Language','Phys. Ed.','Visual or Performing Art','Practical Art','Personal Financial Literacy'];
+    var requirementCodes = ['CREDITS','ENG','MATH','HIST','SCI','WL','PE','VPA','PA','PFL'];
+    var requirementPoints = [120,4,3,3,3,2,4,1,1,0.5];
     for (var i = 0; i < requirementNames.length; i++) {
         graduationRequirementList.push(new GraduationRequirement(requirementNames[i], requirementCodes[i], requirementPoints[i]));
     }
@@ -436,11 +447,11 @@ function createSummaryTable() {
         var gradCode = graduationRequirementList[i].code;
         var hasRequirementChangeOption = currentStudent.hasCompletedCourseWithMultipleGradRequirementOptions(gradCode);
         var pointsEarned = currentStudent.getPointsEarnedFor(gradCode);
-        if(gradCode === 'CREDITS')
-            pointsEarned = currentStudent.getCreditTotal();
         var pointsNeeded = currentStudent.getPointsNeededToMeetRequirement(gradCode)
-        if(gradCode === 'CREDITS')
+        if(gradCode === 'CREDITS') {
+            pointsEarned = currentStudent.getCreditTotal();
             pointsNeeded = currentStudent.getCreditsNeeded();
+        }
         if(pointsNeeded <= 0)
             pointsNeeded = '';
 
@@ -464,6 +475,8 @@ function createSummaryTable() {
         else
             tr.style.color = 'black';
         tr.onclick=function(){highlight_gradReq(this);}
+        if(gradCode === 'CREDITS')
+            tr.classList.add('stickyRow-credits');
         
         newTable.appendChild(tr);
     }
