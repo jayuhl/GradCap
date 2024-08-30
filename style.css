@@ -383,10 +383,14 @@ caption {
   .gradrequirement-met {
     color: green;
   }
+  .gradrequirement-override {
+    color: rgb(42, 72, 223);
+  }
 
   /* SELECTING ITEMS FROM THE LISTS */
   #counselor_list_item_container .selected_counselor {
-    background: lightgreen;
+    background: #3263eb;
+    color:white;
   }
   /* #student_list_item_container .selected_student {
     background: lightskyblue;
@@ -401,5 +405,9 @@ caption {
   }
   .student-container.gradrequirement-met.selected_student {
     background: green;
+    color: white
+  }
+  .student-container.gradrequirement-override.selected_student {
+    background: rgb(42, 72, 223);
     color: white
   }
