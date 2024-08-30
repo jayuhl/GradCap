@@ -286,13 +286,16 @@ table {
     display: block;
     /* height: 100%; */
     /* overflow-y: scroll; */
-    border-collapse: collapse;
+    /* border-collapse: collapse; */
+    border-collapse: separate;
+    border-spacing: 0;
     /* border: 2px solid rgb(140 140 140); */
     font-family: sans-serif;
     font-size: 0.9rem;
     letter-spacing: 1px;
     /* min-width:max-content;  this will stop text wrapping in each table cell */
     /* max-height: fit-content; */
+    border: 0.5px solid rgb(160 160 160);
 }
 
 #gradreq_table {
@@ -305,6 +308,14 @@ thead {
     top: 0px;
     background-color: rgb(228 240 245);
 }
+.stickyRow-credits { /* for the credits row in the table */
+    position: sticky;
+    top: 32px;
+    background-color: rgb(255,255,255,255);
+    /* border-top: 1px solid;
+    border-bottom: 1px solid; */
+}
+
 
 caption {
     caption-side: top;
@@ -319,7 +330,7 @@ caption {
   
   th,
   td {
-    border: 1px solid rgb(160 160 160);
+    border: 0.5px solid rgb(160 160 160);
     padding: 7px 9px;
     text-align: center;
   }
