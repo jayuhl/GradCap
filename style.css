@@ -39,7 +39,7 @@ body{
     flex-direction: column;
     border:1px solid #000;
     font-family:arial;
-    min-width: 350px;
+    min-width: 400px;
     max-width: 750px;
     /* min-height: 200px; */
     /* background-color: linen; */
@@ -295,7 +295,7 @@ table {
     letter-spacing: 1px;
     /* min-width:max-content;  this will stop text wrapping in each table cell */
     /* max-height: fit-content; */
-    border: 0.5px solid rgb(160 160 160);
+    /* border: 0.5px solid rgb(160 160 160); */
 }
 
 #gradreq_table {
@@ -330,9 +330,12 @@ caption {
   
   th,
   td {
-    border: 0.5px solid rgb(160 160 160);
+    /* border: 0.5px solid rgb(160 160 160); */
     padding: 7px 9px;
     text-align: center;
+  }
+  th {
+    border: 0.5px solid rgb(160 160 160);
   }
   
   td:last-of-type {
@@ -349,6 +352,9 @@ caption {
   
   tbody > tr:nth-of-type(even) {
     background-color: rgb(237 238 242);
+  }
+  tr td {
+    border: 0.5px solid rgb(160 160 160);
   }
   
   tfoot th {
@@ -421,4 +427,15 @@ caption {
   .student-container.gradrequirement-override.selected_student {
     background: rgb(42, 72, 223);
     color: white
+  }
+
+  .hidden_row td {
+    color: black;
+    font-size: 14px;
+    border: none;
+    text-align: left;
+    padding-left: 32px;
+  }
+  .totalsPanel_year.selected_year {
+    color: red;
   }
