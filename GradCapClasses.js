@@ -125,20 +125,53 @@ class Student {
                 return true;
         return false;
     }
+    getAllCompletedCoursesFor(gradReq) {
+        var filteredCourses = this.completedCourses.filter(obj => {
+            return obj.getCurrentRequirementCode() === gradReq;
+        });
+        return filteredCourses;
+    }
+    //return true if a swap is made and false otherwise
+    swapRequirementCodeIfPossible(ccr) {
+        if(ccr.getPossibleRequirementCodes().length > 1) {
+            if(ccr.currentRequirementCode === ccr.getPossibleRequirementCodes()[0]){
+                ccr.currentRequirementCode = ccr.getPossibleRequirementCodes()[1];
+            }
+            else{
+                ccr.currentRequirementCode = ccr.getPossibleRequirementCodes()[0];
+            }
+            return true;
+        }
+        return false;
+    }
 }
 
 //STUDENT GENERAL (static) FUNCTIONS
-function getCurrentTotalInGrade(gradeLevel) {
-    var total = 0;
-    for(var i = 0; i < currentStudentList.length; i++)
-        if(currentStudentList[i].getGradeLevel() == gradeLevel)
-            total++;
-    return total;
+function getCurrentTotalInGrade(gradeLevel, counselorName) {
+    console.log(studentList[0].getCounselorName() + ", " + counselorName);
+    var filteredCourses = studentList.filter(obj => {
+        return obj.getGradeLevel() === gradeLevel;
+    });
+    if(!counselorName.startsWith('All Students')) {
+        filteredCourses = filteredCourses.filter(obj => {
+            return obj.getCounselorName() === counselorName;
+        });
+    }
+    console.log("FOUND COUNSELOR TOTAL= " + filteredCourses.length);
+    console.log("FOUND COUNSELOR GRADE LEVEL TOTAL= " + filteredCourses.length);
+
+    return filteredCourses.length;
+
+    // var total = 0;
+    // for(var i = 0; i < studentList.length; i++)
+    //     if(studentList[i].getGradeLevel() == gradeLevel)
+    //         total++;
+    // return total;
 }
 function getCurrentTotalStudentsWithWarnings() {
     var total = 0;
     for(var i = 0; i < currentStudentList.length; i++)
-        if(!currentStudentList[i].hasRequirementWarning())
+        if(currentStudentList[i].hasRequirementWarning())
             total++;
     return total;
 }
@@ -474,11 +507,22 @@ function createSummaryTable() {
             tr.style.color = 'red';
         else
             tr.style.color = 'black';
+
         tr.onclick=function(){highlight_gradReq(this);}
-        if(gradCode === 'CREDITS')
+        if(gradCode === 'CREDITS') //lock the credits row at the top of the table
             tr.classList.add('stickyRow-credits');
         
+        const gradReq = gradCode;
+        // tr.onclick=function(){showHideRow('hidden_row_'+gradReq);}
+        tr.onclick=function(){showHideRow('hidden_row_' + gradReq);}
+
         newTable.appendChild(tr);
+        
+        for(var rowNum=0; rowNum < currentStudent.getAllCompletedCoursesFor(gradReq).length; rowNum++) {
+            const nextCourse = currentStudent.getAllCompletedCoursesFor(gradReq)[rowNum];
+            newTable.appendChild(getGradReqCoursesTR(nextCourse));
+        }
+        
     }
     tablearea.appendChild(newTable);
     sortTable(4,tableID,-1,false);
@@ -495,6 +539,76 @@ function clearSummaryTable() {
     tablearea.appendChild(newTable);
 }
 
+//Retuns a single table row element with the summary information for the completed course parameter
+function getGradReqCoursesTR(ccr) {
+    const gradCode = ccr.getCurrentRequirementCode();
+    const tr = document.createElement('tr');
+    tr.id = 'hidden_row_'+ ccr.getCourseCode();
+    tr.classList.add('hidden_row_' + gradCode); //allows selected requirement to 'unhide'
+    tr.classList.add('hidden_row'); //provides generic formatting for when viewing course data... mainly remove borders and decrease font
+    tr.setAttribute('name',gradCode);
+    tr.style.display = 'none';
+    tr.style.border = '0 none';
+    tr.onclick=function(){doCourseSelectionInSummaryStuff(ccr);}
+    
+    const td = document.createElement('td');
+    td.colSpan = '5';
+    // td.style.backgroundColor = 'red';
+    td.style.color = 'gray';
+    if(ccr.getPossibleRequirementCodes().length > 1)
+        td.style.color = 'rgb(225, 120, 0)';
+    const courseCode = ccr.getCourseCode();
+    const courseName = ccr.getCourseName();
+    const gradeTaken = ccr.getStudentGradeLevelWhenTaken();
+    const avg = ccr.getCourseNumberGrade();
+    const teacher = ccr.getTeacherName();
+    const thText = document.createTextNode(courseCode + ' (' + courseName + ', Grade: ' + gradeTaken + ', Avg = ' + avg + ', Teacher: ' + teacher + ')');
+    // const thText = document.createTextNode(courseCode);
+    td.appendChild(thText);
+
+    tr.appendChild(td);
+
+    return tr;
+}
+
+function showHideRow(row) {
+    $("." + row).toggle();
+    console.log("showHide: " + row);
+}
+
+// function showHideRow(rowID) {
+//     var tableRowElement = document.getElementById(rowID);
+//     if(tableRowElement.style.display === 'block')
+//         tableRowElement.style.display = 'none';
+//     else
+//         tableRowElement.style.display = 'block';
+//     console.log('CHANGING DISPLAY OF ' + tableRowElement.style.display);
+// }
+
+function doCourseSelectionInSummaryStuff(ccr) {
+    console.log('You selected ' + ccr.getCourseCode() + ' with option(s): ' + ccr.getPossibleRequirementCodes());
+    //get a list of all 'unhidden' row and call showHideRow for all to appear the same after this function is complete
+    const gradReq = ccr.getCurrentRequirementCode();
+    //Do the swap and reset the GUI to resemble the current state (since row values will be updated, the table must be repainted)
+    if(currentStudent.swapRequirementCodeIfPossible(ccr)) {
+        var allUnhidden = document.querySelectorAll('.hidden_row'); //gets all grad req sub rows
+        var gradReqCodes = [];
+        //Keep all expanded rows in their expanded state
+        for(var i=0; i < allUnhidden.length; i++) {
+            if(allUnhidden[i].style.display === '' &&
+                    !gradReqCodes.includes(allUnhidden[i].getAttribute('name')))
+                gradReqCodes.push(allUnhidden[i].getAttribute('name'));
+        }
+        // for(var i=0; i < gradReqCodes.length; i++)
+        //     console.log("UNHIDDEN: " + gradReqCodes[i]);
+        createSummaryTable(); //To update the data that was affected in the table
+        //Expand rows that were expanded before the requriement change
+        for(var i=0; i < gradReqCodes.length; i++)
+            showHideRow('hidden_row_' + gradReqCodes[i]);
+
+        updateTotalsArea(); //In case a warning was removed or added
+    }
+}
 
 //Use gradeLevel = 0 for a full history table (called 'transcript')
 function createYearTable(gradeLevel) {
@@ -580,7 +694,6 @@ function createYearTable(gradeLevel) {
             cellText.push(document.createTextNode(currentYearCourses[i].getCourseLetterGrade()));
             cellText.push(document.createTextNode(currentYearCourses[i].getTeacherName()));
             cellText.push(document.createTextNode(currentYearCourses[i].getCourseSection()));
-
             
             for(var j=0; j<thHeaders.length; j++) {
                 var nextData = document.createElement('td');
@@ -624,8 +737,6 @@ function clearYearTable(gradeLevel) {
     var tablearea = document.getElementById(yearName + '-content');
     tablearea.appendChild(newTable);
 }
-
-
 
 
 
