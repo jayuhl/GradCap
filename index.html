@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="../styles/style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GradCap
     </title>
     <script src="GradCapClasses.js"></script>
+    <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
 </head>
 <body>
     <div id="page-title">
@@ -42,11 +45,11 @@
             <div class="counselor_totals_container">
                 <p class="title_area" id="totals_title_school">School Totals</p>
                 <ul id="counselor_totals_item_container">
-                    <li>Total Students = <span id="total-students">0</span></li>
-                    <li>Freshmen = <span id="total-freshmen">0</span></li>
-                    <li>Sophomores = <span id="total-sophomores">0</span></li>
-                    <li>Juniors = <span id="total-juniors">0</span></li>
-                    <li>Seniors = <span id="total-seniors">0</span></li>
+                    <li><span class="totalsPanel_year selected_year" id="totalsPanel_year_0">Total Students</span> = <span id="total-students">0</span></li>
+                    <li><span class="totalsPanel_year" id="totalsPanel_year_9">Freshmen</span> = <span id="total-freshmen">0</span></li>
+                    <li><span class="totalsPanel_year" id="totalsPanel_year_10">Sophomores</span> = <span id="total-sophomores">0</span></li>
+                    <li><span class="totalsPanel_year" id="totalsPanel_year_11">Juniors</span> = <span id="total-juniors">0</span></li>
+                    <li><span class="totalsPanel_year" id="totalsPanel_year_12">Seniors</span> = <span id="total-seniors">0</span></li>
                     <li>Warnings = <span id="total-warnings">0</span></li>
                     <li>Overrides = <span id="total-overrides">0</span></li>
                 </ul>
@@ -712,7 +715,7 @@ function setCurrentStudentDataFields() {
     });
 
     var label = document.createElement('label');
-    label.htmlFor = "id";
+    label.htmlFor = "checkbox-override";
     label.appendChild(document.createTextNode('Override Approval of Graduation Requirements'));
 
     statusContainer.appendChild(checkbox);
@@ -879,25 +882,41 @@ function clearStudentDataFields() {
 
 function updateTotalsArea() {
     var elementWithTitle = document.getElementById("totals_title_school");
-    if(currentCounselor.getLastName() === 'All Students')
-        elementWithTitle.innerHTML = 'School Totals';
-    else
-        elementWithTitle.innerHTML = currentCounselor.getLastName() + ' Totals';
+    var counselorLastName = currentCounselor.getLastName();
+    var counselorName = currentCounselor.getNameLastFirst();
 
     var elementWithTotal = document.getElementById("total-students");
-    elementWithTotal.innerHTML = currentStudentList.length;
+
+    if(counselorLastName === 'All Students') {
+        elementWithTitle.innerHTML = 'School Totals';
+        elementWithTotal.innerHTML = studentList.length;
+    }
+    else {
+        elementWithTitle.innerHTML = counselorLastName + ' Totals';
+        elementWithTotal.innerHTML = currentStudentList.length;
+    }
+    
     elementWithTotal = document.getElementById("total-freshmen");
-    elementWithTotal.innerHTML = getCurrentTotalInGrade(9);
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(9, counselorName);
     elementWithTotal = document.getElementById("total-sophomores");
-    elementWithTotal.innerHTML = getCurrentTotalInGrade(10);
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(10, counselorName);
     elementWithTotal = document.getElementById("total-juniors");
-    elementWithTotal.innerHTML = getCurrentTotalInGrade(11);
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(11, counselorName);
     elementWithTotal = document.getElementById("total-seniors");
-    elementWithTotal.innerHTML = getCurrentTotalInGrade(12);
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(12, counselorName);
     elementWithTotal = document.getElementById("total-warnings");
+    //Use current radio selection to access selected grade level for this by counselor
     elementWithTotal.innerHTML = getCurrentTotalStudentsWithWarnings();
     elementWithTotal = document.getElementById("total-overrides");
     elementWithTotal.innerHTML = getCurrentTotalStudentsWithOverrides();
+
+    //Color the currently selected year for effect  ... totalsPanel_year
+    //filterValue_currentGradeLevel
+    var lastSelection = document.querySelector('.totalsPanel_year.selected_year');
+    // console.log("CURRENT YEAR: " + e.target.innerHTML + " classes: " + selected.classList);
+    if(lastSelection) lastSelection.classList.remove('selected_year');
+    var currentSelection = document.getElementById('totalsPanel_year_' + filterValue_currentGradeLevel);
+    currentSelection.classList.add('selected_year');
 }
 
 
@@ -965,74 +984,75 @@ function selectedRow_ReqTable() {
 }
 
 //Sort table by header
-function sortTable(sortCol, tableID, direction, isNumeric) {
-    // console.log("SORTING...");
-    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-    table = document.getElementById(tableID);
-    switching = true;
-    // Set the sorting direction to ascending:
-    dir = "asc";
-    if(direction == -1)
-        dir = "desc";
-    /* Make a loop that will continue until
-    no switching has been done: */
-    while (switching) {
-        // Start by saying: no switching is done:
-        switching = false;
-        rows = table.rows;
-        /* Loop through all table rows (except the
-        first, which contains table headers): */
-        var startRow = 1;
-        if(tableID === 'gradreq_table')
-            startRow = 2; //leave credits on top of the requirement summary table
-        for (i = startRow; i < (rows.length - 1); i++) {
-            // Start by saying there should be no switching:
-            shouldSwitch = false;
-            /* Get the two elements you want to compare,
-            one from current row and one from the next: */
-            x = rows[i].getElementsByTagName("TD")[sortCol];
-            y = rows[i + 1].getElementsByTagName("TD")[sortCol];
-            /* Check if the two rows should switch place,
-            based on the direction, asc or desc: */
-            if (dir == "asc") {
-                if(isNumeric && Number(x.innerHTML) > Number(y.innerHTML)
-                    || (!isNumeric && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())) {
-                    // If so, mark as a switch and break the loop:
-                    shouldSwitch = true;
-                    break;
-                }
-            } else if (dir == "desc") {
-                if(isNumeric && Number(x.innerHTML) < Number(y.innerHTML)
-                    || (!isNumeric && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())) {
-                    // If so, mark as a switch and break the loop:
-                    shouldSwitch = true;
-                    break;
-                }
-            }
-        }
-        if (shouldSwitch) {
-        /* If a switch has been marked, make the switch
-        and mark that a switch has been done: */
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
-        // Each time a switch is done, increase this count by 1:
-        switchcount ++;
-        } else {
-            /* If no switching has been done AND the direction is "asc",
-            set the direction to "desc" and run the while loop again. */
-            if (switchcount == 0 && dir == "asc") {
-                dir = "desc";
-                switching = true;
-            }
-        }
-    }
-    // console.log("Sorting complete.")
-}
+function sortTable(sortCol, tableID, direction, isNumeric) {}
+//     // console.log("SORTING...");
+//     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+//     table = document.getElementById(tableID);
+//     switching = true;
+//     // Set the sorting direction to ascending:
+//     dir = "asc";
+//     if(direction == -1)
+//         dir = "desc";
+//     /* Make a loop that will continue until
+//     no switching has been done: */
+//     while (switching) {
+//         // Start by saying: no switching is done:
+//         switching = false;
+//         rows = table.rows;
+//         /* Loop through all table rows (except the
+//         first, which contains table headers): */
+//         var startRow = 1;
+//         if(tableID === 'gradreq_table')
+//             startRow = 2; //leave credits on top of the requirement summary table
+//         for (i = startRow; i < (rows.length - 1); i++) {
+//             // Start by saying there should be no switching:
+//             shouldSwitch = false;
+//             /* Get the two elements you want to compare,
+//             one from current row and one from the next: */
+//             x = rows[i].getElementsByTagName("TD")[sortCol];
+//             y = rows[i + 1].getElementsByTagName("TD")[sortCol];
+//             /* Check if the two rows should switch place,
+//             based on the direction, asc or desc: */
+//             if (dir == "asc") {
+//                 if(isNumeric && Number(x.innerHTML) > Number(y.innerHTML)
+//                     || (!isNumeric && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())) {
+//                     // If so, mark as a switch and break the loop:
+//                     shouldSwitch = true;
+//                     break;
+//                 }
+//             } else if (dir == "desc") {
+//                 if(isNumeric && Number(x.innerHTML) < Number(y.innerHTML)
+//                     || (!isNumeric && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())) {
+//                     // If so, mark as a switch and break the loop:
+//                     shouldSwitch = true;
+//                     break;
+//                 }
+//             }
+//         }
+//         if (shouldSwitch) {
+//         /* If a switch has been marked, make the switch
+//         and mark that a switch has been done: */
+//         rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+//         switching = true;
+//         // Each time a switch is done, increase this count by 1:
+//         switchcount ++;
+//         } else {
+//             /* If no switching has been done AND the direction is "asc",
+//             set the direction to "desc" and run the while loop again. */
+//             if (switchcount == 0 && dir == "asc") {
+//                 dir = "desc";
+//                 switching = true;
+//             }
+//         }
+//     }
+//     // console.log("Sorting complete.")
+// }
 
     var filterValue_currentGradeLevel = 0; //0 is for all years
     function setGradeLevelFilterValue(gradeLevel) {
         filterValue_currentGradeLevel = gradeLevel;
         filterStudentsUsingCurrentValues();
+        updateTotalsArea();
     }
 
     //Use the individual grade levels or 0 for all years
