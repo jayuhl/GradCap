@@ -522,6 +522,11 @@ const uploadConfirm = document.getElementById('csv-student-button').addEventList
             setFirstStudentAsCurrent();
             
             sortAndPaintSummaryTable(4,'gradreq_table',-1,false); //4= sort by 'Needed'
+            sortYearTable(0,"transcript-course_table", 1, true, 3);
+            sortYearTable(0,"freshman-course_table", 1, true, 3);
+            sortYearTable(0,"sophomore-course_table", 1, true, 3);
+            sortYearTable(0,"junior-course_table", 1, true, 3);
+            sortYearTable(0,"senior-course_table", 1, true, 3);
 
             updateTotalsArea();
             
@@ -608,6 +613,13 @@ function populateStudentLI() {
         
         if(currentStudentList[i].isApprovedByOverride)
             li.classList.add("gradrequirement-override");
+
+        else if(currentStudentList[i].getGradeLevel() > 9 && currentStudentList[i].getCompletedCoursesForYear(9).length == 0
+                || currentStudentList[i].getGradeLevel() > 10 && currentStudentList[i].getCompletedCoursesForYear(10).length == 0
+                || currentStudentList[i].getGradeLevel() > 11 && currentStudentList[i].getCompletedCoursesForYear(11).length == 0) {
+            li.classList.add("gradrequirement-missingInfo");
+        }
+
         else if(!currentStudentList[i].hasMetAllGradRequirements())
             li.classList.add("gradrequirement-warning");
         else if(!currentStudentList[i].hasMetCreditRequirement())
@@ -702,22 +714,28 @@ function setCurrentStudentDataFields() {
     checkbox.addEventListener('change', function() {
         if (this.checked) {
             currentStudent.isApprovedByOverride = true;
+            //Change color of student in list, save their index, repaint, then reset selection
             var selected= document.querySelector('li.selected_student');
             var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
             populateStudentLI();
             var studentUL = document.getElementById('student_list_item_container');
             var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
             currentStudentLI.classList.add('selected_student');
-            console.log("Checkbox is checked..");
+            console.log("Checkbox is checked.");
+            //Update the 'Overrides' total in the totals panel
+            updateTotalsArea();
         } else {
             currentStudent.isApprovedByOverride = false;
+            //Change color of student in list, save their index, repaint, then reset selection
             var selected= document.querySelector('li.selected_student');
             var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
             populateStudentLI();
             var studentUL = document.getElementById('student_list_item_container');
             var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
             currentStudentLI.classList.add('selected_student');
-            console.log("Checkbox is not checked..");
+            console.log("Checkbox is not checked.");
+            //Update the 'Overrides' total in the totals panel
+            updateTotalsArea();
         }
     });
 
@@ -986,7 +1004,7 @@ function highlight_gradReq(row) {
 function deHighlight_gradReq() { 
     let gradTable = document.getElementById('gradreq_table');
     let rows = gradTable.rows;
-    for (let i = 0; i < rows.length; i++) {
+    for (let i = 2; i < rows.length; i++) { //start at 2 since headers and credits rows are sticky
         rows[i].style.backgroundColor = 'transparent';
         if(rows[i].style.color === 'white')
             rows[i].style.color = restoreColorGradReq_font;
