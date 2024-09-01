@@ -39,8 +39,8 @@ body{
     flex-direction: column;
     border:1px solid #000;
     font-family:arial;
-    min-width: 400px;
-    max-width: 750px;
+    min-width: 550px;
+    max-width: 800px;
     /* min-height: 200px; */
     /* background-color: linen; */
 }
