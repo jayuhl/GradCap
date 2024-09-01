@@ -131,6 +131,13 @@ class Student {
         });
         return filteredCourses;
     }
+    getCompletedCoursesForYear(gradeLevel) {
+        var filteredCourses = this.completedCourses.filter(obj => {
+            return obj.studentGradeLevelWhenTaken == gradeLevel;
+        });
+        // console.log("TOTAL COURSES FOUND: " + filteredCourses.length);
+        return filteredCourses;
+    }
     //return true if a swap is made and false otherwise
     swapRequirementCodeIfPossible(ccr) {
         if(ccr.getPossibleRequirementCodes().length > 1) {
@@ -518,7 +525,7 @@ function createSummaryTable() {
             tr.classList.add('stickyRow-credits');
         
         const gradReq = gradCode;
-        tr.onclick=function(){doRequirementWasSelectedStuff(gradReq);}
+        tr.onclick=function(){doRequirementWasSelectedStuff(gradReq, this);}
 
         newTable.appendChild(tr);
         
@@ -590,7 +597,9 @@ function showHideRow(row) {
 // }
 
 
-function doRequirementWasSelectedStuff(gradReq) {
+function doRequirementWasSelectedStuff(gradReq, tr) {
+
+    highlight_gradReq(tr);
 
     showHideRow('hidden_row_' + gradReq);
 
@@ -646,7 +655,16 @@ function doCourseSelectedInSummaryStuff(ccr) {
 //Perform, if possible, a swap of grad req codes
 function doCourseReqCodeSwapIfPossible(ccr) {
     if(currentStudent.swapRequirementCodeIfPossible(ccr)) {
-        //To update the data that was affected in the table in case a warning was removed or added
+
+        //Might need to change the color of the student text in the student list so: save their index, repaint, then reset selection
+        var selected= document.querySelector('li.selected_student');
+        var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
+        populateStudentLI();
+        var studentUL = document.getElementById('student_list_item_container');
+        var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
+        currentStudentLI.classList.add('selected_student');
+        
+        //Update the data that was affected in the table in case a warning was removed or added
         updateTotalsArea();
         return true;
     }
