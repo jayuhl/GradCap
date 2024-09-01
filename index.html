@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="../styles/style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GradCap
@@ -165,11 +165,16 @@
                         </caption> -->
                         <thead>
                             <tr>
-                                <th onclick='sortTable(0,"gradreq_table", 1, false)' scope="col">Category</th>
-                                <th onclick='sortTable(1,"gradreq_table", 1, false)' scope="col">Code</th>
-                                <th onclick='sortTable(2,"gradreq_table", 1, true)' scope="col">Earned</th>
-                                <th onclick='sortTable(3,"gradreq_table", 1, true)' scope="col">Required</th>
-                                <th onclick='sortTable(4,"gradreq_table", 1, true)' scope="col">Needed</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Earned</th>
+                                <th scope="col">Required</th>
+                                <th scope="col">Needed</th>
+                                <!-- <th onclick='sortAndPaintCurrentSummaryTable(0,"gradreq_table", 1, false)' scope="col">Category</th>
+                                <th onclick='sortAndPaintCurrentSummaryTable(1,"gradreq_table", 1, false)' scope="col">Code</th>
+                                <th onclick='sortAndPaintCurrentSummaryTable(2,"gradreq_table", 1, true)' scope="col">Earned</th>
+                                <th onclick='sortAndPaintCurrentSummaryTable(3,"gradreq_table", 1, true)' scope="col">Required</th>
+                                <th onclick='sortAndPaintCurrentSummaryTable(4,"gradreq_table", 1, true)' scope="col">Needed</th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -248,16 +253,16 @@
                     <table id="transcript-course_table">
                         <thead>
                             <tr>
-                                <th onclick='sortTable(0,"transcript-course_table", 1, true)'>Year</th>
-                                <th onclick='sortTable(1,"transcript-course_table", 1, false)'>Course Name</th>
-                                <th onclick='sortTable(2,"transcript-course_table", 1, false)'>Code</th>
-                                <th onclick='sortTable(3,"transcript-course_table", 1, false)'>Req Met</th>
-                                <th onclick='sortTable(4,"transcript-course_table", 1, false)'>Or</th>
-                                <th onclick='sortTable(5,"transcript-course_table", 1, true)'>Points</th>
-                                <th onclick='sortTable(6,"transcript-course_table", 1, true)'>Credits</th>
-                                <th onclick='sortTable(7,"transcript-course_table", 1, true)'>Avg</th>
-                                <th onclick='sortTable(8,"transcript-course_table", 1, false)'>Teacher</th>
-                                <th onclick='sortTable(9,"transcript-course_table", 1, true)'>Sect</th>
+                                <th onclick='sortYearTable(0,"transcript-course_table", 1, true, 3)'>Year</th>
+                                <th onclick='sortYearTable(1,"transcript-course_table", 1, false, 3)'>Course Name</th>
+                                <th onclick='sortYearTable(2,"transcript-course_table", 1, false, 3)'>Code</th>
+                                <th onclick='sortYearTable(3,"transcript-course_table", 1, false, 3)'>Req Met</th>
+                                <th onclick='sortYearTable(4,"transcript-course_table", 1, false, 3)'>Or</th>
+                                <th onclick='sortYearTable(5,"transcript-course_table", 1, true, 3)'>Points</th>
+                                <th onclick='sortYearTable(6,"transcript-course_table", 1, true, 3)'>Credits</th>
+                                <th onclick='sortYearTable(7,"transcript-course_table", 1, true, 3)'>Avg</th>
+                                <th onclick='sortYearTable(8,"transcript-course_table", 1, false, 3)'>Teacher</th>
+                                <th onclick='sortYearTable(9,"transcript-course_table", 1, true, 3)'>Sect</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -512,9 +517,11 @@ const uploadConfirm = document.getElementById('csv-student-button').addEventList
             //Adjust req codes if needed
             for(var i=0; i < studentList.length; i++)
                 assignOptimalMultiCodeRequirementCourses(studentList[i], false);
-
+            
             populateStudentLI();
             setFirstStudentAsCurrent();
+            
+            sortAndPaintSummaryTable(4,'gradreq_table',-1,false); //4= sort by 'Needed'
 
             updateTotalsArea();
             
@@ -643,7 +650,7 @@ function setCurrentStudentDataFields() {
     console.log("Updating student info for: " + currentStudent.getNameLastFirst());
     if(currentStudent.completedCourses.length > 0) {
         // console.log(currentStudent.completedCourses[0]);
-        createSummaryTable(currentStudent);
+        sortAndPaintSummaryTable(4,'gradreq_table',-1,false); //4= sort by 'Needed'
         createYearTable(0); //transcript (history)
         createYearTable(9);
         createYearTable(10);
@@ -766,11 +773,12 @@ function clearStudentDataFields() {
 
     //For selection and changing color of selected counselor
     document.getElementById('counselor_list_item_container').addEventListener('click', function(e) {   // 1.
+        const previousCounselorName = currentCounselor.getNameLastFirst();
         var selected;
-        if(e.target.tagName === 'LI') {                                      // 2.
-            selected= document.querySelector('li.selected_counselor');                   // 2a.
-            if(selected) selected.classList.remove('selected_counselor');                               // "
-            e.target.classList.add('selected_counselor');                                    // 2b.
+        if(e.target.tagName === 'LI') {
+            selected= document.querySelector('li.selected_counselor');
+            if(selected) selected.classList.remove('selected_counselor');
+            e.target.classList.add('selected_counselor');
             // console.log("SELECTED COUNSELOR: " + e.target.innerHTML);
             // console.log("SELECTED COUNSELOR ID: " + e.target.id);
 
@@ -784,11 +792,16 @@ function clearStudentDataFields() {
 
             filterStudentsUsingCurrentValues();
             // setFirstStudentAsCurrent();  //This is done in the filter method
+
+            if(previousCounselorName !== currentCounselor.getNameLastFirst()) //Don't allow multiple clicks on the same counselor to reset the accordian
+                currentUnhiddenGradCodesInSummary = []; //collapse all currently expanded rows
+
             updateTotalsArea();
         }
     });
     //For selection and changing color of selected student
     document.getElementById('student_list_item_container').addEventListener('click', function(e) {   // 1.
+        const previousStudentName = currentStudent.getNameLastFirst();
         var selected;
         if(e.target.tagName === 'LI') {
             selected= document.querySelector('li.selected_student');
@@ -803,6 +816,9 @@ function clearStudentDataFields() {
             
             // assignOptimalMultiCodeRequirementCourses(currentStudent, false);
             // console.log(currentStudent.getCompletedCourses().length);
+
+            if(previousStudentName !== currentStudent.getNameLastFirst()) //Don't allow multiple clicks on the same student to reset the accordian
+                currentUnhiddenGradCodesInSummary = []; //collapse all currently expanded rows... done prior to updating the next student table
 
             setCurrentStudentDataFields();
         }
@@ -911,7 +927,6 @@ function updateTotalsArea() {
     elementWithTotal.innerHTML = getCurrentTotalStudentsWithOverrides();
 
     //Color the currently selected year for effect  ... totalsPanel_year
-    //filterValue_currentGradeLevel
     var lastSelection = document.querySelector('.totalsPanel_year.selected_year');
     // console.log("CURRENT YEAR: " + e.target.innerHTML + " classes: " + selected.classList);
     if(lastSelection) lastSelection.classList.remove('selected_year');
@@ -983,70 +998,257 @@ function selectedRow_ReqTable() {
     alert(selectedRow_ReqTable);
 }
 
+
 //Sort table by header
-function sortTable(sortCol, tableID, direction, isNumeric) {}
-//     // console.log("SORTING...");
-//     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-//     table = document.getElementById(tableID);
-//     switching = true;
-//     // Set the sorting direction to ascending:
-//     dir = "asc";
-//     if(direction == -1)
-//         dir = "desc";
-//     /* Make a loop that will continue until
-//     no switching has been done: */
-//     while (switching) {
-//         // Start by saying: no switching is done:
-//         switching = false;
-//         rows = table.rows;
-//         /* Loop through all table rows (except the
-//         first, which contains table headers): */
-//         var startRow = 1;
-//         if(tableID === 'gradreq_table')
-//             startRow = 2; //leave credits on top of the requirement summary table
-//         for (i = startRow; i < (rows.length - 1); i++) {
-//             // Start by saying there should be no switching:
-//             shouldSwitch = false;
-//             /* Get the two elements you want to compare,
-//             one from current row and one from the next: */
-//             x = rows[i].getElementsByTagName("TD")[sortCol];
-//             y = rows[i + 1].getElementsByTagName("TD")[sortCol];
-//             /* Check if the two rows should switch place,
-//             based on the direction, asc or desc: */
-//             if (dir == "asc") {
-//                 if(isNumeric && Number(x.innerHTML) > Number(y.innerHTML)
-//                     || (!isNumeric && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())) {
-//                     // If so, mark as a switch and break the loop:
-//                     shouldSwitch = true;
-//                     break;
-//                 }
-//             } else if (dir == "desc") {
-//                 if(isNumeric && Number(x.innerHTML) < Number(y.innerHTML)
-//                     || (!isNumeric && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())) {
-//                     // If so, mark as a switch and break the loop:
-//                     shouldSwitch = true;
-//                     break;
-//                 }
-//             }
-//         }
-//         if (shouldSwitch) {
-//         /* If a switch has been marked, make the switch
-//         and mark that a switch has been done: */
-//         rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-//         switching = true;
-//         // Each time a switch is done, increase this count by 1:
-//         switchcount ++;
-//         } else {
-//             /* If no switching has been done AND the direction is "asc",
-//             set the direction to "desc" and run the while loop again. */
-//             if (switchcount == 0 && dir == "asc") {
-//                 dir = "desc";
-//                 switching = true;
-//             }
-//         }
-//     }
-//     // console.log("Sorting complete.")
-// }
+function sortYearTable(sortCol, tableID, direction, isNumeric, tieBreakerColumn) {
+    // console.log("SORTING...");
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById(tableID);
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc";
+    if(direction == -1)
+        dir = "desc";
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        var startRow = 1;
+        if(tableID === 'gradreq_table')
+            startRow = 2; //leave credits on top of the requirement summary table
+        for (i = startRow; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[sortCol];
+            y = rows[i + 1].getElementsByTagName("TD")[sortCol];
+            var xVal = x.innerHTML;
+            var yVal = y.innerHTML;
+            if(isNumeric){
+                xVal = parseInt(xVal);
+                yVal = parseInt(yVal);
+            }
+            else {
+                xVal = xVal.toLowerCase();
+                yVal = yVal.toLowerCase();
+            }
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            // console.log("x = " + xVal);
+            // console.log("y = " + yVal);
+            if (dir == "asc") {
+                if(xVal > yVal) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+                //Check tie-breaker
+                else if(xVal === yVal || xVal == yVal) {
+                        x = rows[i].getElementsByTagName("TD")[tieBreakerColumn];
+                        y = rows[i + 1].getElementsByTagName("TD")[tieBreakerColumn];
+                        if(x.innerHTML > y.innerHTML) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                }
+            } else if (dir == "desc") {
+                if(xVal < yVal) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+                //Check tie-breaker
+                else if(xVal === yVal || xVal == yVal) {
+                    x = rows[i].getElementsByTagName("TD")[tieBreakerColumn];
+                    y = rows[i + 1].getElementsByTagName("TD")[tieBreakerColumn];
+                    if(x.innerHTML > y.innerHTML) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (shouldSwitch) {
+        /* If a switch has been marked, make the switch
+        and mark that a switch has been done: */
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+        // Each time a switch is done, increase this count by 1:
+        switchcount++;
+        } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+    console.log("Year table sorting complete.");
+}
+
+
+
+
+//Be sure the currentStudent value is set before calling this function.
+function sortAndPaintSummaryTable() {
+    createSummaryTable(); //Establish the proper data in a table structure
+    sortTable(lastSortColumn, 'gradreq_table', lastSortDirection, lastSortWasNumeric); //Keep the current sort order
+    createSummaryTable(); //Repaint the table in the current defined order
+    expandRowsFromCurrentUnhiddenGradCodesInSummary(); //reset the expanded rows to match
+}
+
+//Be sure the currentStudent value is set before calling this function.
+function sortAndPaintSummaryTable(sortCol, tableID, direction, isNumeric) {
+    createSummaryTable(); //Establish the proper data in a table structure
+    sortTable(sortCol, tableID, direction, isNumeric); //Keep the current sort order
+    createSummaryTable(); //Repaint the table in the current defined order
+    expandRowsFromCurrentUnhiddenGradCodesInSummary(); //reset the expanded rows to match
+}
+function sortAndPaintCurrentSummaryTable(sortCol, tableID, direction, isNumeric) {
+    sortTable(sortCol, tableID, direction, isNumeric); //Keep the current sort order
+    createSummaryTable(); //Repaint the table in the current defined order
+    expandRowsFromCurrentUnhiddenGradCodesInSummary(); //reset the expanded rows to match
+}
+
+var lastSortColumn = 4;
+var lastSortDirection = 'desc';
+var lastSortWasNumeric = true;
+//The main purpose of this function is to set the specified order of the graduationRequirementList values
+function sortTable(sortCol, tableID, direction, isNumeric) {
+    // console.log("SORTING...");
+    //If there are prior courses, or just one, do not try to sort.
+    if(currentStudent.completedCourses.length <= 1)
+        return;
+    lastSortColumn = sortCol;
+    lastSortWasNumeric = isNumeric;
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById(tableID);
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc";
+    if(direction == -1)
+        dir = "desc";
+    lastSortDirection = dir;
+
+    var startRow = 1;
+    if(tableID === 'gradreq_table')
+        startRow = 2; //leave credits on top of the requirement summary table
+
+    //Pull out rows that are not grad req summaries, they are course summaries
+    // var coursesFromRows = document.createElement("table");
+
+    // for(var r=table.rows.length-1; r >= startRow; r--){
+        //     var code = table.rows[r].getAttribute('name');
+        //     if(Number(code.substring(code.length-1))){
+            //         coursesFromRows.appendChild(table.rows[r]);
+            //         // console.log("row: " + r);
+            //         // table.deleteRow(r);
+            //     }
+            // }
+
+    // console.log('TOTAL ROWS = ' + table.rows.length);
+
+    for(var r=table.rows.length-1; r >= startRow; r--){
+        var code = table.rows[r].getAttribute('name');
+        if(Number(code.substring(code.length-1))){
+            // coursesFromRows.appendChild(table.rows[r]);
+            // console.log("row: " + r);
+            table.deleteRow(r);
+        }
+    }
+    // console.log("ITEMS REMAINING: " + coursesFromRows.rows.length);
+    // console.log("ITEMS REMAINING: " + table.rows.length);
+    
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = startRow; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[sortCol];
+            y = rows[i + 1].getElementsByTagName("TD")[sortCol];
+            
+            if(isNumeric) {
+                    x = Number(x.innerHTML);
+                    y = Number(y.innerHTML);
+            }
+            else{
+                x = x.innerHTML;
+                y = y.innerHTML;
+            }
+
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (dir == "asc") {
+                if(x > y) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if(x < y) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            // Each time a switch is done, increase this count by 1:
+            switchcount++;
+        } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+    
+    //Sort graduationRequirementList using the current table order
+    //Then repaint the table so the courses get put back in the right places
+    var sortedReqs = [];
+    for(var j = 0; j < table.rows.length; j++){
+        const rowReq = table.rows[j].getAttribute('name');
+        if(rowReq !== null && rowReq !== 'CREDITS')
+            sortedReqs.push(rowReq);
+    }
+    //'CREDITS' always assumes the first location in the list so leave it there
+    //Work backwards an move items to the front of the list (to index 1 to account for credits staying first)
+    for(var j = sortedReqs.length-1; j >= 0; j--) {
+        var moveFromIndex = graduationRequirementList.findIndex(el => el.getCode() === sortedReqs[j]);
+        // console.log("Move " + sortedReqs[j] + " from " + moveFromIndex);
+        //SWAP
+        var element = graduationRequirementList[moveFromIndex];
+        graduationRequirementList.splice(moveFromIndex, 1);
+        graduationRequirementList.splice(1, 0, element);
+    }
+    // for(var j = 0; j < graduationRequirementList.length; j++) {
+    //     console.log("REQ " + graduationRequirementList[j].getCode());
+    // }
+
+    // createSummaryTable();
+
+    console.log("Summary table sort complete.")
+}
 
     var filterValue_currentGradeLevel = 0; //0 is for all years
     function setGradeLevelFilterValue(gradeLevel) {
