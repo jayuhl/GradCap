@@ -430,7 +430,7 @@ caption {
   }
 
   .hidden_row > td {
-    color: black;
+    color: gray;
     font-size: 14px;
     border: none;
     text-align: left;
