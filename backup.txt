@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../styles/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GradCap
+    </title>
+    <script src="GradCapClasses.js"></script>
+    <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+</head>
+<body>
+    <div id="page-title">
+        GradCap Graduation Requirement Tracker
+    </div>
+    <div class="main_container">
+        <div class="counselor_column">
+            <div class="counselor_list_container">
+                <p class="title_area">Counselors</p>
+                <ul id="counselor_list_item_container">
+                    <li id="1000" class='selected_counselor'>All Students</li>
+                    <!-- <li>Counselor 2</li>
+                    <li>Counselor 3</li>
+                    <li>Counselor 4</li>
+                    <li>Counselor 5</li>
+                    <li>Counselor 6</li>
+                    <li>Counselor 7</li>
+                    <li>Counselor 8</li>
+                    <li>Counselor 9</li>
+                    <li>Counselor 10</li>
+                    <li>Counselor 11</li>
+                    <li>Counselor 12</li>
+                    <li>Counselor 13</li>
+                    <li>Counselor 14</li>
+                    <li>Counselor 15</li>
+                    <li>Counselor 16</li>
+                    <li>Counselor 17</li>
+                    <li>Counselor 18</li>
+                    <li>Counselor 19</li>
+                    <li>Counselor 20</li> -->
+                </ul>
+            </div>
+            <div class="counselor_totals_container">
+                <p class="title_area" id="totals_title_school">School Totals</p>
+                <ul id="counselor_totals_item_container">
+                    <li><span class="totalsPanel_year selected_year" id="totalsPanel_year_0">Total Students</span> = <span id="total-students">0</span></li>
+                    <li><span class="totalsPanel_year" id="totalsPanel_year_9">Freshmen</span> = <span id="total-freshmen">0</span></li>
+                    <li><span class="totalsPanel_year" id="totalsPanel_year_10">Sophomores</span> = <span id="total-sophomores">0</span></li>
+                    <li><span class="totalsPanel_year" id="totalsPanel_year_11">Juniors</span> = <span id="total-juniors">0</span></li>
+                    <li><span class="totalsPanel_year" id="totalsPanel_year_12">Seniors</span> = <span id="total-seniors">0</span></li>
+                    <li>Warnings = <span id="total-warnings">0</span></li>
+                    <li>Overrides = <span id="total-overrides">0</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="student_column">
+            <div class="student_list_container">
+                <p class="title_area">Students</p>
+                <ul id="student_list_item_container">
+                    <li class='selected_student'>Student 1</li>
+                    <!-- <li>Student 2</li>
+                    <li>Student 3</li>
+                    <li>Student 4</li>
+                    <li>Student 5</li>
+                    <li>Student 6</li>
+                    <li>Student 7</li>
+                    <li>Student 8</li>
+                    <li>Student 9</li>
+                    <li>Student 10</li>
+                    <li>Student 11</li>
+                    <li>Student 12</li>
+                    <li>Student 13</li>
+                    <li>Student 14</li>
+                    <li>Student 15</li>
+                    <li>Student 16</li>
+                    <li>Student 17</li>
+                    <li>Student 18</li>
+                    <li>Student 19</li>
+                    <li>Student 20</li> -->
+                </ul>
+            </div>
+            <div class="student_radios_container">
+                <div id="student_sort_options_container">
+                    <p class="title_area">Sort Options</p>
+                    <label for="alphabetical"><input type="radio" id="alphabetical" name="sort_options_group" value="alphabetical" checked onclick="setSortValue('alpha')"><span>Alphabetically</span></label><br>
+                    <label for="grad_reqs"><input type="radio" id="grad_reqs" name="sort_options_group" value="grad_reqs" onclick="setSortValue('gradreqs')"><span>By Grad Reqs</span></label><br>
+                    <label for="credit_total"><input type="radio" id="credit_total" name="sort_options_group" value="credit_total" onclick="setSortValue('credits')"><span>By Credits</span></label>
+                </div>
+                <div id="student_filter_options_container">
+                    <p class="title_area">Filter Options:</p>
+                    <label for="all_students"><input type="radio" id="all_students" name="filter_options_group" value="all_students" checked onclick="setGradeLevelFilterValue(0)"><span>All Years</span></label><br>
+                    <label for="freshmen"><input type="radio" id="freshmen" name="filter_options_group" value="freshmen" onclick="setGradeLevelFilterValue(9)"><span>Freshmen</span></label><br>
+                    <label for="sophomores"><input type="radio" id="sophomores" name="filter_options_group" value="sophomores" onclick="setGradeLevelFilterValue(10)"><span>Sophomores</span></label><br>
+                    <label for="juniors"><input type="radio" id="juniors" name="filter_options_group" value="juniors"onclick="setGradeLevelFilterValue(11)"><span>Juniors</span></label><br>
+                    <label for="seniors"><input type="radio" id="seniors" name="filter_options_group" value="seniors" onclick="setGradeLevelFilterValue(12)"><span>Seniors</span></label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="student_info_general_container">
+            <div class="student_top_container">
+                <p class="title_area">Student Data</p>
+                <div class="student-info-grid">
+                    <div class="grid-item">Name:</div>
+
+                    <div class="studentdata-dropdown-wrapper">
+                        <select id="student-names-dropdown" class="studentdata-dropdown-options">
+                            <option value="s1">Spongebob Squarepants</option>
+                            <option value="s2">Sandy Cheeks</option>
+                            <option value="s3">Squidward Tentacles</option>
+                            <option value="s4">Mr. Krabs</option>
+                            <option value="s5">Plankton</option>
+                            <option value="s6">Gary Snail</option>
+                        </select>
+                        <!-- <span class="custom-arrow"></span> -->
+                    </div>        
+
+
+                    <div class="grid-item">Grade Level: </div>
+                    <div id="student-grade-level" class="grid-item-data">10</div>
+                    <div class="grid-item">ID:</div>
+                    <div id="student-id" class="grid-item-data">810432</div>
+                    <div class="grid-item">Counselor:</div>
+
+                    <div class="studentdata-dropdown-wrapper">
+                        <select id="counselor-names-dropdown" class="studentdata-dropdown-options">
+                            <option value="s1">Steve Casamento</option>
+                            <option value="s2">Valerie DelRusso</option>
+                            <option value="s3">Marin Donnelly</option>
+                            <option value="s4">Jenna Howard</option>
+                            <option value="s5">Cristina Schneider</option>
+                            <option value="s6">All Students</option>
+                        </select>
+                        <!-- <span class="custom-arrow"></span> -->
+                    </div>
+
+
+                    <div class="grid-item">Status:</div>
+                    <div class="grid-item-data" id="status-field">Requirements are...</div>
+                </div>
+            </div>
+            
+            <!-- an attempt to use a spinner -->
+            <div class="dropdown-wrapper">
+                <select id="dropdown-options">
+                    <option value="Summary">Graduation Requirement Summary</option>
+                    <option value="Transcript">Full Transcript</option>
+                    <option value="Freshman">Freshman Year</option>
+                    <option value="Sophomore">Sophomore Year</option>
+                    <option value="Junior">Junior Year</option>
+                    <option value="Senior">Senior Year</option>
+                </select>
+                <!-- <span class="custom-arrow"></span> -->
+            </div>
+            <!-- Data Panels -->
+            <!-- <div class="student_course_container"> -->
+            <div class="table-outer-wrapper">
+                <div id="summary-content" class="content-pane">
+                    <table id="gradreq_table">
+                        <!-- <caption>
+                            Graduation Requirement Summary
+                        </caption> -->
+                        <thead>
+                            <tr>
+                                <th scope="col">Category</th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Earned</th>
+                                <th scope="col">Required</th>
+                                <th scope="col">Needed</th>
+                                <!-- <th onclick='sortTable(0,"gradreq_table", 1, false)' scope="col">Category</th>
+                                <th onclick='sortTable(1,"gradreq_table", 1, false)' scope="col">Code</th>
+                                <th onclick='sortTable(2,"gradreq_table", 1, true)' scope="col">Earned</th>
+                                <th onclick='sortTable(3,"gradreq_table", 1, true)' scope="col">Required</th>
+                                <th onclick='sortTable(4,"gradreq_table", 1, true)' scope="col">Needed</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td class="table-item-left-justify">English</td>
+                                <td>ENG</td>
+                                <td>2.0</td>
+                                <td>4.0</td>
+                                <td>2.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td class="table-item-left-justify">Math</td>
+                                <td>MATH</td>
+                                <td>2.0</td>
+                                <td>3.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td class="table-item-left-justify">History</td>
+                                <td>HIST</td>
+                                <td>2.0</td>
+                                <td>3.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td class="table-item-left-justify">Science</td>
+                                <td>SCI</td>
+                                <td>1.0</td>
+                                <td>3.0</td>
+                                <td>2.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td class="table-item-left-justify">Language</td>
+                                <td>WL</td>
+                                <td>1.0</td>
+                                <td>2.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td class="table-item-left-justify">Visual or Performing Art</td>
+                                <td>VPA</td>
+                                <td>0.0</td>
+                                <td>1.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td class="table-item-left-justify">Practical Art</td>
+                                <td>PA</td>
+                                <td>1.0</td>
+                                <td>2.0</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr onclick="highlight_gradReq(this);">
+                                <td class="table-item-left-justify">Personal Financial Literacy</td>
+                                <td>PFL</td>
+                                <td>0.0</td>
+                                <td>0.5</td>
+                                <td>0.5</td>
+                            </tr>
+                    </tbody>
+                    <!-- <tfoot>
+                        <tr>
+                            <th scope="row" colspan="4">Total Needed</th>
+                            <td>9.5</td>
+                        </tr>
+                    </tfoot> -->
+                </table>
+                
+            </div>
+
+
+            <div id="transcript-content" class="content-pane">
+                <!-- Historical Course Data -->
+                <!-- <button onclick="getSelectedRow()">Snatch Data</button> -->
+                <div id="transcript-placeholder-text"></div>
+                    <table id="transcript-course_table">
+                        <thead>
+                            <tr>
+                                <th onclick='sortTable(0,"transcript-course_table", 1, true)'>Year</th>
+                                <th onclick='sortTable(1,"transcript-course_table", 1, false)'>Course Name</th>
+                                <th onclick='sortTable(2,"transcript-course_table", 1, false)'>Code</th>
+                                <th onclick='sortTable(3,"transcript-course_table", 1, false)'>Req Met</th>
+                                <th onclick='sortTable(4,"transcript-course_table", 1, false)'>Or</th>
+                                <th onclick='sortTable(5,"transcript-course_table", 1, true)'>Points</th>
+                                <th onclick='sortTable(6,"transcript-course_table", 1, true)'>Credits</th>
+                                <th onclick='sortTable(7,"transcript-course_table", 1, true)'>Avg</th>
+                                <th onclick='sortTable(8,"transcript-course_table", 1, false)'>Teacher</th>
+                                <th onclick='sortTable(9,"transcript-course_table", 1, true)'>Sect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="highlight_course(this);">
+                                <td>9</td>
+                                <td class="table-item-left-justify">Honors Comp Sci</td>
+                                <td>MA6404</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>2</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>10</td>
+                                <td class="table-item-left-justify">AP Comp Sci</td>
+                                <td>MA6504</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>11</td>
+                                <td class="table-item-left-justify">Advanced Topics in Comp Sci</td>
+                                <td>MA6704</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>12</td>
+                                <td class="table-item-left-justify">More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>12</td>
+                                <td class="table-item-left-justify">More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>13</td>
+                                <td class="table-item-left-justify">More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+
+
+                
+                <div id="freshman-content" class="content-pane">
+                    <div id="freshman-placeholder-text" style="display: none;">No Freshman Year Courses Found</div>
+                    <table id="freshman-course_table">
+                        <thead>
+                            <tr>
+                                <th>Year</th>
+                                <th>Course Name</th>
+                                <th>Code</th>
+                                <th>Req Met</th>
+                                <th>Or</th>
+                                <th>Points</th>
+                                <th>Credits</th>
+                                <th>Avg</th>
+                                <th>Teacher</th>
+                                <th>Sect</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="highlight_course(this);">
+                                <td>9</td>
+                                <td class="table-item-left-justify">Honors Comp Sci</td>
+                                <td>MA6404</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>2</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>10</td>
+                                <td class="table-item-left-justify">AP Comp Sci</td>
+                                <td>MA6504</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>11</td>
+                                <td class="table-item-left-justify">Advanced Topics in Comp Sci</td>
+                                <td>MA6704</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>93.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>12</td>
+                                <td class="table-item-left-justify">More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>12</td>
+                                <td class="table-item-left-justify">More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                            <tr onclick="highlight_course(this);">
+                                <td>14</td>
+                                <td class="table-item-left-justify">More Comp Sci</td>
+                                <td>MA6804</td>
+                                <td>PA</td>
+                                <td></td>
+                                <td>1.0</td>
+                                <td>5.0</td>
+                                <td>95.0</td>
+                                <td class="table-item-left-justify">Uhl</td>
+                                <td>1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+
+
+                    <div id="sophomore-content" class="content-pane">
+                        <div id="sophomore-placeholder-text">No Sophomore Year Courses Found</div>
+                        <table id="sophomore-course_table">
+                        </table>
+                    </div>
+
+                    <div id="junior-content" class="content-pane">
+                        <div id="junior-placeholder-text">No Junior Year Courses Found</div>
+                        <table id="junior-course_table">
+                        </table>
+                    </div>
+
+                    <div id="senior-content" class="content-pane">
+                        <div id="senior-placeholder-text">No Senior Year Courses Found</div>
+                        <table id="senior-course_table">
+                        </table>
+                    </div>
+
+                 
+            </div> 
+
+            <!-- To read in csv files as JSON -->
+            <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js">
+            </script>
+
+            <div id="testingstuff-container">
+                <!-- <button id="csv-counselor-button">Populate Counselor Data</button> -->
+                <!-- <button id="csv-requirement-button">Populate Grad Reqmt Data</button> -->
+                <!-- <div> -->
+                    <p>Select local CSV File with Student Data:</p>
+                    <input id="csv" type="file" accept=".csv" onChange="fileNameChange()">
+                    <button id="csv-student-button" style="visibility:hidden">Populate Student Data</button>
+                <!-- </div> -->
+                <!-- <div> -->
+                    <!-- <pre id="out">
+                        <p>File contents will appear here</p>
+                    </pre> -->
+                <!-- </div> -->
+            </div>
+
+
+        </div>
+        </div>
+        </body>
+        
+
+        <style>
+            #testingstuff-container {
+                padding: 0px 20px;
+            }
+        </style>
+
+<script>
+
+//Student Reader - Populate Student data from csv
+const uploadConfirm = document.getElementById('csv-student-button').addEventListener('click', () => {
+    Papa.parse(document.getElementById('csv').files[0],
+    {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            // const myObj = JSON.parse(results.data[2]);
+            // var keyss = Object.keys(results.data[0]);
+            
+            // console.log(keyss);
+            // console.log("NAME: " + results.data[0]['Last Name']);
+
+            populateRequirementsForPVRHSD();
+            populateCounselorListForPH();
+            populateCounselorLI();
+            setFirstCounselorAsCurrent(); //The first counselor is "All Students"
+
+            populateStudentArrayFromJSON(results);
+
+            //Adjust req codes if needed
+            for(var i=0; i < studentList.length; i++)
+                assignOptimalMultiCodeRequirementCourses(studentList[i], false);
+            
+            populateStudentLI();
+            setFirstStudentAsCurrent();
+            
+            sortAndPaintSummaryTable(4,'gradreq_table',-1,false);
+
+            updateTotalsArea();
+            
+            //   console.log(results.data[0]);
+            //   console.log(studentList[0]);
+            document.getElementById("csv-student-button").style.visibility = "hidden";
+        }
+    });
+});
+
+function fileNameChange() {
+    // console.log('file was selected');
+    document.getElementById("csv-student-button").style.visibility = "visible";
+}
+
+//USE THIS WHEN LOADING COUNSELOR DATA FROM A LOCAL CSV
+// Counselor Reader - Populate Counselor data from csv
+// const uploadCounselorConfirm = document.getElementById('csv-counselor-button').addEventListener('click', () => {
+//     Papa.parse(document.getElementById('csv').files[0],
+//     {
+//         download: true,
+//         header: true,
+//         skipEmptyLines: true,
+//         complete: function(results) {
+//             //     var ul = document.getElementById("counselor_list_item_container");
+//             //     for (var i = 0; i < results.data.length; i++)
+//             //     {
+//                 //         var li = document.createElement("li");
+//                 //         li.className = "counselor-container";
+                
+//                 //         li.innerHTML = results.data[i]['Last Name'];
+                
+//                 //         ul.appendChild(li);
+//                 //   }
+//                 populateCounselorArrayFromJSON(results);
+//                 populateCounselorLI();
+//                 console.log(counselorList[0].getLastName());
+//         }
+//     });
+// });
+
+//USE THIS WHEN LOADING GRAD REQUIREMENT DATA FROM A LOCAL CSV
+// Grad Requirement Reader - Populate graduation requirement data from csv
+// const uploadRequirementConfirm = document.getElementById('csv-requirement-button').addEventListener('click', () => {
+//     Papa.parse(document.getElementById('csv').files[0],
+//     {
+//         download: true,
+//         header: true,
+//         skipEmptyLines: true,
+//         complete: function(results) {
+//         //     var ul = document.getElementById("counselor_list_item_container");
+//         //     for (var i = 0; i < results.data.length; i++)
+//         //     {
+//         //         var li = document.createElement("li");
+//         //         li.className = "counselor-container";
+
+//         //         li.innerHTML = results.data[i]['Last Name'];
+
+//         //         ul.appendChild(li);
+//         //   }
+//           populateRequirementsFromJSON(results);
+//           console.log(graduationRequirementList[0].getRequirementName());
+//         }
+//     });
+// });
+
+//Populate student list - currently for all students (not a subset)
+function populateStudentLI() {
+    var ul = document.getElementById("student_list_item_container");
+    //Remove current list items to make way for updated ones
+    while( ul.firstChild ){
+        ul.removeChild( ul.firstChild );
+    }
+    //Populate the list items in the HTML
+    for (var i = 0; i < currentStudentList.length; i++)
+    {
+        if(currentStudentList[i].getGradeLevel() == 8)
+            console.log("FOUND: " + currentStudentList[i].getNameLastFirst());
+        var li = document.createElement("li");  
+        li.className = "student-container";
+
+        li.innerHTML = currentStudentList[i].getNameLastFirst();
+        li.id = currentStudentList[i].id;
+        
+        if(currentStudentList[i].isApprovedByOverride)
+            li.classList.add("gradrequirement-override");
+        else if(!currentStudentList[i].hasMetAllGradRequirements())
+            li.classList.add("gradrequirement-warning");
+        else if(!currentStudentList[i].hasMetCreditRequirement())
+            li.classList.add("creditsLow-warning");
+        else
+            li.classList.add("gradrequirement-met");
+
+        // console.log(currentStudentList[i] + " " + currentStudentList[i].hasMetAllGradRequirements())
+        ul.appendChild(li);
+    }
+}
+
+//Populate counselor list for all counselors
+function populateCounselorLI() {
+    var ul = document.getElementById("counselor_list_item_container");
+    //Currently not removing the first item... "All Students"... now I am
+    ul.removeChild(ul.getElementsByTagName('li')[0]);
+    for (var i = 0; i < counselorList.length; i++)
+    {
+        var li = document.createElement("li");
+        li.className = "counselor-container";
+
+        if(counselorList[i].getLastName() === 'All Students')
+            li.innerHTML = 'All Students';
+        else if(counselorList[i].getLastName() === 'Unassigned')
+            li.innerHTML = 'Unassigned';
+        else
+            li.innerHTML = counselorList[i].getNameLastFirst();
+
+        li.id = counselorList[i].id;
+
+        ul.appendChild(li);
+    }
+}
+
+
+//THE MAIN UPDATING FUNCTION FOR WHEN A NEW STUDENT IS SELECTED OR DEFAULTED
+//This should be called each time a student is changed
+function setCurrentStudentDataFields() {
+    console.log("Updating student info for: " + currentStudent.getNameLastFirst());
+    if(currentStudent.completedCourses.length > 0) {
+        // console.log(currentStudent.completedCourses[0]);
+        sortAndPaintSummaryTable(4,'gradreq_table',-1,false); //4= sort by 'Needed'
+        createYearTable(0); //transcript (history)
+        createYearTable(9);
+        createYearTable(10);
+        createYearTable(11);
+        createYearTable(12);
+    }
+
+    //Set selected student name
+    var studentNameContainer = document.getElementById('student-names-dropdown');
+    studentNameContainer.options[0].remove(); //so the list doen't buid up
+    var studentOptionElement = document.createElement('option');
+    studentOptionElement.value = 's0';
+    // option.onclick=function(){sortTable(0);}
+    var studentOptionText = document.createTextNode(currentStudent.getNameLastFirst());
+    studentOptionElement.appendChild(studentOptionText);
+    studentNameContainer.insertBefore(studentOptionElement, studentNameContainer.firstChild);
+    studentNameContainer.selectedIndex = 0;
+
+    //Set selected student counselor name
+    var counselorNameContainer = document.getElementById('counselor-names-dropdown');
+    counselorNameContainer.options[0].remove(); //so the list doen't buid up
+    var counselorOptionElement = document.createElement('option');
+    counselorOptionElement.value = 's0';
+    // option.onclick=function(){sortTable(0);}
+    var counselorOptionText = document.createTextNode(currentStudent.getCounselorName());
+    counselorOptionElement.appendChild(counselorOptionText);
+    counselorNameContainer.insertBefore(counselorOptionElement, counselorNameContainer.firstChild);
+    counselorNameContainer.selectedIndex = 0;
+
+    //Set selected student grade level
+    var gradeLevelContainer = document.getElementById('student-grade-level');
+    gradeLevelContainer.innerHTML = currentStudent.getGradeLevel();
+    
+    //Set selected student grade level name
+    var idContainer = document.getElementById('student-id');
+    idContainer.innerHTML = currentStudent.getId();
+    
+    //Set selected student status
+    var statusContainer = document.getElementById('status-field');
+    statusContainer.innerHTML = '';
+    var checkbox = document.createElement('input');
+    checkbox.type = "checkbox";
+    checkbox.name = "override-checkbox";
+    checkbox.value = "value";
+    checkbox.id = "checkbox-override";
+    if(currentStudent.isApprovedByOverride)
+        checkbox.checked = true;
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            currentStudent.isApprovedByOverride = true;
+            var selected= document.querySelector('li.selected_student');
+            var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
+            populateStudentLI();
+            var studentUL = document.getElementById('student_list_item_container');
+            var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
+            currentStudentLI.classList.add('selected_student');
+            console.log("Checkbox is checked..");
+        } else {
+            currentStudent.isApprovedByOverride = false;
+            var selected= document.querySelector('li.selected_student');
+            var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
+            populateStudentLI();
+            var studentUL = document.getElementById('student_list_item_container');
+            var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
+            currentStudentLI.classList.add('selected_student');
+            console.log("Checkbox is not checked..");
+        }
+    });
+
+    var label = document.createElement('label');
+    label.htmlFor = "checkbox-override";
+    label.appendChild(document.createTextNode('Override Approval of Graduation Requirements'));
+
+    statusContainer.appendChild(checkbox);
+    statusContainer.appendChild(label);
+}
+
+
+//For when there are no students to display
+function clearStudentDataFields() {
+    console.log("Clearing student data.");
+    clearSummaryTable();
+    clearYearTable(0);
+
+    //Set selected student name
+    var studentNameContainer = document.getElementById('student-names-dropdown');
+    studentNameContainer.options[0].remove(); //so the list doen't buid up
+    var studentOptionElement = document.createElement('option');
+    studentOptionElement.value = 's0';
+    // option.onclick=function(){sortTable(0);}
+    var studentOptionText = document.createTextNode('');
+    studentOptionElement.appendChild(studentOptionText);
+    studentNameContainer.insertBefore(studentOptionElement, studentNameContainer.firstChild);
+    studentNameContainer.selectedIndex = 0;
+
+    //Set selected student counselor name
+    var counselorNameContainer = document.getElementById('counselor-names-dropdown');
+    counselorNameContainer.options[0].remove(); //so the list doen't buid up
+    var counselorOptionElement = document.createElement('option');
+    counselorOptionElement.value = 's0';
+    // option.onclick=function(){sortTable(0);}
+    var counselorName = currentCounselor.getNameLastFirst();
+    if(currentCounselor.getLastName() === 'Unassigned')
+        counselorName = 'Unassigned';
+    var counselorOptionText = document.createTextNode(counselorName);
+    counselorOptionElement.appendChild(counselorOptionText);
+    counselorNameContainer.insertBefore(counselorOptionElement, counselorNameContainer.firstChild);
+    counselorNameContainer.selectedIndex = 0;
+
+    //Set selected student grade level
+    var gradeLevelContainer = document.getElementById('student-grade-level');
+    gradeLevelContainer.innerHTML = '';
+    
+    //Set selected student grade level name
+    var idContainer = document.getElementById('student-id');
+    idContainer.innerHTML = '';
+    
+}
+
+    //For selection and changing color of selected counselor
+    document.getElementById('counselor_list_item_container').addEventListener('click', function(e) {   // 1.
+        var selected;
+        if(e.target.tagName === 'LI') {                                      // 2.
+            selected= document.querySelector('li.selected_counselor');                   // 2a.
+            if(selected) selected.classList.remove('selected_counselor');                               // "
+            e.target.classList.add('selected_counselor');                                    // 2b.
+            // console.log("SELECTED COUNSELOR: " + e.target.innerHTML);
+            // console.log("SELECTED COUNSELOR ID: " + e.target.id);
+
+            // const counselorIndex = counselorList.findIndex(el => el.id === e.target.id);
+            currentCounselor = counselorList.find(obj => {
+                // console.log("Checking... " + obj.getNameLastFirst() + " id=" + obj.id);
+                return obj.id == e.target.id;
+            });
+
+            console.log("SELECTED/CURRENT COUNSELOR: " + currentCounselor);
+
+            filterStudentsUsingCurrentValues();
+            // setFirstStudentAsCurrent();  //This is done in the filter method
+            updateTotalsArea();
+        }
+    });
+    //For selection and changing color of selected student
+    document.getElementById('student_list_item_container').addEventListener('click', function(e) {   // 1.
+        var selected;
+        if(e.target.tagName === 'LI') {
+            selected= document.querySelector('li.selected_student');
+            // console.log("CURRENT STUDENT: " + e.target.innerHTML + " classes: " + selected.classList);
+            if(selected) selected.classList.remove('selected_student');
+            e.target.classList.add('selected_student');
+            console.log("SELECTED STUDENT: " + e.target.innerHTML + " classes: " + e.target.classList);
+            //Determine the selected student and get their object reference
+            //Students list items are assigned an id of the student id... clever?
+            const studentIndex = currentStudentList.findIndex(el => el.id === e.target.id);
+            currentStudent = currentStudentList[studentIndex];
+            
+            // assignOptimalMultiCodeRequirementCourses(currentStudent, false);
+            // console.log(currentStudent.getCompletedCourses().length);
+
+            setCurrentStudentDataFields();
+        }
+    });
+
+    //A function for defaulting to the first student in the student list (at startup and counselor selection change, etc.)
+    //Uses the ul NOT the student list... seems safer that way
+    function setFirstStudentAsCurrent() {
+        var ul = document.getElementById("student_list_item_container");
+        if(ul.firstChild) { //as long as there is at least one student
+            //deselect current selected student
+            selected= document.querySelector('li.selected_student');
+            if(selected) selected.classList.remove('selected_student');
+            //Highlight first student
+            var studentUL = document.getElementById('student_list_item_container');
+            var currentStudentLI = studentUL.getElementsByTagName('li')[0];
+            currentStudentLI.classList.add('selected_student');
+
+            //Determine the selected student and get their object reference
+            //Students list items are assigned an id of the student id... clever?
+            var selectedStudentID = currentStudentLI.id;
+            const studentIndex = currentStudentList.findIndex(el => el.id === selectedStudentID);
+            currentStudent = currentStudentList[studentIndex];
+            
+            setCurrentStudentDataFields();
+        }
+        else {
+            clearStudentDataFields();
+        }
+    }
+
+    //A function for defaulting to the first counselor in the counselor list (at startup, anywhere else?)
+    //Uses the ul NOT the student list... seems safer that way
+    function setFirstCounselorAsCurrent() {
+        //deselect current selected counselor
+        selected= document.querySelector('li.selected_counselor');
+        if(selected) selected.classList.remove('selected_counselor');
+        //Highlight first counselor
+        var counselorUL = document.getElementById('counselor_list_item_container');
+        var currentCounselorLI = counselorUL.getElementsByTagName('li')[0];
+        currentCounselorLI.classList.add('selected_counselor');
+
+        //Determine the selected counselor and get their object reference
+        //Counselor list items are assigned an id of the counselor id... clever?
+        var selectedCounselorID = currentCounselorLI.id;
+        var counselorIndex = counselorList.findIndex(el => el.id === selectedCounselorID);
+        if(counselorIndex = -1)
+            currentCounselor = counselorList[0];
+        else
+            currentCounselor = counselorList[counselorIndex];
+        // console.log("FIRST COUNSELOR IS " + selectedCounselorID + " " + currentCounselor + " index= " + counselorIndex);
+    }
+
+    //Selecting the proper data to display using student info dropdown selector
+    var contentpanes = document.getElementsByClassName("content-pane");
+    for(var i = 0; i < contentpanes.length; i++)
+        contentpanes[i].style.display = "none";
+    
+    // Default is the Summary tab
+    var summary = document.getElementById("summary-content");
+    // var hist = document.getElementById("transcript-content");
+    var dataselection = document.getElementById("dropdown-options");
+    summary.style.display = "block";
+    
+    dataselection.addEventListener("change", function() {
+        for(var i = 0; i < contentpanes.length; i++)
+          contentpanes[i].style.display = "none";
+    
+    console.log("Selection: " + dataselection.options[dataselection.selectedIndex].value.toLowerCase());
+    
+    let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
+    currentId += "-content";
+    var current_pane = document.getElementById(currentId);
+    current_pane.style.display = "block";
+});
+
+
+function updateTotalsArea() {
+    var elementWithTitle = document.getElementById("totals_title_school");
+    var counselorLastName = currentCounselor.getLastName();
+    var counselorName = currentCounselor.getNameLastFirst();
+
+    var elementWithTotal = document.getElementById("total-students");
+
+    if(counselorLastName === 'All Students') {
+        elementWithTitle.innerHTML = 'School Totals';
+        elementWithTotal.innerHTML = studentList.length;
+    }
+    else {
+        elementWithTitle.innerHTML = counselorLastName + ' Totals';
+        elementWithTotal.innerHTML = currentStudentList.length;
+    }
+    
+    elementWithTotal = document.getElementById("total-freshmen");
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(9, counselorName);
+    elementWithTotal = document.getElementById("total-sophomores");
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(10, counselorName);
+    elementWithTotal = document.getElementById("total-juniors");
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(11, counselorName);
+    elementWithTotal = document.getElementById("total-seniors");
+    elementWithTotal.innerHTML = getCurrentTotalInGrade(12, counselorName);
+    elementWithTotal = document.getElementById("total-warnings");
+    //Use current radio selection to access selected grade level for this by counselor
+    elementWithTotal.innerHTML = getCurrentTotalStudentsWithWarnings();
+    elementWithTotal = document.getElementById("total-overrides");
+    elementWithTotal.innerHTML = getCurrentTotalStudentsWithOverrides();
+
+    //Color the currently selected year for effect  ... totalsPanel_year
+    var lastSelection = document.querySelector('.totalsPanel_year.selected_year');
+    // console.log("CURRENT YEAR: " + e.target.innerHTML + " classes: " + selected.classList);
+    if(lastSelection) lastSelection.classList.remove('selected_year');
+    var currentSelection = document.getElementById('totalsPanel_year_' + filterValue_currentGradeLevel);
+    currentSelection.classList.add('selected_year');
+}
+
+
+// Selecting a row of a table of course objects
+var selectedRow_courseTable = "";
+var restoreColorCourse_font = "";
+
+function highlight_course(row) {
+    selectedRow_courseTable=row.cells[2].textContent;
+    deHighlight_course();
+    restoreColorCourse_font = row.style.color;
+    row.style.backgroundColor = '#004aff';
+    // row.style.backgroundColor = 'red';
+    row.style.color = 'white';
+    row.classList.toggle("selectedRow");
+}
+
+function deHighlight_course() { 
+    var dataselection = document.getElementById("dropdown-options");
+    let currentId = dataselection.options[dataselection.selectedIndex].value.toLowerCase();
+    currentId += "-course_table";
+    let courseTable = document.getElementById(currentId);
+    let rows = courseTable.rows;
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].style.backgroundColor = "transparent";
+        if(rows[i].style.color === 'white')
+            rows[i].style.color = restoreColorCourse_font;
+    // rows[i].style.color = "black";
+}
+}
+
+function selectedRow_courseTable() {
+    alert(selectedRow_courseTable);
+}
+
+// Selecting a row of a table of Grad Requirements
+var selectedRow_ReqTable = "";
+var restoreColorGradReq_font = "";
+
+function highlight_gradReq(row) {
+    selectedRow_ReqTable=row.cells[2].textContent;
+    deHighlight_gradReq();
+    restoreColorGradReq_font = row.style.color;
+    if(restoreColorGradReq_font === 'black')
+        row.style.backgroundColor = '#3263eb'; //'#004aff';
+    else
+       row.style.backgroundColor = row.style.color;
+    row.style.color = 'white';
+    row.classList.toggle("selectedRow");
+}
+
+function deHighlight_gradReq() { 
+    let gradTable = document.getElementById('gradreq_table');
+    let rows = gradTable.rows;
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].style.backgroundColor = 'transparent';
+        if(rows[i].style.color === 'white')
+            rows[i].style.color = restoreColorGradReq_font;
+        // rows[i].style.color = "black";
+    }   
+}
+
+function selectedRow_ReqTable() {
+    alert(selectedRow_ReqTable);
+}
+
+//Be sure the currentStudent value is set before calling this function.
+function sortAndPaintSummaryTable() {
+    createSummaryTable(); //Establish the proper data in a table structure
+    sortTable(sortCol, tableID, direction, isNumeric); //Keep the current sort order
+    createSummaryTable(); //Repaint the table in the current defined order
+}
+
+var lastSortColumn = 0;
+var lastSortDirection = 'asc';
+var lastSortWasNumeric = false;
+//The main purpose of this function is to set the specified order of the graduationRequirementList values
+function sortTable(sortCol, tableID, direction, isNumeric) {
+    // console.log("SORTING...");
+    lastSortColumn = sortCol;
+    lastSortWasNumeric = isNumeric;
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById(tableID);
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc";
+    if(direction == -1)
+        dir = "desc";
+    lastSortDirection = dir;
+
+    var startRow = 1;
+    if(tableID === 'gradreq_table')
+        startRow = 2; //leave credits on top of the requirement summary table
+
+    //Pull out rows that are not grad req summaries, they are course summaries
+    // var coursesFromRows = document.createElement("table");
+
+    // for(var r=table.rows.length-1; r >= startRow; r--){
+        //     var code = table.rows[r].getAttribute('name');
+        //     if(Number(code.substring(code.length-1))){
+            //         coursesFromRows.appendChild(table.rows[r]);
+            //         // console.log("row: " + r);
+            //         // table.deleteRow(r);
+            //     }
+            // }
+
+    console.log('TOTAL ROWS = ' + table.rows.length);
+
+    for(var r=table.rows.length-1; r >= startRow; r--){
+        var code = table.rows[r].getAttribute('name');
+        if(Number(code.substring(code.length-1))){
+            // coursesFromRows.appendChild(table.rows[r]);
+            // console.log("row: " + r);
+            table.deleteRow(r);
+        }
+    }
+    // console.log("ITEMS REMAINING: " + coursesFromRows.rows.length);
+    console.log("ITEMS REMAINING: " + table.rows.length);
+    
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = startRow; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[sortCol];
+            y = rows[i + 1].getElementsByTagName("TD")[sortCol];
+            
+            if(isNumeric) {
+                    x = Number(x.innerHTML);
+                    y = Number(y.innerHTML);
+            }
+            else{
+                x = x.innerHTML;
+                y = y.innerHTML;
+            }
+
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (dir == "asc") {
+                if(x > y) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if(x < y) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            // Each time a switch is done, increase this count by 1:
+            switchcount++;
+        } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+    
+    //Sort graduationRequirementList using the current table order
+    //Then repaint the table so the courses get put back in the right places
+    var sortedReqs = [];
+    for(var j = 0; j < table.rows.length; j++){
+        const rowReq = table.rows[j].getAttribute('name');
+        if(rowReq !== null && rowReq !== 'CREDITS')
+            sortedReqs.push(rowReq);
+    }
+    //'CREDITS' always assumes the first location in the list so leave it there
+    //Work backwards an move items to the front of the list (to index 1 to account for credits staying first)
+    for(var j = sortedReqs.length-1; j >= 0; j--) {
+        var moveFromIndex = graduationRequirementList.findIndex(el => el.getCode() === sortedReqs[j]);
+        console.log("Move " + sortedReqs[j] + " from " + moveFromIndex);
+        //SWAP
+        var element = graduationRequirementList[moveFromIndex];
+        graduationRequirementList.splice(moveFromIndex, 1);
+        graduationRequirementList.splice(1, 0, element);
+    }
+    for(var j = 0; j < graduationRequirementList.length; j++) {
+        console.log("REQ " + graduationRequirementList[j].getCode());
+    }
+
+    createSummaryTable();
+
+    console.log("Sort and update/paint complete.")
+}
+
+    var filterValue_currentGradeLevel = 0; //0 is for all years
+    function setGradeLevelFilterValue(gradeLevel) {
+        filterValue_currentGradeLevel = gradeLevel;
+        filterStudentsUsingCurrentValues();
+        updateTotalsArea();
+    }
+
+    //Use the individual grade levels or 0 for all years
+    function filterStudentsUsingCurrentValues() {
+        currentStudentList = [];
+
+        //Filter out students by counselor first
+        if(currentCounselor.getLastName() === 'All Students') {
+            currentStudentList = studentList;
+        } else if(currentCounselor.getLastName() === 'Unassigned') {
+            currentStudentList = studentList;
+            for(var i = 0; i < counselorList.length; i++) {
+                currentStudentList = currentStudentList.filter(obj => {
+                    return obj.getCounselorName() !== counselorList[i].getNameLastFirst();
+                });
+            }
+        }
+        else {
+            currentStudentList = studentList.filter(obj => {
+                return obj.getCounselorName() === currentCounselor.getNameLastFirst();
+            });
+        }
+
+        //Filter the counselor's students by grade level
+        if(filterValue_currentGradeLevel != 0) {
+            currentStudentList = currentStudentList.filter(obj => {
+                return obj.gradeLevel == filterValue_currentGradeLevel;
+            });
+        }
+
+        //check for students not assigned a grade level
+        // for(var i=0; i < studentList.length; i++)
+        //     if(studentList[i].gradeLevel != 9 && studentList[i].filterValue_currentGradeLevel != 10 && studentList[i].gradeLevel !=11 && studentList[i].gradeLevel != 12)
+        //         console.log("i=" + i+ ": " + studentList[i].gradeLevel + " " + studentList[i].getNameLastFirst())
+        console.log("Students in grade " + filterValue_currentGradeLevel + " = " + currentStudentList.length);
+        
+        //make GUI changes based on the filter result
+        populateStudentLI();
+        setFirstStudentAsCurrent();
+        sortCurrentStudentList();
+    }
+
+    document.addEventListener('keydown', function(event){
+        if(event.keyCode == 38 || event.keyCode == 40) {
+            
+            event.preventDefault(); //stop auto scroll with cursor
+            var studentIndex = currentStudentList.findIndex(el => el === currentStudent);
+            if(event.keyCode == 38)
+                studentIndex--;
+            else
+                studentIndex++;
+            //Watch for out of bounds
+            if(studentIndex >= 0 && studentIndex <= currentStudentList.length-1) {
+                selected= document.querySelector('li.selected_student');
+                if(selected) selected.classList.remove('selected_student');
+                var studentUL = document.getElementById('student_list_item_container');
+                
+                //Select and highlight next student
+                var currentStudentLI = studentUL.getElementsByTagName('li')[studentIndex];
+                currentStudentLI.classList.add('selected_student');
+                
+                //Determine the selected student and get their object reference
+                //Students list items are assigned an id of the student id... clever?
+                // var selectedStudentID = currentStudentLI.id;
+                // const studentIndex = currentStudentList.findIndex(el => el.id === selectedStudentID);
+                currentStudent = currentStudentList[studentIndex];
+                
+                //automate the scroll in the list
+                var elDistanceToTop = window.pageYOffset + currentStudentLI.getBoundingClientRect().top;
+                var elDistanceToBottom = window.pageYOffset + currentStudentLI.getBoundingClientRect().bottom;
+                var ulTop = window.pageYOffset + studentUL.getBoundingClientRect().top;
+                var ulBottom = window.pageYOffset + studentUL.getBoundingClientRect().bottom;
+
+                var list = studentUL, targetLi = currentStudentLI; // id tag of the <li> element
+                if(event.keyCode == 38 && elDistanceToTop < ulTop)
+                    studentUL.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - currentStudentLI.getBoundingClientRect().height);
+                else if(event.keyCode == 40 && elDistanceToBottom > ulBottom) {
+                    studentUL.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) + currentStudentLI.getBoundingClientRect().height);
+                }
+                console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
+
+
+                setCurrentStudentDataFields();
+            }
+        }
+    });
+
+    var currentSortValue = 'alpha'; //options: alpha, gradreqs, credits
+    function setSortValue(value) {
+        currentSortValue = value;
+        sortCurrentStudentList();
+    }
+
+    function sortCurrentStudentList() {
+        if(currentSortValue === 'alpha')
+            currentStudentList.sort(compareUsingLastNameAlphabetical)
+        else if(currentSortValue === 'gradreqs')
+            currentStudentList.sort(compareUsingMissingRequirements)
+        else if(currentSortValue === 'credits')
+            currentStudentList.sort(compareUsingMissingCredits)
+
+        populateStudentLI();
+        setFirstStudentAsCurrent();
+    }
+
+    function compareUsingLastNameAlphabetical( a, b ) {
+        if ( a.getLastName() < b.getLastName() ){
+            return -1;
+        }
+        if ( a.getLastName() > b.getLastName() ){
+            return 1;
+        }
+        return 0;
+    }
+    function compareUsingMissingRequirements( a, b ) {
+        if( a.getTotalNumMissingRequirements() > b.getTotalNumMissingRequirements() ){
+            return -1;
+        }
+        if( a.getTotalNumMissingRequirements() < b.getTotalNumMissingRequirements() ){
+            return 1;
+        }
+        return 0;
+    }
+    function compareUsingMissingCredits( a, b ) {
+        console.log(a.getCreditsNeeded() + ", " + b.getCreditsNeeded());
+        if ( a.getCreditsNeeded() > b.getCreditsNeeded() ){
+            return -1;
+        }
+        if ( a.getCreditsNeeded() < b.getCreditsNeeded() ){
+            return 1;
+        }
+        console.log(a.getNameLastFirst() + ", " + b.getNameLastFirst());
+        return compareUsingMissingRequirements( a, b );
+    }
+
+</script>
+</html>
+
+var studentList = [];
+var counselorList = [];
+var graduationRequirementList = []
+
+var currentStudent, currentCounselor;
+var currentStudentList = [];
+
+
+class Student {
+    constructor(id, lastName, firstName, gradeLevel, counselorName, completedCourses) {
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.gradeLevel = Number(gradeLevel);
+        this.counselorName = counselorName;
+        this.completedCourses = completedCourses;
+        // console.log("COMPLETED: " + completedCourses);
+        this.isApprovedByOverride = false;
+    }
+    getId() {
+        return this.id;
+    }
+    getLastName() {
+        return this.lastName;
+    }
+    getFirstName() {
+        return this.firstName;
+    }
+    getGradeLevel() {
+        return this.gradeLevel;
+    }
+    getCounselorName() {
+        return this.counselorName;
+    }
+    getIsApprovedByOverride() {
+        return this.isApprovedByOverride;
+    }
+    getNameLastFirst() {
+        return this.lastName + ", " + this.firstName;
+    }
+    getCompletedCourses() {
+        return this.completedCourses;
+    }
+    setCompletedCourses(cc) {
+        this.completedCourses = cc;
+    }
+    getPointsNeededToMeetRequirement(gradReq) {
+        var requirement = graduationRequirementList.find(obj => {
+            return obj.code === gradReq;
+        });
+        var reqPoints = requirement.getRequiredTotalPoints();
+        return reqPoints - this.getPointsEarnedFor(gradReq);
+    }
+    getPointsEarnedFor(gradReq) {
+        var points = 0;
+        for(var j = 0; j < this.completedCourses.length; j++) {
+            var pointsForNext = this.completedCourses[j].getRequirementPointValue();
+            if(this.completedCourses[j].currentRequirementCode.includes('/')) {
+                // includes when there is a / but not if there is not since VPA includes PA
+                if(this.completedCourses[j].currentRequirementCode.includes(gradReq)) {
+                    // if(this.lastName === 'Katz')
+                    //    console.log('Katz: ' + pointsForNext);
+                    points += pointsForNext / 2;
+                }
+            }
+            else if(this.completedCourses[j].currentRequirementCode === gradReq) {
+                points += pointsForNext;
+            }
+        }
+        return points;
+    }
+    getCreditTotal() {
+        var total = 0;
+        for(var i = 0; i < this.completedCourses.length; i++)
+            total += this.completedCourses[i].getNumCredits();
+        return total;
+    }
+    getCreditsNeeded() {
+        var creditRequirement = graduationRequirementList.find(obj => {
+            return obj.code === 'CREDITS';
+        });
+        var needed = creditRequirement.getRequiredTotalPoints() - this.getCreditTotal();
+        if(needed > 0)
+            return needed;
+        return 0;
+    }
+    hasMetCreditRequirement() {
+        return this.getCreditsNeeded() <= 0;
+    }
+    hasMetGradRequirement(reqCode) {
+        var gradReq = graduationRequirementList.find(obj => {
+            return obj.code === reqCode;
+        });
+        return this.getPointsEarnedFor(reqCode) >= gradReq.getRequiredTotalPoints();
+    }
+    hasMetAllGradRequirements() {
+        var metAllRequirements = true;
+        for(var i=0; i<graduationRequirementList.length; i++) {
+            if(graduationRequirementList[i].code !== 'CREDITS') {
+                if(!this.hasMetGradRequirement(graduationRequirementList[i].code))
+                    metAllRequirements = false;
+                // if(this.lastName === 'Friend')
+                //     console.log(this.lastName + " " + graduationRequirementList[i].code + " " + this.hasMetGradRequirement(graduationRequirementList[i].code));
+            }
+        }
+        return metAllRequirements;
+    }
+    hasRequirementWarning() {
+        return !this.hasMetAllGradRequirements() || !this.hasMetCreditRequirement();
+    }
+    getTotalNumMissingRequirements() {
+        var total = 0;
+        for(var i=0; i<graduationRequirementList.length; i++) {
+            if(graduationRequirementList[i].code !== 'CREDITS') {
+                var pts = this.getPointsNeededToMeetRequirement(graduationRequirementList[i].code);
+                if(pts > 0)
+                    total += pts;
+            }
+        }
+        return total;
+    }
+    hasCompletedCourseWithMultipleGradRequirementOptions(reqCode) {
+        for (const ccr of this.completedCourses)
+            if(ccr.getCurrentRequirementCode().toLowerCase() === reqCode.toLowerCase() && ccr.getPossibleRequirementCodes().length > 1)
+                return true;
+        return false;
+    }
+    getAllCompletedCoursesFor(gradReq) {
+        var filteredCourses = this.completedCourses.filter(obj => {
+            return obj.getCurrentRequirementCode() === gradReq;
+        });
+        return filteredCourses;
+    }
+    //return true if a swap is made and false otherwise
+    swapRequirementCodeIfPossible(ccr) {
+        if(ccr.getPossibleRequirementCodes().length > 1) {
+            if(ccr.currentRequirementCode === ccr.getPossibleRequirementCodes()[0]){
+                ccr.currentRequirementCode = ccr.getPossibleRequirementCodes()[1];
+            }
+            else{
+                ccr.currentRequirementCode = ccr.getPossibleRequirementCodes()[0];
+            }
+            return true;
+        }
+        return false;
+    }
+}
+
+//STUDENT GENERAL (static) FUNCTIONS
+function getCurrentTotalInGrade(gradeLevel, counselorName) {
+    console.log(studentList[0].getCounselorName() + ", " + counselorName);
+    var filteredCourses = studentList.filter(obj => {
+        return obj.getGradeLevel() === gradeLevel;
+    });
+    if(!counselorName.startsWith('All Students')) {
+        filteredCourses = filteredCourses.filter(obj => {
+            return obj.getCounselorName() === counselorName;
+        });
+    }
+    console.log("FOUND COUNSELOR TOTAL= " + filteredCourses.length);
+    console.log("FOUND COUNSELOR GRADE LEVEL TOTAL= " + filteredCourses.length);
+
+    return filteredCourses.length;
+
+    // var total = 0;
+    // for(var i = 0; i < studentList.length; i++)
+    //     if(studentList[i].getGradeLevel() == gradeLevel)
+    //         total++;
+    // return total;
+}
+function getCurrentTotalStudentsWithWarnings() {
+    var total = 0;
+    for(var i = 0; i < currentStudentList.length; i++)
+        if(currentStudentList[i].hasRequirementWarning())
+            total++;
+    return total;
+}
+function getCurrentTotalStudentsWithOverrides() {
+    var total = 0;
+    for(var i = 0; i < currentStudentList.length; i++)
+        if(currentStudentList[i].getIsApprovedByOverride())
+            total++;
+    return total;
+}
+
+
+
+class Counselor {
+    static #nextID = 1001;
+    constructor(lastName, firstName) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.id = Counselor.getNextID();
+        Counselor.advanceID();
+    }
+    getLastName() {
+        return this.lastName;
+    }
+    getFirstName() {
+        return this.firstName;
+    }
+    getNameLastFirst() {
+        return this.lastName + ", " + this.firstName;
+    }
+    static advanceID() {
+        Counselor.#nextID++;
+    }
+    static getNextID() {
+        return Counselor.#nextID;
+    }
+}
+
+class GraduationRequirement {
+    constructor(requirementName, code, requiredTotalPoints) {
+        this.requirementName = requirementName;
+        this.code = code;
+        this.requiredTotalPoints = requiredTotalPoints;
+        this.requiredTotalCredits = 0;
+    }
+    getRequirementName() {
+        return this.requirementName;
+    }
+    getCode() {
+        return this.code;
+    }
+    getRequiredTotalPoints() {
+        return this.requiredTotalPoints;
+    }
+    getRequiredTotalCredits() {
+        return this.requiredTotalCredits;
+    }
+}
+
+class CourseRecord {
+    constructor(studentName, courseCode, courseName,
+            schoolYearCourseWasTaken, studentGradeLevelWhenTaken,
+            credits, requirementCode, requirementPointValue) {
+        this.studentName = studentName;
+        this.courseCode = courseCode;
+        this.courseName = courseName;
+        this.schoolYearCourseWasTaken = schoolYearCourseWasTaken;
+        this.studentGradeLevelWhenTaken = studentGradeLevelWhenTaken;
+        this.numCredits = Number(credits);
+        this.requirementPointValue = requirementPointValue;
+        // this.possibleRequirementCodes = requirementCode.split("\\s*;\\s*");
+        this.possibleRequirementCodes = requirementCode.split(';');
+        //Default to the initial code if there are multiple
+        // this.currentRequirementCode = requirementCode;
+        this.currentRequirementCode = this.possibleRequirementCodes[0];
+    }
+    getStudentName() {
+        return this.studentName;
+    }
+    getCourseCode() {
+        return this.courseCode;
+    }
+    getCourseName() {
+        return this.courseName;
+    }
+    getSchoolYearCourseWasTaken() {
+        return this.schoolYearCourseWasTaken;
+    }
+    getStudentGradeLevelWhenTaken() {
+        return this.studentGradeLevelWhenTaken;
+    }
+    getNumCredits() {
+        return this.numCredits;
+    }
+    getRequirementPointValue() {
+        return this.requirementPointValue;
+    }
+    getPossibleRequirementCodes() {
+        return this.possibleRequirementCodes;
+    }
+    getCurrentRequirementCode() {
+        return this.currentRequirementCode;
+    }
+    setCurrentRequirementCode(reqCode) {
+        this.currentRequirementCode = reqCode;
+    }
+}
+
+class CompletedCourseRecord extends CourseRecord {
+    constructor(studentName, courseCode, courseSection,
+        courseName, courseLetterGrade, courseNumberGrade,
+         teacherName,  schoolYearCourseWasTaken,  studentGradeLevelWhenTaken,
+         credits,  requirementCode,  requirementPointValue) {
+        super(studentName, courseCode, courseName, schoolYearCourseWasTaken, studentGradeLevelWhenTaken,
+                credits, requirementCode, requirementPointValue);
+          
+        this.courseSection = courseSection;
+        this.courseLetterGrade = courseLetterGrade;
+        this.courseNumberGrade = courseNumberGrade;
+        this.teacherName = teacherName;
+    }
+    getCourseSection() {
+        return this.courseSection;
+    }
+    getCourseLetterGrade() {
+        return this.courseLetterGrade;
+    }
+    getCourseNumberGrade() {
+        return this.courseNumberGrade;
+    }
+    getTeacherName() {
+        return this.teacherName;
+    }
+}
+
+function populateStudentArrayFromJSON(json) {
+    for (var i = 0; i < json.data.length; i++) {
+        var studentName = json.data[i]['Last Name'] + ', ' + json.data[i]['First Name'];
+        var courseCode = json.data[i]['Course'];
+        var section = json.data[i]['Sect'];
+        var courseName = json.data[i]['Description'];
+        var courseLetterGrade = json.data[i]['Final Grade'];
+        var courseNumberGrade = json.data[i]['Final GB Ave'];
+        var teacherName = json.data[i]['Teacher Names'];
+        var schoolYearCourseWasTaken = json.data[i]['Course Year'];
+        var studentGradeLevelWhenTaken = Number(json.data[i]['Student GR']);
+        var credits = json.data[i]['Credits'];
+        var rawRequirementPrimary = json.data[i]['Course Primary Subj'];
+        var rawRequirementSecondary = json.data[i]['CourseSecondarySubj'];
+        
+        //The requirementCode gets sent as a combination of the primary and secondary as long as the secondary is not "Electives"
+        var requirementCode = getCodeFromPrimaryAndSecondarySubjectValues(rawRequirementPrimary, rawRequirementSecondary);
+        // console.log(courseCode + ": " + requirementCode1);
+        // var requirementCode = getReqCodeFromRawName(rawRequirementPrimary);
+
+        var requirementPointValue = credits / 5;
+        if(credits == 6)
+            requirementPointValue = 1;
+        
+        var courseRecord = new CompletedCourseRecord(studentName, courseCode, section, courseName, courseLetterGrade, courseNumberGrade, teacherName, schoolYearCourseWasTaken, studentGradeLevelWhenTaken, credits, requirementCode, requirementPointValue, completedCourses);
+
+        var completedCourses = [courseRecord]; 
+
+        var nextStudent = new Student(json.data[i]['ID'], json.data[i]['Last Name'], json.data[i]['First Name'], json.data[i]['GR'], json.data[i]['Counselor Name'], completedCourses);
+        
+        //Only add this student if they have not yet been added to the student list
+        const index = studentList.findIndex(e => e.id === nextStudent.id);
+        if (index == -1) {
+            studentList.push(nextStudent);
+            // console.log(nextStudent);
+        }
+        else { //otherwise just add this course record to the student's transcript data (completedCourses list)
+            studentList[index].completedCourses.push(courseRecord);
+        }
+    }
+    console.log("Student List length = " + studentList.length);
+
+    //Sort courses by grade taken
+    for(var i = 0; i < studentList.length; i++)
+        studentList[i].completedCourses.sort(dynamicSort("studentGradeLevelWhenTaken"));
+
+    currentStudentList = studentList;
+}
+
+function getReqCodeFromRawName(reqName) {
+    if(reqName == 'English/History') return 'ENG/HIST';
+    if(reqName == 'English') return 'ENG';
+    if(reqName == 'Math') return 'MATH';
+    if(reqName == 'Science') return 'SCI';
+    if(reqName == 'World Languages') return 'WL';
+    if(reqName == '21st Century Life & Careers') return 'PA';
+    if(reqName == 'Phys. Ed. - Health') return 'PE';
+    if(reqName == 'Social Studies') return 'HIST';
+    if(reqName == 'Financial Literacy') return 'PFL';
+    if(reqName == 'Visual or Performing Arts') return 'VPA';
+    return 'ELECT';
+}
+
+function getCodeFromPrimaryAndSecondarySubjectValues(primary, secondary) {
+   if(secondary.toLowerCase().startsWith("elect") || secondary.toLowerCase() === primary.toLowerCase())
+      return getReqCodeFromRawName(primary);
+   else
+      return getReqCodeFromRawName(primary) + ";" + getReqCodeFromRawName(secondary);
+}
+
+function dynamicSort(property) {
+    var sortOrder = 1;
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a,b) {
+        /* next line works with strings and numbers, 
+         * and you may want to customize it to your needs
+         */
+        var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+
+        //To sort by first property, then another...
+        // obj.sort(function(a,b){
+        //     if(a.last_nom< b.last_nom) return -1;
+        //     if(a.last_nom >b.last_nom) return 1;
+        //     if(a.first_nom< b.first_nom) return -1;
+        //     if(a.first_nom >b.first_nom) return 1;
+        //     return 0;
+        // });
+    }
+}
+
+function populateCounselorArrayFromJSON(json) {
+    for (var i = 0; i < json.data.length; i++) {
+        counselorList.push(new Counselor(json.data[i]['Last Name'], json.data[i]['First Name']));
+    }
+}
+
+function populateCounselorListForPH() {
+    var counselorLastNames = ['All Students','Casamento','Cherichello','Donnelly','Howard','Petzold','Schneider','Unassigned'];
+    var counselorFirstNames = ['','Steven P','Francis','Marin','Jenna','Alexa','Cristina',''];
+    for (var i = 0; i < counselorLastNames.length; i++) {
+        counselorList.push(new Counselor(counselorLastNames[i], counselorFirstNames[i]));
+    }
+    currentCounselor = counselorList[0];
+}
+
+function populateRequirementsFromJSON(json) {
+    graduationRequirementList = [];
+    for (var i = 0; i < json.data.length; i++) {
+        graduationRequirementList.push(new GraduationRequirement(json.data[i]['Requirement Name'], json.data[i]['Code'], json.data[i]['Points Needed']));
+    }
+    //Put the credit requirement on top since it will lock itself into that location of the table
+    for(var i = 0; i < graduationRequirementList.length; i++)
+        if(graduationRequirementList[i].getCode() === 'CREDITS') {
+            var element = graduationRequirementList[i];
+            graduationRequirementList.splice(i, 1);
+            graduationRequirementList.splice(0, 0, element);
+        }
+        console.log("CREDITS REQURIEMENTS: " + graduationRequirementList);
+}
+
+function populateRequirementsForPVRHSD() {
+    var requirementNames = ['Credits','English','Math','History','Science','Language','Phys. Ed.','Visual or Performing Art','Practical Art','Personal Financial Literacy'];
+    var requirementCodes = ['CREDITS','ENG','MATH','HIST','SCI','WL','PE','VPA','PA','PFL'];
+    var requirementPoints = [120,4,3,3,3,2,4,1,1,0.5];
+    for (var i = 0; i < requirementNames.length; i++) {
+        graduationRequirementList.push(new GraduationRequirement(requirementNames[i], requirementCodes[i], requirementPoints[i]));
+    }
+}
+
+//This function needs to be called twice:
+//  Once to establish the table for the student
+//  Then after the sort is determined so that the hidden courses can "move" with the proper requirement row
+//A call to sortAndPaintSummaryTable will do this process, so this function might never be called independently
+function createSummaryTable() {
+    // console.log("SUMMARY TABLE FOR: " + currentStudent.getNameLastFirst());
+    var tableID = 'gradreq_table';
+    var table = document.getElementById(tableID);
+    table.remove();
+    var newTable = document.createElement("table");
+    newTable.id = "gradreq_table";
+    var tablearea = document.getElementById('summary-content');
+    
+    var thead = document.createElement("thead");
+    var headRow = document.createElement('tr');
+
+    var thHeaders = ['Category','Code','Earned','Required','Needed'];
+    var isNumberData = [false, false, true, true, true];
+
+    for(var i=0; i<thHeaders.length; i++) {
+        var nextTH = document.createElement('th');
+        nextTH.scope = 'col';
+        const col = i;
+        nextTH.onclick=function(){sortTable(col,tableID,1,isNumberData[i]);}
+        var thText = document.createTextNode(thHeaders[i]);
+        nextTH.appendChild(thText);
+        headRow.appendChild(nextTH);
+    }
+
+    thead.appendChild(headRow);
+    newTable.appendChild(thead);
+
+    for (var i = 0; i < graduationRequirementList.length; i++) {
+        // console.log("Creating summary table for " + currentStudent.getNameLastFirst() + " " + graduationRequirementList[i].code);
+
+        var tr = document.createElement('tr');
+        tr.setAttribute('name', graduationRequirementList[i].code);
+
+        var cellText = [];
+        
+        var reqName = graduationRequirementList[i].getRequirementName();
+        var reqPoints = graduationRequirementList[i].getRequiredTotalPoints();
+        var gradCode = graduationRequirementList[i].code;
+        var hasRequirementChangeOption = currentStudent.hasCompletedCourseWithMultipleGradRequirementOptions(gradCode);
+        var pointsEarned = currentStudent.getPointsEarnedFor(gradCode);
+        var pointsNeeded = currentStudent.getPointsNeededToMeetRequirement(gradCode)
+        if(gradCode === 'CREDITS') {
+            pointsEarned = currentStudent.getCreditTotal();
+            pointsNeeded = currentStudent.getCreditsNeeded();
+        }
+        if(pointsNeeded <= 0)
+            pointsNeeded = '';
+
+        cellText.push(document.createTextNode(reqName));
+        var signalText = '';
+        if(hasRequirementChangeOption)
+            signalText = '*';
+        cellText.push(document.createTextNode(gradCode + signalText));
+        cellText.push(document.createTextNode(pointsEarned));
+        cellText.push(document.createTextNode(reqPoints));
+        cellText.push(document.createTextNode(pointsNeeded));
+
+        for(var j=0; j<thHeaders.length; j++) {
+            var nextData = document.createElement('td');
+            nextData.appendChild(cellText[j]);
+            if(j == 0) nextData.className = 'table-item-left-justify';
+            tr.appendChild(nextData);
+        }
+        if(pointsNeeded > 0)
+            tr.style.color = 'red';
+        else
+            tr.style.color = 'black';
+
+        tr.onclick=function(){highlight_gradReq(this);}
+        if(gradCode === 'CREDITS') //lock the credits row at the top of the table
+            tr.classList.add('stickyRow-credits');
+        
+        const gradReq = gradCode;
+        tr.onclick=function(){showHideRow('hidden_row_' + gradReq);}
+
+        newTable.appendChild(tr);
+        
+        for(var rowNum=0; rowNum < currentStudent.getAllCompletedCoursesFor(gradReq).length; rowNum++) {
+            const nextCourse = currentStudent.getAllCompletedCoursesFor(gradReq)[rowNum];
+            newTable.appendChild(getGradReqCoursesTR(nextCourse));
+        }
+        
+    }
+    tablearea.appendChild(newTable);
+}
+
+function clearSummaryTable() {
+    
+    var tableID = 'gradreq_table';
+    var table = document.getElementById(tableID);
+    table.remove();
+    var newTable = document.createElement("table");
+    newTable.id = "gradreq_table";
+    var tablearea = document.getElementById('summary-content');
+    tablearea.appendChild(newTable);
+}
+
+//Retuns a single table row element with the summary information for the completed course parameter
+function getGradReqCoursesTR(ccr) {
+    const gradCode = ccr.getCurrentRequirementCode();
+    const tr = document.createElement('tr');
+    tr.id = 'hidden_row_'+ ccr.getCourseCode();
+    tr.classList.add('hidden_row_' + gradCode); //allows selected requirement to 'unhide'
+    tr.classList.add('hidden_row'); //provides generic formatting for when viewing course data... mainly remove borders and decrease font
+    var gradeLevel = ccr.getStudentGradeLevelWhenTaken() - 8;
+    tr.setAttribute('name',gradCode + gradeLevel);
+    tr.style.display = 'none';
+    tr.style.border = '0 none';
+    tr.onclick=function(){doCourseSelectionInSummaryStuff(ccr);}
+    
+    const td = document.createElement('td');
+    td.colSpan = '5';
+    // td.style.backgroundColor = 'red';
+    if(ccr.getPossibleRequirementCodes().length > 1)
+        td.style.color = 'rgb(225, 120, 0)';
+    const courseCode = ccr.getCourseCode();
+    const courseName = ccr.getCourseName();
+    const gradeTaken = ccr.getStudentGradeLevelWhenTaken();
+    const avg = ccr.getCourseNumberGrade();
+    const teacher = ccr.getTeacherName();
+    const thText = document.createTextNode(courseCode + ' (' + courseName + ', Grade: ' + gradeTaken + ', Avg = ' + avg + ', Teacher: ' + teacher + ')');
+    // const thText = document.createTextNode(courseCode);
+    td.appendChild(thText);
+
+    tr.appendChild(td);
+
+    return tr;
+}
+
+function showHideRow(row) {
+    $("." + row).toggle();
+    console.log("showHide: " + row);
+}
+
+// function showHideRow(rowID) {
+//     var tableRowElement = document.getElementById(rowID);
+//     if(tableRowElement.style.display === 'block')
+//         tableRowElement.style.display = 'none';
+//     else
+//         tableRowElement.style.display = 'block';
+//     console.log('CHANGING DISPLAY OF ' + tableRowElement.style.display);
+// }
+
+function doCourseSelectionInSummaryStuff(ccr) {
+    console.log('You selected ' + ccr.getCourseCode() + ' with option(s): ' + ccr.getPossibleRequirementCodes());
+    //get a list of all 'unhidden' row and call showHideRow for all to appear the same after this function is complete
+    const gradReq = ccr.getCurrentRequirementCode();
+    //Do the swap and reset the GUI to resemble the current state (since row values will be updated, the table must be repainted)
+    if(currentStudent.swapRequirementCodeIfPossible(ccr)) {
+        var allUnhidden = document.querySelectorAll('.hidden_row'); //gets all grad req sub rows
+        var gradReqCodes = [];
+        //Keep all expanded rows in their expanded state
+        for(var i=0; i < allUnhidden.length; i++) {
+            if(allUnhidden[i].style.display === '' &&
+                    !gradReqCodes.includes(allUnhidden[i].getAttribute('name')))
+                gradReqCodes.push(allUnhidden[i].getAttribute('name'));
+        }
+        // for(var i=0; i < gradReqCodes.length; i++)
+        //     console.log("UNHIDDEN: " + gradReqCodes[i]);
+        sortAndPaintSummaryTable(lastSortColumn,'gradReq_table',lastSortDirection,lastSortWasNumeric); //To update the data that was affected in the table
+        //Expand rows that were expanded before the requriement change
+        for(var i=0; i < gradReqCodes.length; i++)
+            showHideRow('hidden_row_' + gradReqCodes[i]);
+
+        updateTotalsArea(); //In case a warning was removed or added
+    }
+}
+
+//Use gradeLevel = 0 for a full history table (called 'transcript')
+function createYearTable(gradeLevel) {
+
+    var currentYearCourses = currentStudent.getCompletedCourses();
+
+    if(gradeLevel !== 0) { //zero is for full transcript (all years)
+        currentYearCourses = currentYearCourses.filter(obj => {
+            return obj.getStudentGradeLevelWhenTaken() === gradeLevel;
+        });
+    }
+    // console.log("NUM COURSES: " + currentYearCourses.length)
+
+    
+    var yearName = 'transcript';
+    if(gradeLevel == 9)
+        yearName = 'freshman';
+    else if(gradeLevel == 10)
+        yearName = 'sophomore';
+    else if(gradeLevel == 11)
+        yearName = 'junior';
+    else if(gradeLevel == 12)
+        yearName = 'senior';
+
+    var tableID = yearName + '-course_table';
+    var table = document.getElementById(tableID);
+    table.remove();
+
+    var initialTextDiv = document.getElementById(yearName + '-placeholder-text');
+    initialTextDiv.style.display = 'none';
+
+    var newTable = document.createElement('table');
+    newTable.id = yearName + '-course_table';
+    var tablearea = document.getElementById(yearName + '-content');
+
+    if(currentYearCourses.length > 0) {
+        
+        var thead = document.createElement('thead');
+        var headRow = document.createElement('tr');
+        
+        var thHeaders = ['Yr','Course Name','Code','Req Met','Or','Pts','Credits','Avg','Grd','Teacher','Sect'];
+        var isNumberData = [true,false,false,false,false,true,true,true,false,false,true];
+
+        for(var i=0; i<thHeaders.length; i++) {
+            nextTH = document.createElement('th');
+            nextTH.scope = 'col';
+            const col = i;
+            nextTH.onclick=function(){sortTable(col,tableID,1,isNumberData[i]);}
+            var thText = document.createTextNode(thHeaders[i]);
+            nextTH.appendChild(thText);
+            headRow.appendChild(nextTH);
+        }
+        
+        thead.appendChild(headRow);
+        newTable.appendChild(thead);
+
+        for (var i = 0; i < currentYearCourses.length; i++) {
+            
+            var tr = document.createElement('tr');
+
+            var cellText = [];
+
+            cellText.push(document.createTextNode(currentYearCourses[i].getStudentGradeLevelWhenTaken()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseName()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseCode()));
+            var currentReq = currentYearCourses[i].getCurrentRequirementCode();
+            cellText.push(document.createTextNode(currentReq));
+            // if(currentYearCourses[i].getPossibleRequirementCodes().length > 1)
+            //     console.log(currentStudent.getNameLastFirst() + ' ' + currentYearCourses[i].getCourseCode() + ' ' + currentYearCourses[i].getPossibleRequirementCodes());
+            var otherReqOption = '';
+            var reqOption1 = currentYearCourses[i].getPossibleRequirementCodes()[0];
+            var reqOption2 = currentYearCourses[i].getPossibleRequirementCodes()[1];
+            if(currentYearCourses[i].getPossibleRequirementCodes().length > 1) {
+                if(currentReq === reqOption1)
+                    otherReqOption = reqOption2;
+                else
+                    otherReqOption = reqOption1;
+            }
+            cellText.push(document.createTextNode(otherReqOption));
+            cellText.push(document.createTextNode(currentYearCourses[i].getRequirementPointValue()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getNumCredits()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseNumberGrade()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseLetterGrade()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getTeacherName()));
+            cellText.push(document.createTextNode(currentYearCourses[i].getCourseSection()));
+            
+            for(var j=0; j<thHeaders.length; j++) {
+                var nextData = document.createElement('td');
+                nextData.appendChild(cellText[j]);
+                if(j == 1 || j == 9)
+                    nextData.className = 'table-item-left-justify';
+                tr.appendChild(nextData);
+            }
+            
+            tr.onclick=function(){highlight_course(this);}
+            
+            newTable.appendChild(tr);
+        }
+        tablearea.appendChild(newTable);
+    }
+    else { //this student has not courses this gradeLevel
+        tablearea.appendChild(newTable);
+
+        var initialTextDiv = document.getElementById(yearName + '-placeholder-text');
+        initialTextDiv.style.display = 'block';
+    }
+}
+
+//Use gradeLevel = 0 for history table ('transcript')
+function clearYearTable(gradeLevel) {
+    var yearName = 'transcript';
+    if(gradeLevel == 9)
+        yearName = 'freshman';
+    else if(gradeLevel == 10)
+        yearName = 'sophomore';
+    else if(gradeLevel == 11)
+        yearName = 'junior';
+    else if(gradeLevel == 12)
+        yearName = 'senior';
+
+    var tableID = yearName + '-course_table';
+    var table = document.getElementById(tableID);
+    table.remove();
+    var newTable = document.createElement('table');
+    newTable.id = yearName + '-course_table';
+    var tablearea = document.getElementById(yearName + '-content');
+    tablearea.appendChild(newTable);
+}
+
+
+
+
+//OPTIMIZE THE GRAD REQUIREMENT IF OPTIONS EXIST
+   //All CourseRecord objects MUST ALREADY HAVE A GRADUATION REQUIREMENT CODE ASSIGNED (I'm not sure why they wouldn't)
+   //Determines how to assign a code to a course that has two possible codes (or more, eventually... if that's even possible).
+   //A course that has the possibility of VPA;PA will decide the best to use based on the student's current transcript data.
+   //AN ATTEMPT TO INCLUDE REQUEST DATA IN THE PROCESS WITH COMPLETED COURSE DATA
+   //The useRequests parameter is true to include request data and false not to.
+   function assignOptimalMultiCodeRequirementCourses(student, useRequests)
+   {
+      //A list of all records to be analyzed... records will be moved out of this list as they are processed
+      var toBeProcessed = [];
+      for(var i=0; i < student.getCompletedCourses().length; i++) {
+        toBeProcessed.push(student.getCompletedCourses()[i]);
+      }
+      /** THIS IS THE BIG CHANGE... ADD COURSE REQUESTS.  **/
+    //   if(useRequests)
+    //      toBeProcessed.addAll(futureCourses);
+      
+      //A list for records as they get counted toward grad requirement totals
+      var processed = [];
+      
+      //Move single option records to the processed list... correctly accounting for dual-code courses like ENG/HIST is done in getCurrentPointTotalFor
+      for(var i = toBeProcessed.length - 1; i >= 0; i--)
+         if(toBeProcessed[i].getPossibleRequirementCodes().length == 1) {
+            var removed = toBeProcessed[i];
+            toBeProcessed.splice(i, 1);
+            processed.push(removed);
+         }
+    // if(toBeProcessed.length > 0){
+    //     console.log(toBeProcessed[0]);
+    //   console.log("Processing... num left = " + toBeProcessed.length + " " +  toBeProcessed[0].getCourseCode());
+    //     }
+    // else
+    //   console.log("Processing... num left = " + toBeProcessed.length + " " +  toBeProcessed[0]);
+      //At this point, only multi-code courses exist in the toBeProcessed list.
+      //The processed list can be used to analyze the "current" totals of each requirement.
+      //From the multi-code options, the course requirement with the most "need" will be assigned to each course as they get processed.
+      //  - "Need" is based on (requiredPoints - earnedPoints)... the largest difference determines the "neediest".
+      for(var i = toBeProcessed.length - 1; i >= 0; i--)
+      {
+          var nextCCRtoProcess = toBeProcessed[i];
+        //   console.log("Processing... " + nextCCRtoProcess.code + " ... num found = " + toBeProcessed.length);
+         //Get the list of possible grad requirement codes.
+         var codes = nextCCRtoProcess.getPossibleRequirementCodes();
+         //Determine the index of the requirement code with the greatest need.
+         //USE THE PROCESSED LIST for this calculation, NOT the completedCourses list,
+         //  since this algorithm is "building" the requirement assignment values, not using current ones.
+         //Each code is currently assumed to be a single grad req code, not something combined with a "/"
+         //  These were codes separated by ";"
+         var currentMaxNeedPoints = 0;
+         var currentMaxNeedIndex = 0;
+         for(var j = 0; j < codes.length; j++)
+         {
+            var nextCode = codes[j];
+            var pointsEarned = getCurrentPointTotalFor(nextCode, processed);
+
+            var requirement = graduationRequirementList.find(obj => {
+                return obj.code === nextCode;
+            });
+            // console.log("FOUND REQUIREMENT: " + requirement + " from " + nextCode);
+            var pointsRequired = 0;
+            if(typeof requirement !== 'undefined')
+                pointsRequired = requirement.getRequiredTotalPoints();
+
+            var pointsNeeded = pointsRequired - pointsEarned;
+            //Determine if this is current "max need" index
+            if(pointsNeeded > currentMaxNeedPoints) {
+               currentMaxNeedPoints = pointsNeeded;
+               currentMaxNeedIndex = j;
+            }
+         }
+         //At this point, currentMaxNeedIndex represents the location of the optimal code to use.
+         //Assign the calculated requirement code.
+        //  console.log('Changing from ' + nextCCRtoProcess.getCurrentRequirementCode() + " to " + codes[currentMaxNeedIndex]);
+         nextCCRtoProcess.setCurrentRequirementCode(codes[currentMaxNeedIndex]);
+         //Move the processed course to the processed list
+         var removed = toBeProcessed[i];
+         toBeProcessed.splice(i, 1);
+         processed.push(removed);
+      }
+      //All completed courses should now be completely accounted for and assigned optimal grad requirement codes.
+      //Print a message in case something went wrong:
+      if(toBeProcessed.length > 0)
+         console.log("WARNING!!! Not all couurses were accounted for in the assignOptimalMultiCodeRequirementCourses method of the GraduationTracker class! Skipped... " + toBeProcessed);
+    //    else
+    //      console.log('Finished optimization of grad codes.');
+
+   }
+   
+   //A HELPER METHOD for the assignOptimalMultiCodeRequirementCodes algorithm.
+   //This is the EXACT same code as in getMyPointsEarnedFor, BUT this uses a list
+   //  called "processed" that represents a portion of the completedCourses list as they get accounted for.
+   //For the reqCode parameter, the return is the total number of points
+   //CURRENTLY counted in the "processed" array... an array that IS NOT the completedCourses array,
+   //  it is an array that is being populated as codes are assigned to multi-code courses.
+   //The reqCode parameter MUST BE a SINGLE grad requirement code (should NOT contain a ";").
+   //DEALING WITH DUAL-CODE COURSES (like Am. Studies with reqCode=ENG/HIST):
+   //  - If reqCode parameter is "ENG/HIST" count as 1 ENG and 1 HIST, SEPARATELY!
+   function getCurrentPointTotalFor(reqCode, processed) {
+       var total = 0;
+       for(var i=0; i < processed.length; i++)
+       {
+           var ccr = processed[i];
+        //    console.log(ccr);
+         //check for combo FIRST... count the "part" of the code that matches reqCode
+         if(ccr.getCurrentRequirementCode().includes('/') //Slash means it counts for both requirement codes
+               && ccr.getCurrentRequirementCode().toLowerCase().includes(reqCode.toLowerCase()))
+            total += ccr.getRequirementPointValue() / 2.0; //Assumes ONLY DUAL course codes (not more) 
+         //MUST USE ELSE so there is no double-counting of codes with "/"
+         else if(ccr.getCurrentRequirementCode().toLowerCase() === reqCode.toLowerCase())
+            total += ccr.getRequirementPointValue();
+      }
+      return total;
+   }
+
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body{
+    overflow: hidden;
+}
+#page-title {
+    display: flex;
+    font-family: sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    justify-content: center;
+    color:mediumblue;
+}
+.main_container {
+    /* background-color: lightgrey; */
+    display: flex;
+    /* flex-direction: row; default is row */
+    height: 95vh;
+    /* overflow: hidden; */
+    /* justify-content:flex-start; main axis alignment */
+    /* align-items:center; cross-axis alignment */
+    /* flex-wrap: nowrap; default is nowrap */
+}
+
+.counselor_column {
+    display: flex;
+    flex-direction: column; /* default is row */
+}
+.student_column {
+    display: flex;
+    flex-direction: column; /* default is row */
+}
+.student_info_general_container {
+    display: flex;
+    flex-direction: column;
+    border:1px solid #000;
+    font-family:arial;
+    min-width: 400px;
+    max-width: 750px;
+    /* min-height: 200px; */
+    /* background-color: linen; */
+}
+
+
+.counselor_list_container {
+    border:1px solid #000;
+    font-family:arial;
+    height:100%;
+    overflow:hidden;
+    width:180px;
+}
+#counselor_list_item_container {
+    list-style:none;
+    max-height:100%;
+    margin:0;
+    overflow:auto;
+    padding:0;
+    padding-bottom: 24px;
+    text-indent:10px;
+}
+/* #counselor_list_item_container li:nth-child(even){
+    background: #ccc;
+} */
+.counselor_totals_container {
+    border:1px solid #000;
+    font-family:arial;
+    /* height:326px; */
+    width:180px;
+    /* margin-bottom: 10px; */
+}
+#counselor_totals_item_container {
+    /* list-style:none; */
+    /* max-height:100%; */
+    height: 198px;
+    margin:0;
+    overflow:hidden;
+    padding:0;
+    text-indent:10px;
+}
+#counselor_totals_item_container li {
+    padding: 4px;;
+    line-height:20px;
+}
+.student_list_container {
+    border:1px solid #000;
+    font-family:arial;
+    /* height:350px; */
+    height:100%;
+    overflow: hidden;
+    width:180px;
+}
+#student_list_item_container {
+    list-style:none;
+    /* max-height:350px; */
+    max-height:100%;
+    margin:0;
+    overflow:auto;
+    padding:0;
+    text-indent:10px;
+    padding-bottom: 24px;
+}
+/* #student_list_item_container li:nth-child(even){
+    background: #ccc;
+} */
+li {
+    line-height: 25px;
+}
+
+
+.student_radios_container {
+    border:1px solid #000;
+    font-family:arial;
+    /* height: 350px; */
+    width:180px;
+    /* margin-bottom: 10px; */
+}
+
+#student_sort_options_container {
+    /* border:1px solid #000; */
+    font-family:arial;
+    height: 90px;
+    /* width:160px; */
+}  
+#student_sort_options_container input[type="radio"]:checked ~ * {
+    color: red;
+  }
+
+#student_filter_options_container {
+    /* border:1px solid #000; */
+    /* font-family:arial; */
+    height:130px;
+    /* width:160px; */
+}
+#student_filter_options_container input[type="radio"]:checked ~ * { 
+    color:red;
+}
+
+/* ALL TITLE AREAS USE THIS FORMATTING */
+.title_area {
+    background-color: red;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0;
+    height: 22px;
+    vertical-align: middle;
+    padding-top: 1px;
+    margin-bottom: 0;
+    border-bottom: 1px solid #000;
+}
+
+
+/* Student Data Panel */
+.student_top_container {
+    list-style:none;
+    margin:0;
+    padding:0;
+    /* text-indent:10px; */
+    /* background-color:antiquewhite; */
+}
+
+.student-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    font-size: 20px;
+}
+.grid-item {
+    height: 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 150px;
+    text-indent: 10px;
+}
+.grid-item-data {
+    height: 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    min-width: 200px;
+}
+.studentdata-dropdown-options {
+    /* margin: 5px 0px 5px 0px; */
+    font-size: 20px;
+    margin-top: 5px;
+    width: 90%;
+    height: 40px;
+}
+
+/* STUDENT SUMMARY AND ANNUAL COURSES TABS */
+.table-outer-wrapper {
+    margin: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    /* border: 1px solid black; */
+    border-radius: 4px;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
+    max-width: 100%;
+    height: fit-content;
+    /* height: calc(45vh - 20% + 70px); */
+    /* background-color: blueviolet; */
+    height: 350px;
+}
+.content-pane {
+    max-height: 88%;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    margin: 20px;
+    /* background-color: chartreuse; */
+    scroll-snap-type: y mandatory;
+    /* height: 250px; */
+    /* height: calc(45vh - 10%); */
+    /* height: calc(80%); */
+    /* max-width: fit-content; */
+    text-align: center;
+    /* background-color: red; */
+}
+/* .content-pane {
+    /* position: relative; */
+    /* position: absolute; */
+    /* top: 50px; */
+    /* left: 20px; */
+    /* background: white; */
+    /* background: magenta; */
+    /* border: 1px solid #ccc; */
+    /* font-size: 1.1rem; */
+    /* } */
+/* caption {
+    border: 1px solid black;
+    border-radius: 4px 4px 0px 0px;
+    background-color: bisque;
+} */
+  
+/* Dropdown selector */
+.dropdown-wrapper {
+    background-color: #fff;
+    /* background-color: aqua; */
+    width:96%;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+#dropdown-options {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 5px 1px;
+    background-color: red;
+    /* background-color:rgb(232, 232, 232); */
+    color: #fff;
+    /* color: black; */
+    border: 1px solid black;
+    border-radius: 20px;
+    width: 100%;
+    min-width:fit-content;
+    text-align: center;
+    /* margin-left: 20px;
+    margin-right: 20px; */
+}
+
+/* .custom-arrow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block;
+    height: 100%;
+    width: 4%;
+} */
+
+.custom-select {
+    /* background-color: green; */
+    /* position: relative; */
+    /* margin-top: 100px; */
+}
+
+/* option:checked .content {
+    z-index: 1;
+} */
+
+
+/* SUMMARY TABLE */
+table {
+    display: block;
+    /* height: 100%; */
+    /* overflow-y: scroll; */
+    /* border-collapse: collapse; */
+    border-collapse: separate;
+    border-spacing: 0;
+    /* border: 2px solid rgb(140 140 140); */
+    font-family: sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    /* min-width:max-content;  this will stop text wrapping in each table cell */
+    /* max-height: fit-content; */
+    /* border: 0.5px solid rgb(160 160 160); */
+}
+
+#gradreq_table {
+    /* background-color: red; */
+    /* height: 100%; */
+}
+
+thead {
+    position: sticky;
+    top: 0px;
+    background-color: rgb(228 240 245);
+}
+.stickyRow-credits { /* for the credits row in the table */
+    position: sticky;
+    top: 32px;
+    background-color: rgb(255,255,255,255);
+    /* border-top: 1px solid;
+    border-bottom: 1px solid; */
+}
+
+
+caption {
+    caption-side: top;
+    padding: 10px;
+    font-weight: bold;
+  }
+  
+  thead,
+  tfoot {
+    background-color: rgb(228 240 245);
+  }
+  
+  th,
+  td {
+    /* border: 0.5px solid rgb(160 160 160); */
+    padding: 7px 9px;
+    text-align: center;
+  }
+  th {
+    border: 0.5px solid rgb(160 160 160);
+  }
+  
+  td:last-of-type {
+    text-align: center;
+  }
+
+  .table-item-left-justify {
+    text-align: left;
+  }
+    
+  /* table tr {
+    scroll-snap-align: start;
+  } */
+  
+  tbody > tr:nth-of-type(even) {
+    background-color: rgb(237 238 242);
+  }
+  tr td {
+    border: 0.5px solid rgb(160 160 160);
+  }
+  
+  tfoot th {
+    text-align: right;
+  }
+  
+  tfoot td {
+    font-weight: bold;
+  }
+
+
+  #csv-student-button {
+    font-size: 20px;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: rgb(50,150,200);
+    color: white;
+  }
+
+  #freshman-content,
+  #sophomore-content,
+  #junior-content,
+  #senior-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-content: center;
+    text-align: center;
+    /* background-color: #eee; */
+    font-size: 1.2rem;
+    /* font-weight: bold; */
+  }
+
+
+  /* THE STUDENTS LIST ITEMS */
+
+  .gradrequirement-warning {
+    color: red;
+  }
+  .creditsLow-warning {
+    color: yellow;
+  }
+  .gradrequirement-met {
+    color: green;
+  }
+  .gradrequirement-override {
+    color: rgb(42, 72, 223);
+  }
+
+  /* SELECTING ITEMS FROM THE LISTS */
+  #counselor_list_item_container .selected_counselor {
+    background: #3263eb;
+    color:white;
+  }
+  /* #student_list_item_container .selected_student {
+    background: lightskyblue;
+  } */
+  .student-container.creditsLow-warning.selected_student {
+    background: yellow;
+    color: white
+  }
+  .student-container.gradrequirement-warning.selected_student {
+    background: red;
+    color: white
+  }
+  .student-container.gradrequirement-met.selected_student {
+    background: green;
+    color: white
+  }
+  .student-container.gradrequirement-override.selected_student {
+    background: rgb(42, 72, 223);
+    color: white
+  }
+
+  .hidden_row > td {
+    color: gray;
+    font-size: 14px;
+    border: none;
+    text-align: left;
+    padding-left: 32px;
+  }
+  .totalsPanel_year.selected_year {
+    color: red;
+  }
