@@ -39,7 +39,7 @@ body{
     flex-direction: column;
     border:1px solid #000;
     font-family:arial;
-    min-width: 550px;
+    min-width: 500px;
     max-width: 800px;
     /* min-height: 200px; */
     /* background-color: linen; */
@@ -217,6 +217,7 @@ li {
     /* max-width: fit-content; */
     text-align: center;
     /* background-color: red; */
+    border: 1.5px solid #aaa;
 }
 /* .content-pane {
     /* position: relative; */
@@ -336,6 +337,7 @@ caption {
   }
   th {
     border: 0.5px solid rgb(160 160 160);
+    border-bottom: 1.5px solid #aaa;
   }
   
   td:last-of-type {
@@ -403,6 +405,9 @@ caption {
   .gradrequirement-override {
     color: rgb(42, 72, 223);
   }
+  .gradrequirement-missingInfo {
+    color: rgb(140, 140, 140);
+  }
 
   /* SELECTING ITEMS FROM THE LISTS */
   #counselor_list_item_container .selected_counselor {
@@ -426,6 +431,10 @@ caption {
   }
   .student-container.gradrequirement-override.selected_student {
     background: rgb(42, 72, 223);
+    color: white
+  }
+  .student-container.gradrequirement-missingInfo.selected_student {
+    background: rgb(140, 140, 140);
     color: white
   }
 
