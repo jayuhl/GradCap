@@ -39,7 +39,7 @@ body{
     flex-direction: column;
     border:1px solid #000;
     font-family:arial;
-    min-width: 500px;
+    min-width: 480px;
     max-width: 800px;
     /* min-height: 200px; */
     /* background-color: linen; */
@@ -181,6 +181,11 @@ li {
     margin-top: 10px;
     margin-bottom: 10px;
     min-width: 200px;
+  }
+  #status-field {
+  margin-top: 10px;
+  margin-bottom: 0px;
+  height: fit-content;
 }
 .studentdata-dropdown-options {
     /* margin: 5px 0px 5px 0px; */
@@ -448,3 +453,24 @@ caption {
   .totalsPanel_year.selected_year {
     color: red;
   }
+
+
+
+/* SEARCH FIELD */
+#myInput {
+    /* background-image: url('/css/searchicon.png'); Add a search icon to input */
+    /* background-position: 10px 12px; Position the search icon */
+    /* background-repeat: no-repeat; Do not repeat the icon image */
+    background-color: rgb(245 245 245);
+    color: #000;
+    /* width: 100%; Full-width */
+    width: 180px;
+    font-size: 16px; /* Increase font-size */
+    padding: 8px 10px 8px 20px; /* Add some padding */
+    border: 1px solid #000;
+    /* margin-bottom: 12px; Add some space below the input */
+}
+
+input#myInput:focus {
+  outline-width: 0;
+}
