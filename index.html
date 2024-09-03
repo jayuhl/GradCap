@@ -815,6 +815,7 @@ document.getElementById('counselor_list_item_container').addEventListener('click
 
         console.log("SELECTED/CURRENT COUNSELOR: " + currentCounselor);
 
+        clearAndCloseSearchField();
         filterStudentsUsingCurrentValues();
         // setFirstStudentAsCurrent();  //This is done in the filter method
 
@@ -847,6 +848,21 @@ document.getElementById('student_list_item_container').addEventListener('click',
             currentUnhiddenGradCodesInSummary = []; //collapse all currently expanded rows... done prior to updating the next student table
 
         setCurrentStudentDataFields();
+
+//LOOK HERE!!!!
+        var ul = document.getElementById("student_list_item_container");
+        var selectedStudentLI = ul.querySelector('li.selected_student');
+        console.log("Current student: " + currentStudent.getNameLastFirst());
+        
+        var elDistanceToTop = window.pageYOffset + selectedStudentLI.getBoundingClientRect().top;
+        var elDistanceToBottom = window.pageYOffset + selectedStudentLI.getBoundingClientRect().bottom;
+        var ulTop = window.pageYOffset + ul.getBoundingClientRect().top;
+        var ulBottom = window.pageYOffset + ul.getBoundingClientRect().bottom;
+        
+        var list = ul, targetLi = selectedStudentLI; // id tag of the <li> element
+        // ul.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - selectedStudentLI.getBoundingClientRect().height);
+        console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
+        console.log("TOP IS: " + selectedStudentLI.getBoundingClientRect().top);
     }
 });
 
@@ -1295,6 +1311,7 @@ function setGradeLevelFilterValue(gradeLevel) {
     filterValue_currentGradeLevel = gradeLevel;
     filterStudentsUsingCurrentValues();
     updateTotalsArea();
+    clearAndCloseSearchField();
 }
 
 //Use the individual grade levels or 0 for all years
@@ -1386,6 +1403,7 @@ var currentSortValue = 'alpha'; //options: alpha, gradreqs, credits
 function setSortValue(value) {
     currentSortValue = value;
     sortCurrentStudentList();
+    clearAndCloseSearchField();
 }
 
 function sortCurrentStudentList() {
@@ -1459,11 +1477,9 @@ function showSearchBox() {
         searchField.focus();
     }
     else {
-        searchField.style.display = 'none';
-        searchField.value = '';
-        searchFunction();
-        
-        //Set the scroll
+        clearAndCloseSearchField();
+
+        //Set the scroll to the selected student on top
         var ul = document.getElementById("student_list_item_container");
         var selectedStudentLI = ul.querySelector('li.selected_student');
         console.log("Current student: " + currentStudent.getNameLastFirst());
@@ -1472,14 +1488,35 @@ function showSearchBox() {
         var elDistanceToBottom = window.pageYOffset + selectedStudentLI.getBoundingClientRect().bottom;
         var ulTop = window.pageYOffset + ul.getBoundingClientRect().top;
         var ulBottom = window.pageYOffset + ul.getBoundingClientRect().bottom;
-
+        
         var list = ul, targetLi = selectedStudentLI; // id tag of the <li> element
         // ul.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - selectedStudentLI.getBoundingClientRect().height);
-        ul.scrollTop = elDistanceToBottom - selectedStudentLI.getBoundingClientRect().height - ulTop;
         console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
-        console.log(targetLi.offsetTop);
+        var st = elDistanceToBottom - selectedStudentLI.getBoundingClientRect().height - ulTop;
+        console.log("Calculated top = " + st);
+        var selectedIndex = [].slice.call(selectedStudentLI.parentNode.children).indexOf(selectedStudentLI);
+        console.log("Selected Student Index = " + selectedIndex);
+        
+        // ul.scrollTop = selectedIndex * selectedStudentLI.getBoundingClientRect().height + ulTop + 130.5;
+        // if(st !== 0)
+        //     ul.scrollTop = st;
+        
+        ul.scrollTop = selectedStudentLI.getBoundingClientRect().top;;
     }
 }
+
+//This is a separate function so it can be called to erase any current search parameters when a counselor is changes or radio is selected
+function clearAndCloseSearchField() {
+    var searchField = document.getElementById('myInput');
+    searchField.style.display = 'none';
+    //Clear the search to bring all names back when the search is closed
+    searchField.value = '';
+    searchFunction();
+    //Reset the scroll to the top
+    var ul = document.getElementById("student_list_item_container");
+    var selectedStudentLI = ul.querySelector('li.selected_student');
+    ul.scrollTop = selectedStudentLI.getBoundingClientRect().top - 58.5;
+} 
 
 </script>
 </html>
