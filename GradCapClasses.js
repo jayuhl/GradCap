@@ -484,7 +484,7 @@ function createSummaryTable() {
 
         var tr = document.createElement('tr');
         tr.setAttribute('name', graduationRequirementList[i].code);
-
+        tr.classList.add('gradreq_tablerow');
         var cellText = [];
         
         var reqName = graduationRequirementList[i].getRequirementName();
@@ -565,8 +565,10 @@ function getGradReqCoursesTR(ccr) {
     const td = document.createElement('td');
     td.colSpan = '5';
     // td.style.backgroundColor = 'red';
-    if(ccr.getPossibleRequirementCodes().length > 1)
-        td.style.color = 'rgb(225, 120, 0)';
+    if(ccr.getPossibleRequirementCodes().length > 1){
+        // td.style.color = 'rgb(225, 120, 0)';
+        td.classList.add('courseData_multiReqOptions');
+    }
     const courseCode = ccr.getCourseCode();
     const courseName = ccr.getCourseName();
     const gradeTaken = ccr.getStudentGradeLevelWhenTaken();
