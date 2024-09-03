@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="../styles/style.css" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GradCap
@@ -57,7 +57,8 @@
         </div>
         <div class="student_column">
             <div class="student_list_container">
-                <p class="title_area">Students</p>
+                <p class="title_area" id="studentListTitle" onclick="showSearchBox()">Students</p>
+                <input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search for names..." style="display: none;">
                 <ul id="student_list_item_container">
                     <li class='selected_student'>Student 1</li>
                     <!-- <li>Student 2</li>
@@ -82,7 +83,6 @@
                 </ul>
             </div>
 
-            <input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search for names...">
 
             <div class="student_radios_container">
                 <div id="student_sort_options_container">
@@ -601,7 +601,7 @@ function fileNameChange() {
 //Populate student list - currently for all students (not a subset)
 function populateStudentLI() {
     var ul = document.getElementById("student_list_item_container");
-    //Remove current list items to make way for updated ones
+    //Remove initial list items to make way for updated ones (Student 1)
     while( ul.firstChild ){
         ul.removeChild( ul.firstChild );
     }
@@ -721,7 +721,7 @@ function setCurrentStudentDataFields() {
 
     statusContainer.appendChild(checkbox);
     statusContainer.appendChild(label);
-    
+
     if(currentStudent.isApprovedByOverride)
         checkbox.checked = true;
 
@@ -1348,7 +1348,7 @@ document.addEventListener('keydown', function(event){
             studentIndex++;
         //Watch for out of bounds
         if(studentIndex >= 0 && studentIndex <= currentStudentList.length-1) {
-            selected= document.querySelector('li.selected_student');
+            selected = document.querySelector('li.selected_student');
             if(selected) selected.classList.remove('selected_student');
             var studentUL = document.getElementById('student_list_item_container');
             
@@ -1431,7 +1431,7 @@ function compareUsingMissingCredits( a, b ) {
 }
 
 
-//SERACH FILED FUNCTION
+//SEARCH FILED FUNCTION
 function searchFunction() {
     // Declare variables
     var input, filter, ul, li, a, i, txtValue;
@@ -1439,7 +1439,7 @@ function searchFunction() {
     filter = input.value.toUpperCase();
     ul = document.getElementById("student_list_item_container");
     li = ul.getElementsByTagName('li');
-
+    
     // Loop through all list items, and hide those who don't match the search query
     for (i = 0; i < li.length; i++) {
         a = li[i];
@@ -1449,6 +1449,35 @@ function searchFunction() {
         } else {
             li[i].style.display = 'none';
         }
+    }
+}
+
+function showSearchBox() {
+    var searchField = document.getElementById('myInput');
+    if(searchField.style.display === 'none') {
+        searchField.style.display = '';
+        searchField.focus();
+    }
+    else {
+        searchField.style.display = 'none';
+        searchField.value = '';
+        searchFunction();
+        
+        //Set the scroll
+        var ul = document.getElementById("student_list_item_container");
+        var selectedStudentLI = ul.querySelector('li.selected_student');
+        console.log("Current student: " + currentStudent.getNameLastFirst());
+        
+        var elDistanceToTop = window.pageYOffset + selectedStudentLI.getBoundingClientRect().top;
+        var elDistanceToBottom = window.pageYOffset + selectedStudentLI.getBoundingClientRect().bottom;
+        var ulTop = window.pageYOffset + ul.getBoundingClientRect().top;
+        var ulBottom = window.pageYOffset + ul.getBoundingClientRect().bottom;
+
+        var list = ul, targetLi = selectedStudentLI; // id tag of the <li> element
+        // ul.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - selectedStudentLI.getBoundingClientRect().height);
+        ul.scrollTop = elDistanceToBottom - selectedStudentLI.getBoundingClientRect().height - ulTop;
+        console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
+        console.log(targetLi.offsetTop);
     }
 }
 
