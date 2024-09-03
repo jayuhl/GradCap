@@ -815,7 +815,6 @@ document.getElementById('counselor_list_item_container').addEventListener('click
 
         console.log("SELECTED/CURRENT COUNSELOR: " + currentCounselor);
 
-        clearAndCloseSearchField();
         filterStudentsUsingCurrentValues();
         // setFirstStudentAsCurrent();  //This is done in the filter method
 
@@ -823,6 +822,7 @@ document.getElementById('counselor_list_item_container').addEventListener('click
             currentUnhiddenGradCodesInSummary = []; //collapse all currently expanded rows
 
         updateTotalsArea();
+        clearAndCloseSearchField();
     }
 });
 
