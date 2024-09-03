@@ -1515,7 +1515,8 @@ function clearAndCloseSearchField() {
     //Reset the scroll to the top
     var ul = document.getElementById("student_list_item_container");
     var selectedStudentLI = ul.querySelector('li.selected_student');
-    ul.scrollTop = selectedStudentLI.getBoundingClientRect().top - 58.5;
+    if(selectedStudentLI !== null)
+        ul.scrollTop = selectedStudentLI.getBoundingClientRect().top - 58.5;
 } 
 
 </script>
