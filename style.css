@@ -481,7 +481,7 @@ tfoot td {
 
 /* SEARCH FIELD */
 #myInput {
-    background-image: url('/searchIcon.png');
+    background-image: url('searchIcon.png');
     background-position: 5px 4px;
     background-repeat: no-repeat;
     background-color: rgb(245 245 245);
@@ -504,7 +504,7 @@ tfoot td {
 } */
 
 #studentListTitle {
-    background-image: url('/searchIcon_white.png');
+    background-image: url('searchIcon_white.png');
     background-position: 30px 1px;
     background-repeat: no-repeat;
 }
