@@ -439,9 +439,9 @@ function populateRequirementsFromJSON(json) {
 }
 
 function populateRequirementsForPVRHSD() {
-    var requirementNames = ['Credits','English','Math','History','Science','Language','Phys. Ed.','Visual or Performing Art','Practical Art','Personal Financial Literacy'];
-    var requirementCodes = ['CREDITS','ENG','MATH','HIST','SCI','WL','PE','VPA','PA','PFL'];
-    var requirementPoints = [120,4,3,3,3,2,4,1,1,0.5];
+    var requirementNames = ['Credits','English','Math','History','Science','Language','Phys. Ed.','Visual or Performing Art','Practical Art','Personal Financial Literacy','Electives'];
+    var requirementCodes = ['CREDITS','ENG','MATH','HIST','SCI','WL','PE','VPA','PA','PFL', 'ELECT'];
+    var requirementPoints = [120,4,3,3,3,2,4,1,1,0.5,0];
     for (var i = 0; i < requirementNames.length; i++) {
         graduationRequirementList.push(new GraduationRequirement(requirementNames[i], requirementCodes[i], requirementPoints[i]));
     }
@@ -603,15 +603,39 @@ function doRequirementWasSelectedStuff(gradReq, tr) {
     highlight_gradReq(tr);
 
     showHideRow('hidden_row_' + gradReq);
-
     updateExpandedGradRequirementsList(); //keep track of which courses are using the dropdown in order to repaint the same result when changes call for a repaint
 
     checkForScrollOfRequirementTable(tr); //in case this row is low in the list and expanded course summaries are not visibile upon expanding
 }
 
 function checkForScrollOfRequirementTable(tr) {
-    console.log("SCROLL CHECK: " + tr.getBoundingClientRect().top + " ... " + tr.getBoundingClientRect().bottom + " ... " + window.scrollY);
-    tr.scrollTop = 391; //(targetLi.offsetTop - Math.round(elDistanceToTop) - currentStudentLI.getBoundingClientRect().height);
+    // console.log("SCROLL CHECK: " + tr.getBoundingClientRect().top + " ... " + tr.getBoundingClientRect().bottom + " ... " + window.scrollY);
+    const gradReq = tr.getAttribute('name');
+    // //Get scroll container
+    var tablearea = document.getElementById('summary-content');
+    // var trDistanceToBottom = tr.getBoundingClientRect().bottom;
+    var tableBottom = tablearea.getBoundingClientRect().bottom;
+    var hiddensNowNotHidden = document.getElementsByClassName('hidden_row_' + gradReq);
+    if(hiddensNowNotHidden.length > 0) {
+        // const firstUnhiddenRow = hiddensNowNotHidden[0];
+        // var firstUnhiddenRowBottom = firstUnhiddenRow.getBoundingClientRect().bottom;
+        const lastUnhiddenRow = hiddensNowNotHidden[hiddensNowNotHidden.length-1];
+        // var lastUnhiddenRowTop = lastUnhiddenRow.getBoundingClientRect().top;
+        var lastUnhiddenRowBottom = lastUnhiddenRow.getBoundingClientRect().bottom;
+        // var lastUnhiddenRowHeight = lastUnhiddenRow.getBoundingClientRect().height;
+        // console.log('DIST TO BOTTOM = ' + firstUnhiddenRowBottom);
+        // console.log('CONTAINER BOTTOM = ' + tableBottom);
+        // var totalHeightAdded = 0;
+        // for(var i=0; i < hiddensNowNotHidden.length; i++)
+        //     totalHeightAdded += hiddensNowNotHidden[i].getBoundingClientRect().height;
+        // if(firstUnhiddenRowBottom > tableBottom)
+        //     tablearea.scrollTop = tablearea.scrollTop + totalHeightAdded;
+        var overhang = lastUnhiddenRowBottom - tableBottom;
+        if(overhang > 0)
+            tablearea.scrollTop = tablearea.scrollTop + overhang;
+        console.log("OVERHANG = " + overhang);
+        // console.log("ADDED    = " + totalHeightAdded);
+    }
 }
 
 var currentUnhiddenGradCodesInSummary = []; //For keeping courses displayed when repainting
