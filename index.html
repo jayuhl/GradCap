@@ -60,7 +60,7 @@
                 <p class="title_area" id="studentListTitle" onclick="showSearchBox()">Students</p>
                 <input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search for names..." style="display: none;">
                 <ul id="student_list_item_container">
-                    <li class='selected_student'>Student 1</li>
+                    <li class='selected_student gradrequirement-missingInfo'>Student 1</li>
                     <!-- <li>Student 2</li>
                     <li>Student 3</li>
                     <li>Student 4</li>
@@ -757,6 +757,7 @@ function setCurrentStudentDataFields() {
 
 //For when there are no students to display
 function clearStudentDataFields() {
+if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an error being thrown
     console.log("Clearing student data.");
     clearSummaryTable();
     clearYearTable(0);
@@ -793,11 +794,12 @@ function clearStudentDataFields() {
     //Set selected student grade level name
     var idContainer = document.getElementById('student-id');
     idContainer.innerHTML = '';
-    
+}
 }
 
 //For selection and changing color of selected counselor
-document.getElementById('counselor_list_item_container').addEventListener('click', function(e) {   // 1.
+document.getElementById('counselor_list_item_container').addEventListener('click', function(e) {
+if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an error being thrown
     const previousCounselorName = currentCounselor.getNameLastFirst();
     var selected;
     if(e.target.tagName === 'LI') {
@@ -817,21 +819,23 @@ document.getElementById('counselor_list_item_container').addEventListener('click
 
         filterStudentsUsingCurrentValues();
         // setFirstStudentAsCurrent();  //This is done in the filter method
-
+        
         if(previousCounselorName !== currentCounselor.getNameLastFirst()) //Don't allow multiple clicks on the same counselor to reset the accordian
-            currentUnhiddenGradCodesInSummary = []; //collapse all currently expanded rows
-
+        currentUnhiddenGradCodesInSummary = []; //collapse all currently expanded rows
+        
         updateTotalsArea();
         clearAndCloseSearchField();
     }
+}
 });
 
 //For selection and changing color of selected student
-document.getElementById('student_list_item_container').addEventListener('click', function(e) {   // 1.
+document.getElementById('student_list_item_container').addEventListener('click', function(e) {
+if(typeof currentStudent !== 'undefined') { //On startup... this avoids an error being thrown
     const previousStudentName = currentStudent.getNameLastFirst();
     var selected;
     if(e.target.tagName === 'LI') {
-        selected= document.querySelector('li.selected_student');
+        selected = document.querySelector('li.selected_student');
         // console.log("CURRENT STUDENT: " + e.target.innerHTML + " classes: " + selected.classList);
         if(selected) selected.classList.remove('selected_student');
         e.target.classList.add('selected_student');
@@ -850,20 +854,21 @@ document.getElementById('student_list_item_container').addEventListener('click',
         setCurrentStudentDataFields();
 
 //LOOK HERE!!!!
-        var ul = document.getElementById("student_list_item_container");
-        var selectedStudentLI = ul.querySelector('li.selected_student');
-        console.log("Current student: " + currentStudent.getNameLastFirst());
+        // var ul = document.getElementById("student_list_item_container");
+        // var selectedStudentLI = ul.querySelector('li.selected_student');
+        // console.log("Current student: " + currentStudent.getNameLastFirst());
         
-        var elDistanceToTop = window.pageYOffset + selectedStudentLI.getBoundingClientRect().top;
-        var elDistanceToBottom = window.pageYOffset + selectedStudentLI.getBoundingClientRect().bottom;
-        var ulTop = window.pageYOffset + ul.getBoundingClientRect().top;
-        var ulBottom = window.pageYOffset + ul.getBoundingClientRect().bottom;
+        // var elDistanceToTop = window.pageYOffset + selectedStudentLI.getBoundingClientRect().top;
+        // var elDistanceToBottom = window.pageYOffset + selectedStudentLI.getBoundingClientRect().bottom;
+        // var ulTop = window.pageYOffset + ul.getBoundingClientRect().top;
+        // var ulBottom = window.pageYOffset + ul.getBoundingClientRect().bottom;
         
-        var list = ul, targetLi = selectedStudentLI; // id tag of the <li> element
-        // ul.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - selectedStudentLI.getBoundingClientRect().height);
-        console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
-        console.log("TOP IS: " + selectedStudentLI.getBoundingClientRect().top);
+        // var list = ul, targetLi = selectedStudentLI; // id tag of the <li> element
+        // // ul.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - selectedStudentLI.getBoundingClientRect().height);
+        // console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
+        // console.log("TOP IS: " + selectedStudentLI.getBoundingClientRect().top);
     }
+}
 });
 
 //A function for defaulting to the first student in the student list (at startup and counselor selection change, etc.)
@@ -872,7 +877,7 @@ function setFirstStudentAsCurrent() {
     var ul = document.getElementById("student_list_item_container");
     if(ul.firstChild) { //as long as there is at least one student
         //deselect current selected student
-        selected= document.querySelector('li.selected_student');
+        selected = document.querySelector('li.selected_student');
         if(selected) selected.classList.remove('selected_student');
         //Highlight first student
         var studentUL = document.getElementById('student_list_item_container');
@@ -896,7 +901,7 @@ function setFirstStudentAsCurrent() {
 //Uses the ul NOT the student list... seems safer that way
 function setFirstCounselorAsCurrent() {
     //deselect current selected counselor
-    selected= document.querySelector('li.selected_counselor');
+    selected = document.querySelector('li.selected_counselor');
     if(selected) selected.classList.remove('selected_counselor');
     //Highlight first counselor
     var counselorUL = document.getElementById('counselor_list_item_container');
@@ -939,6 +944,7 @@ dataselection.addEventListener("change", function() {
 
 
 function updateTotalsArea() {
+if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an error being thrown
     var elementWithTitle = document.getElementById("totals_title_school");
     var counselorLastName = currentCounselor.getLastName();
     var counselorName = currentCounselor.getNameLastFirst();
@@ -974,6 +980,7 @@ function updateTotalsArea() {
     if(lastSelection) lastSelection.classList.remove('selected_year');
     var currentSelection = document.getElementById('totalsPanel_year_' + filterValue_currentGradeLevel);
     currentSelection.classList.add('selected_year');
+}
 }
 
 
@@ -1073,6 +1080,13 @@ function sortYearTable(sortCol, tableID, direction, isNumeric, tieBreakerColumn)
         var startRow = 1;
         if(tableID === 'gradreq_table')
             startRow = 2; //leave credits on top of the requirement summary table
+        //If there are blank fields, then sort as text
+        for (i = startRow; i < (rows.length - 1); i++) {
+            x = rows[i].getElementsByTagName("TD")[sortCol].innerHTML;
+            y = rows[i + 1].getElementsByTagName("TD")[sortCol].innerHTML;
+            if(isNaN(parseInt(x))) isNumeric = false;
+            if(isNaN(parseInt(y))) isNumeric = false;
+        }
         for (i = startRow; i < (rows.length - 1); i++) {
             // Start by saying there should be no switching:
             shouldSwitch = false;
@@ -1085,6 +1099,7 @@ function sortYearTable(sortCol, tableID, direction, isNumeric, tieBreakerColumn)
             if(isNumeric){
                 xVal = parseInt(xVal);
                 yVal = parseInt(yVal);
+                // console.log(xVal + ', ' + yVal);
             }
             else {
                 xVal = xVal.toLowerCase();
@@ -1316,6 +1331,7 @@ function setGradeLevelFilterValue(gradeLevel) {
 
 //Use the individual grade levels or 0 for all years
 function filterStudentsUsingCurrentValues() {
+if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an error being thrown
     currentStudentList = [];
 
     //Filter out students by counselor first
@@ -1352,6 +1368,7 @@ function filterStudentsUsingCurrentValues() {
     populateStudentLI();
     setFirstStudentAsCurrent();
     sortCurrentStudentList();
+}
 }
 
 document.addEventListener('keydown', function(event){
@@ -1452,9 +1469,9 @@ function compareUsingMissingCredits( a, b ) {
 //SEARCH FILED FUNCTION
 function searchFunction() {
     // Declare variables
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById('myInput');
-    filter = input.value.toUpperCase();
+    var searchField, filter, ul, li, a, i, txtValue;
+    searchField = document.getElementById('myInput');
+    filter = searchField.value.toUpperCase();
     ul = document.getElementById("student_list_item_container");
     li = ul.getElementsByTagName('li');
     
@@ -1468,6 +1485,8 @@ function searchFunction() {
             li[i].style.display = 'none';
         }
     }
+    if(searchField.value === '')
+        setSelectedStudentToTopOfList();
 }
 
 function showSearchBox() {
@@ -1482,7 +1501,7 @@ function showSearchBox() {
         //Set the scroll to the selected student on top
         var ul = document.getElementById("student_list_item_container");
         var selectedStudentLI = ul.querySelector('li.selected_student');
-        console.log("Current student: " + currentStudent.getNameLastFirst());
+        // console.log("Current student: " + currentStudent.getNameLastFirst());
         
         var elDistanceToTop = window.pageYOffset + selectedStudentLI.getBoundingClientRect().top;
         var elDistanceToBottom = window.pageYOffset + selectedStudentLI.getBoundingClientRect().bottom;
@@ -1491,17 +1510,13 @@ function showSearchBox() {
         
         var list = ul, targetLi = selectedStudentLI; // id tag of the <li> element
         // ul.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - selectedStudentLI.getBoundingClientRect().height);
-        console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
+        // console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
         var st = elDistanceToBottom - selectedStudentLI.getBoundingClientRect().height - ulTop;
-        console.log("Calculated top = " + st);
+        // console.log("Calculated top = " + st);
         var selectedIndex = [].slice.call(selectedStudentLI.parentNode.children).indexOf(selectedStudentLI);
-        console.log("Selected Student Index = " + selectedIndex);
-        
-        // ul.scrollTop = selectedIndex * selectedStudentLI.getBoundingClientRect().height + ulTop + 130.5;
-        // if(st !== 0)
-        //     ul.scrollTop = st;
-        
-        ul.scrollTop = selectedStudentLI.getBoundingClientRect().top;;
+        // console.log("Selected Student Index = " + selectedIndex);
+                
+        // ul.scrollTop = selectedStudentLI.getBoundingClientRect().top;
     }
 }
 
@@ -1513,11 +1528,24 @@ function clearAndCloseSearchField() {
     searchField.value = '';
     searchFunction();
     //Reset the scroll to the top
+    setSelectedStudentToTopOfList();
+}
+
+function setSelectedStudentToTopOfList() {
     var ul = document.getElementById("student_list_item_container");
+    // const ulTop = ul.getBoundingClientRect().top;
+    const ulBottom = ul.getBoundingClientRect().bottom;
+    const ulHeight = ul.getBoundingClientRect().height;
     var selectedStudentLI = ul.querySelector('li.selected_student');
-    if(selectedStudentLI !== null)
-        ul.scrollTop = selectedStudentLI.getBoundingClientRect().top - 58.5;
-} 
+    // const studentBottom = selectedStudentLI.getBoundingClientRect().bottom;
+    if(selectedStudentLI !== null) {
+        const studentTop = selectedStudentLI.getBoundingClientRect().top;
+        // ul.scrollTop = selectedStudentLI.getBoundingClientRect().top - 52; //58.5;
+        const diff = studentTop - ulBottom;
+        // console.log("DIFF = " + diff);
+        ul.scrollTop = ul.scrollTop + diff + ulHeight;
+    }
+}
 
 </script>
 </html>
