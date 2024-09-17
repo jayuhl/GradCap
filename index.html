@@ -57,10 +57,9 @@
         </div>
         <div class="student_column">
             <div class="student_list_container">
-                <p class="title_area" id="studentListTitle" onclick="showSearchBox()">Students</p>
-                <input type="text" id="myInput" onkeyup="searchFunction()" placeholder="Search for names..." style="display: none;">
+                <p class="title_area">Students</p>
                 <ul id="student_list_item_container">
-                    <li class='selected_student gradrequirement-missingInfo'>Student 1</li>
+                    <li class='selected_student'>Student 1</li>
                     <!-- <li>Student 2</li>
                     <li>Student 3</li>
                     <li>Student 4</li>
@@ -82,8 +81,6 @@
                     <li>Student 20</li> -->
                 </ul>
             </div>
-
-
             <div class="student_radios_container">
                 <div id="student_sort_options_container">
                     <p class="title_area">Sort Options</p>
@@ -101,8 +98,6 @@
                 </div>
             </div>
         </div>
-
-
 
 
         <div class="student_info_general_container">
@@ -258,16 +253,16 @@
                     <table id="transcript-course_table">
                         <thead>
                             <tr>
-                                <th onclick='sortYearTable(0,"transcript-course_table", 1, true, 3)'>Year</th>
-                                <th onclick='sortYearTable(1,"transcript-course_table", 1, false, 3)'>Course Name</th>
-                                <th onclick='sortYearTable(2,"transcript-course_table", 1, false, 3)'>Code</th>
-                                <th onclick='sortYearTable(3,"transcript-course_table", 1, false, 3)'>Req Met</th>
-                                <th onclick='sortYearTable(4,"transcript-course_table", 1, false, 3)'>Or</th>
-                                <th onclick='sortYearTable(5,"transcript-course_table", 1, true, 3)'>Points</th>
-                                <th onclick='sortYearTable(6,"transcript-course_table", 1, true, 3)'>Credits</th>
-                                <th onclick='sortYearTable(7,"transcript-course_table", 1, true, 3)'>Avg</th>
-                                <th onclick='sortYearTable(8,"transcript-course_table", 1, false, 3)'>Teacher</th>
-                                <th onclick='sortYearTable(9,"transcript-course_table", 1, true, 3)'>Sect</th>
+                                <th onclick='sortYearTable(0,"transcript-course_table", 1, true)'>Year</th>
+                                <th onclick='sortYearTable(1,"transcript-course_table", 1, false)'>Course Name</th>
+                                <th onclick='sortYearTable(2,"transcript-course_table", 1, false)'>Code</th>
+                                <th onclick='sortYearTable(3,"transcript-course_table", 1, false)'>Req Met</th>
+                                <th onclick='sortYearTable(4,"transcript-course_table", 1, false)'>Or</th>
+                                <th onclick='sortYearTable(5,"transcript-course_table", 1, true)'>Points</th>
+                                <th onclick='sortYearTable(6,"transcript-course_table", 1, true)'>Credits</th>
+                                <th onclick='sortYearTable(7,"transcript-course_table", 1, true)'>Avg</th>
+                                <th onclick='sortYearTable(8,"transcript-course_table", 1, false)'>Teacher</th>
+                                <th onclick='sortYearTable(9,"transcript-course_table", 1, true)'>Sect</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -527,11 +522,6 @@ const uploadConfirm = document.getElementById('csv-student-button').addEventList
             setFirstStudentAsCurrent();
             
             sortAndPaintSummaryTable(4,'gradreq_table',-1,false); //4= sort by 'Needed'
-            sortYearTable(0,"transcript-course_table", 1, true, 3);
-            sortYearTable(0,"freshman-course_table", 1, true, 3);
-            sortYearTable(0,"sophomore-course_table", 1, true, 3);
-            sortYearTable(0,"junior-course_table", 1, true, 3);
-            sortYearTable(0,"senior-course_table", 1, true, 3);
 
             updateTotalsArea();
             
@@ -601,7 +591,7 @@ function fileNameChange() {
 //Populate student list - currently for all students (not a subset)
 function populateStudentLI() {
     var ul = document.getElementById("student_list_item_container");
-    //Remove initial list items to make way for updated ones (Student 1)
+    //Remove current list items to make way for updated ones
     while( ul.firstChild ){
         ul.removeChild( ul.firstChild );
     }
@@ -609,23 +599,15 @@ function populateStudentLI() {
     for (var i = 0; i < currentStudentList.length; i++)
     {
         if(currentStudentList[i].getGradeLevel() == 8)
-            console.log("FOUND 8th GRADER: " + currentStudentList[i].getNameLastFirst());
+            console.log("FOUND: " + currentStudentList[i].getNameLastFirst());
         var li = document.createElement("li");  
         li.className = "student-container";
 
         li.innerHTML = currentStudentList[i].getNameLastFirst();
         li.id = currentStudentList[i].id;
         
-        //Assign the appropriate color to the name in the list
         if(currentStudentList[i].isApprovedByOverride)
             li.classList.add("gradrequirement-override");
-
-        else if(currentStudentList[i].getGradeLevel() > 9 && currentStudentList[i].getCompletedCoursesForYear(9).length == 0
-                || currentStudentList[i].getGradeLevel() > 10 && currentStudentList[i].getCompletedCoursesForYear(10).length == 0
-                || currentStudentList[i].getGradeLevel() > 11 && currentStudentList[i].getCompletedCoursesForYear(11).length == 0) {
-            li.classList.add("gradrequirement-missingInfo");
-        }
-
         else if(!currentStudentList[i].hasMetAllGradRequirements())
             li.classList.add("gradrequirement-warning");
         else if(!currentStudentList[i].hasMetCreditRequirement())
@@ -642,22 +624,25 @@ function populateStudentLI() {
 function populateCounselorLI() {
     var ul = document.getElementById("counselor_list_item_container");
     //Currently not removing the first item... "All Students"... now I am
-    ul.removeChild(ul.getElementsByTagName('li')[0]);
-    for (var i = 0; i < counselorList.length; i++)
-    {
-        var li = document.createElement("li");
-        li.className = "counselor-container";
+    console.log("TOTAL COUNSELOR LIST ITEMS= " + ul.getElementsByTagName('li').length)
+    if(ul.getElementsByTagName('li').length <= 1) { 
+        ul.removeChild(ul.getElementsByTagName('li')[0]);
+        for (var i = 0; i < counselorList.length; i++)
+        {
+            var li = document.createElement("li");
+            li.className = "counselor-container";
 
-        if(counselorList[i].getLastName() === 'All Students')
-            li.innerHTML = 'All Students';
-        else if(counselorList[i].getLastName() === 'Unassigned')
-            li.innerHTML = 'Unassigned';
-        else
-            li.innerHTML = counselorList[i].getNameLastFirst();
+            if(counselorList[i].getLastName() === 'All Students')
+                li.innerHTML = 'All Students';
+            else if(counselorList[i].getLastName() === 'Unassigned')
+                li.innerHTML = 'Unassigned';
+            else
+                li.innerHTML = counselorList[i].getNameLastFirst();
 
-        li.id = counselorList[i].id;
+            li.id = counselorList[i].id;
 
-        ul.appendChild(li);
+            ul.appendChild(li);
+        }
     }
 }
 
@@ -714,6 +699,31 @@ function setCurrentStudentDataFields() {
     checkbox.name = "override-checkbox";
     checkbox.value = "value";
     checkbox.id = "checkbox-override";
+    if(currentStudent.isApprovedByOverride)
+        checkbox.checked = true;
+
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            currentStudent.isApprovedByOverride = true;
+            var selected= document.querySelector('li.selected_student');
+            var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
+            populateStudentLI();
+            var studentUL = document.getElementById('student_list_item_container');
+            var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
+            currentStudentLI.classList.add('selected_student');
+            console.log("Checkbox is checked..");
+        } else {
+            currentStudent.isApprovedByOverride = false;
+            var selected= document.querySelector('li.selected_student');
+            var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
+            populateStudentLI();
+            var studentUL = document.getElementById('student_list_item_container');
+            var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
+            currentStudentLI.classList.add('selected_student');
+            console.log("Checkbox is not checked..");
+        }
+        updateTotalsArea();
+    });
 
     var label = document.createElement('label');
     label.htmlFor = "checkbox-override";
@@ -721,43 +731,11 @@ function setCurrentStudentDataFields() {
 
     statusContainer.appendChild(checkbox);
     statusContainer.appendChild(label);
-
-    if(currentStudent.isApprovedByOverride)
-        checkbox.checked = true;
-
-    checkbox.addEventListener('change', function() {
-        if (this.checked) {
-            currentStudent.isApprovedByOverride = true;
-            //Change color of student in list, save their index, repaint, then reset selection
-            var selected= document.querySelector('li.selected_student');
-            var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
-            populateStudentLI();
-            var studentUL = document.getElementById('student_list_item_container');
-            var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
-            currentStudentLI.classList.add('selected_student');
-            console.log("Checkbox is checked.");
-            //Update the 'Overrides' total in the totals panel
-            updateTotalsArea();
-        } else {
-            currentStudent.isApprovedByOverride = false;
-            //Change color of student in list, save their index, repaint, then reset selection
-            var selected= document.querySelector('li.selected_student');
-            var selectedIndex = [].slice.call(selected.parentNode.children).indexOf(selected);
-            populateStudentLI();
-            var studentUL = document.getElementById('student_list_item_container');
-            var currentStudentLI = studentUL.getElementsByTagName('li')[selectedIndex];
-            currentStudentLI.classList.add('selected_student');
-            console.log("Checkbox is not checked.");
-            //Update the 'Overrides' total in the totals panel
-            updateTotalsArea();
-        }
-    });
 }
 
 
 //For when there are no students to display
 function clearStudentDataFields() {
-if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an error being thrown
     console.log("Clearing student data.");
     clearSummaryTable();
     clearYearTable(0);
@@ -794,145 +772,115 @@ if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an err
     //Set selected student grade level name
     var idContainer = document.getElementById('student-id');
     idContainer.innerHTML = '';
-}
+    
 }
 
-//For selection and changing color of selected counselor
-document.getElementById('counselor_list_item_container').addEventListener('click', function(e) {
-if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an error being thrown
-    const previousCounselorName = currentCounselor.getNameLastFirst();
-    var selected;
-    if(e.target.tagName === 'LI') {
+    //For selection and changing color of selected counselor
+    document.getElementById('counselor_list_item_container').addEventListener('click', function(e) {   // 1.
+        var selected;
+        if(e.target.tagName === 'LI') {                                      // 2.
+            selected= document.querySelector('li.selected_counselor');                   // 2a.
+            if(selected) selected.classList.remove('selected_counselor');                               // "
+            e.target.classList.add('selected_counselor');                                    // 2b.
+            // console.log("SELECTED COUNSELOR: " + e.target.innerHTML);
+            // console.log("SELECTED COUNSELOR ID: " + e.target.id);
+
+            // const counselorIndex = counselorList.findIndex(el => el.id === e.target.id);
+            currentCounselor = counselorList.find(obj => {
+                // console.log("Checking... " + obj.getNameLastFirst() + " id=" + obj.id);
+                return obj.id == e.target.id;
+            });
+
+            console.log("SELECTED/CURRENT COUNSELOR: " + currentCounselor);
+
+            filterStudentsUsingCurrentValues();
+            // setFirstStudentAsCurrent();  //This is done in the filter method
+            updateTotalsArea();
+        }
+    });
+    //For selection and changing color of selected student
+    document.getElementById('student_list_item_container').addEventListener('click', function(e) {   // 1.
+        var selected;
+        if(e.target.tagName === 'LI') {
+            selected= document.querySelector('li.selected_student');
+            // console.log("CURRENT STUDENT: " + e.target.innerHTML + " classes: " + selected.classList);
+            if(selected) selected.classList.remove('selected_student');
+            e.target.classList.add('selected_student');
+            console.log("SELECTED STUDENT: " + e.target.innerHTML + " classes: " + e.target.classList);
+            //Determine the selected student and get their object reference
+            //Students list items are assigned an id of the student id... clever?
+            const studentIndex = currentStudentList.findIndex(el => el.id === e.target.id);
+            currentStudent = currentStudentList[studentIndex];
+            
+            // assignOptimalMultiCodeRequirementCourses(currentStudent, false);
+            // console.log(currentStudent.getCompletedCourses().length);
+
+            setCurrentStudentDataFields();
+        }
+    });
+
+    //A function for defaulting to the first student in the student list (at startup and counselor selection change, etc.)
+    //Uses the ul NOT the student list... seems safer that way
+    function setFirstStudentAsCurrent() {
+        var ul = document.getElementById("student_list_item_container");
+        if(ul.firstChild) { //as long as there is at least one student
+            //deselect current selected student
+            selected= document.querySelector('li.selected_student');
+            if(selected) selected.classList.remove('selected_student');
+            //Highlight first student
+            var studentUL = document.getElementById('student_list_item_container');
+            var currentStudentLI = studentUL.getElementsByTagName('li')[0];
+            currentStudentLI.classList.add('selected_student');
+
+            //Determine the selected student and get their object reference
+            //Students list items are assigned an id of the student id... clever?
+            var selectedStudentID = currentStudentLI.id;
+            const studentIndex = currentStudentList.findIndex(el => el.id === selectedStudentID);
+            currentStudent = currentStudentList[studentIndex];
+            // console.log("SETTING: "+currentStudent.getLastName())
+            setCurrentStudentDataFields();
+        }
+        else {
+            clearStudentDataFields();
+        }
+    }
+
+    //A function for defaulting to the first counselor in the counselor list (at startup, anywhere else?)
+    //Uses the ul NOT the student list... seems safer that way
+    function setFirstCounselorAsCurrent() {
+        //deselect current selected counselor
         selected= document.querySelector('li.selected_counselor');
         if(selected) selected.classList.remove('selected_counselor');
-        e.target.classList.add('selected_counselor');
-        // console.log("SELECTED COUNSELOR: " + e.target.innerHTML);
-        // console.log("SELECTED COUNSELOR ID: " + e.target.id);
+        //Highlight first counselor
+        var counselorUL = document.getElementById('counselor_list_item_container');
+        var currentCounselorLI = counselorUL.getElementsByTagName('li')[0];
+        currentCounselorLI.classList.add('selected_counselor');
 
-        // const counselorIndex = counselorList.findIndex(el => el.id === e.target.id);
-        currentCounselor = counselorList.find(obj => {
-            // console.log("Checking... " + obj.getNameLastFirst() + " id=" + obj.id);
-            return obj.id == e.target.id;
-        });
-
-        console.log("SELECTED/CURRENT COUNSELOR: " + currentCounselor);
-
-        filterStudentsUsingCurrentValues();
-        // setFirstStudentAsCurrent();  //This is done in the filter method
-        
-        if(previousCounselorName !== currentCounselor.getNameLastFirst()) //Don't allow multiple clicks on the same counselor to reset the accordian
-        currentUnhiddenGradCodesInSummary = []; //collapse all currently expanded rows
-        
-        updateTotalsArea();
-        clearAndCloseSearchField();
+        //Determine the selected counselor and get their object reference
+        //Counselor list items are assigned an id of the counselor id... clever?
+        var selectedCounselorID = currentCounselorLI.id;
+        var counselorIndex = counselorList.findIndex(el => el.id === selectedCounselorID);
+        if(counselorIndex = -1)
+            currentCounselor = counselorList[0];
+        else
+            currentCounselor = counselorList[counselorIndex];
+        // console.log("FIRST COUNSELOR IS " + selectedCounselorID + " " + currentCounselor + " index= " + counselorIndex);
     }
-}
-});
 
-//For selection and changing color of selected student
-document.getElementById('student_list_item_container').addEventListener('click', function(e) {
-if(typeof currentStudent !== 'undefined') { //On startup... this avoids an error being thrown
-    const previousStudentName = currentStudent.getNameLastFirst();
-    var selected;
-    if(e.target.tagName === 'LI') {
-        selected = document.querySelector('li.selected_student');
-        // console.log("CURRENT STUDENT: " + e.target.innerHTML + " classes: " + selected.classList);
-        if(selected) selected.classList.remove('selected_student');
-        e.target.classList.add('selected_student');
-        console.log("SELECTED STUDENT: " + e.target.innerHTML + " classes: " + e.target.classList);
-        //Determine the selected student and get their object reference
-        //Students list items are assigned an id of the student id... clever?
-        const studentIndex = currentStudentList.findIndex(el => el.id === e.target.id);
-        currentStudent = currentStudentList[studentIndex];
-        
-        // assignOptimalMultiCodeRequirementCourses(currentStudent, false);
-        // console.log(currentStudent.getCompletedCourses().length);
-
-        if(previousStudentName !== currentStudent.getNameLastFirst()) //Don't allow multiple clicks on the same student to reset the accordian
-            currentUnhiddenGradCodesInSummary = []; //collapse all currently expanded rows... done prior to updating the next student table
-
-        setCurrentStudentDataFields();
-
-//LOOK HERE!!!!
-        // var ul = document.getElementById("student_list_item_container");
-        // var selectedStudentLI = ul.querySelector('li.selected_student');
-        // console.log("Current student: " + currentStudent.getNameLastFirst());
-        
-        // var elDistanceToTop = window.pageYOffset + selectedStudentLI.getBoundingClientRect().top;
-        // var elDistanceToBottom = window.pageYOffset + selectedStudentLI.getBoundingClientRect().bottom;
-        // var ulTop = window.pageYOffset + ul.getBoundingClientRect().top;
-        // var ulBottom = window.pageYOffset + ul.getBoundingClientRect().bottom;
-        
-        // var list = ul, targetLi = selectedStudentLI; // id tag of the <li> element
-        // // ul.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - selectedStudentLI.getBoundingClientRect().height);
-        // console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
-        // console.log("TOP IS: " + selectedStudentLI.getBoundingClientRect().top);
-    }
-}
-});
-
-//A function for defaulting to the first student in the student list (at startup and counselor selection change, etc.)
-//Uses the ul NOT the student list... seems safer that way
-function setFirstStudentAsCurrent() {
-    var ul = document.getElementById("student_list_item_container");
-    if(ul.firstChild) { //as long as there is at least one student
-        //deselect current selected student
-        selected = document.querySelector('li.selected_student');
-        if(selected) selected.classList.remove('selected_student');
-        //Highlight first student
-        var studentUL = document.getElementById('student_list_item_container');
-        var currentStudentLI = studentUL.getElementsByTagName('li')[0];
-        currentStudentLI.classList.add('selected_student');
-
-        //Determine the selected student and get their object reference
-        //Students list items are assigned an id of the student id... clever?
-        var selectedStudentID = currentStudentLI.id;
-        const studentIndex = currentStudentList.findIndex(el => el.id === selectedStudentID);
-        currentStudent = currentStudentList[studentIndex];
-        
-        setCurrentStudentDataFields();
-    }
-    else {
-        clearStudentDataFields();
-    }
-}
-
-//A function for defaulting to the first counselor in the counselor list (at startup, anywhere else?)
-//Uses the ul NOT the student list... seems safer that way
-function setFirstCounselorAsCurrent() {
-    //deselect current selected counselor
-    selected = document.querySelector('li.selected_counselor');
-    if(selected) selected.classList.remove('selected_counselor');
-    //Highlight first counselor
-    var counselorUL = document.getElementById('counselor_list_item_container');
-    var currentCounselorLI = counselorUL.getElementsByTagName('li')[0];
-    currentCounselorLI.classList.add('selected_counselor');
-
-    //Determine the selected counselor and get their object reference
-    //Counselor list items are assigned an id of the counselor id... clever?
-    var selectedCounselorID = currentCounselorLI.id;
-    var counselorIndex = counselorList.findIndex(el => el.id === selectedCounselorID);
-    if(counselorIndex = -1)
-        currentCounselor = counselorList[0];
-    else
-        currentCounselor = counselorList[counselorIndex];
-    // console.log("FIRST COUNSELOR IS " + selectedCounselorID + " " + currentCounselor + " index= " + counselorIndex);
-}
-
-//Selecting the proper data to display using student info dropdown selector
-var contentpanes = document.getElementsByClassName("content-pane");
-for(var i = 0; i < contentpanes.length; i++)
-    contentpanes[i].style.display = "none";
-
-// Default is the Summary tab
-var summary = document.getElementById("summary-content");
-// var hist = document.getElementById("transcript-content");
-var dataselection = document.getElementById("dropdown-options");
-summary.style.display = "block";
-    
-dataselection.addEventListener("change", function() {
+    //Selecting the proper data to display using student info dropdown selector
+    var contentpanes = document.getElementsByClassName("content-pane");
     for(var i = 0; i < contentpanes.length; i++)
         contentpanes[i].style.display = "none";
+    
+    // Default is the Summary tab
+    var summary = document.getElementById("summary-content");
+    // var hist = document.getElementById("transcript-content");
+    var dataselection = document.getElementById("dropdown-options");
+    summary.style.display = "block";
+    
+    dataselection.addEventListener("change", function() {
+        for(var i = 0; i < contentpanes.length; i++)
+          contentpanes[i].style.display = "none";
     
     console.log("Selection: " + dataselection.options[dataselection.selectedIndex].value.toLowerCase());
     
@@ -944,7 +892,6 @@ dataselection.addEventListener("change", function() {
 
 
 function updateTotalsArea() {
-if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an error being thrown
     var elementWithTitle = document.getElementById("totals_title_school");
     var counselorLastName = currentCounselor.getLastName();
     var counselorName = currentCounselor.getNameLastFirst();
@@ -981,21 +928,20 @@ if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an err
     var currentSelection = document.getElementById('totalsPanel_year_' + filterValue_currentGradeLevel);
     currentSelection.classList.add('selected_year');
 }
-}
 
 
 // Selecting a row of a table of course objects
 var selectedRow_courseTable = "";
 var restoreColorCourse_font = "";
 
-function highlight_course(tr) {
-    selectedRow_courseTable=tr.cells[2].textContent;
+function highlight_course(row) {
+    selectedRow_courseTable=row.cells[2].textContent;
     deHighlight_course();
-    restoreColorCourse_font = tr.style.color;
-    tr.style.backgroundColor = '#004aff';
-    // tr.style.backgroundColor = 'red';
-    tr.style.color = 'white';
-    tr.classList.toggle("selectedRow");
+    restoreColorCourse_font = row.style.color;
+    row.style.backgroundColor = '#004aff';
+    // row.style.backgroundColor = 'red';
+    row.style.color = 'white';
+    row.classList.toggle("selectedRow");
 }
 
 function deHighlight_course() { 
@@ -1017,41 +963,30 @@ function selectedRow_courseTable() {
 }
 
 // Selecting a row of a table of Grad Requirements
-var selectedRow_ReqTable = '';
-var restoreColorGradReq_font = '';
+var selectedRow_ReqTable = "";
+var restoreColorGradReq_font = "";
 
-function highlight_gradReq(tr) {
-    selectedRow_ReqTable=tr.cells[1].textContent;
-    console.log("ROW IS: " + selectedRow_ReqTable);
+function highlight_gradReq(row) {
+    selectedRow_ReqTable=row.cells[2].textContent;
     deHighlight_gradReq();
-    restoreColorGradReq_font = tr.style.color;
+    restoreColorGradReq_font = row.style.color;
     if(restoreColorGradReq_font === 'black')
-        tr.style.backgroundColor = '#3263eb'; //'#004aff';
+        row.style.backgroundColor = '#3263eb'; //'#004aff';
     else
-       tr.style.backgroundColor = tr.style.color;
-    tr.style.color = 'white';
-    tr.classList.toggle("selectedRow");
+       row.style.backgroundColor = row.style.color;
+    row.style.color = 'white';
+    row.classList.toggle("selectedRow");
 }
 
 function deHighlight_gradReq() { 
     let gradTable = document.getElementById('gradreq_table');
     let rows = gradTable.rows;
-    for (let i = 1; i < rows.length; i++) { //start at 2 since headers and credits rows are sticky
-        rows[i].style.backgroundColor = 'white';
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].style.backgroundColor = 'transparent';
         if(rows[i].style.color === 'white')
             rows[i].style.color = restoreColorGradReq_font;
         // rows[i].style.color = "black";
     }   
-}
-
-function reHighlightLastGradReqSelection() {
-    const allTR = document.querySelectorAll('tr');
-    var tr = '';
-    for(var i = 0; i < allTR.length; i++)
-        if(allTR[i].getAttribute('name') === selectedRow_ReqTable)
-            tr = allTR[i];
-    if(tr !== '')
-        highlight_gradReq(tr)
 }
 
 function selectedRow_ReqTable() {
@@ -1060,7 +995,7 @@ function selectedRow_ReqTable() {
 
 
 //Sort table by header
-function sortYearTable(sortCol, tableID, direction, isNumeric, tieBreakerColumn) {
+function sortYearTable(sortCol, tableID, direction, isNumeric) {
     // console.log("SORTING...");
     var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
     table = document.getElementById(tableID);
@@ -1080,13 +1015,6 @@ function sortYearTable(sortCol, tableID, direction, isNumeric, tieBreakerColumn)
         var startRow = 1;
         if(tableID === 'gradreq_table')
             startRow = 2; //leave credits on top of the requirement summary table
-        //If there are blank fields, then sort as text
-        for (i = startRow; i < (rows.length - 1); i++) {
-            x = rows[i].getElementsByTagName("TD")[sortCol].innerHTML;
-            y = rows[i + 1].getElementsByTagName("TD")[sortCol].innerHTML;
-            if(isNaN(parseInt(x))) isNumeric = false;
-            if(isNaN(parseInt(y))) isNumeric = false;
-        }
         for (i = startRow; i < (rows.length - 1); i++) {
             // Start by saying there should be no switching:
             shouldSwitch = false;
@@ -1094,50 +1022,21 @@ function sortYearTable(sortCol, tableID, direction, isNumeric, tieBreakerColumn)
             one from current row and one from the next: */
             x = rows[i].getElementsByTagName("TD")[sortCol];
             y = rows[i + 1].getElementsByTagName("TD")[sortCol];
-            var xVal = x.innerHTML;
-            var yVal = y.innerHTML;
-            if(isNumeric){
-                xVal = parseInt(xVal);
-                yVal = parseInt(yVal);
-                // console.log(xVal + ', ' + yVal);
-            }
-            else {
-                xVal = xVal.toLowerCase();
-                yVal = yVal.toLowerCase();
-            }
             /* Check if the two rows should switch place,
             based on the direction, asc or desc: */
-            // console.log("x = " + xVal);
-            // console.log("y = " + yVal);
             if (dir == "asc") {
-                if(xVal > yVal) {
+                if(isNumeric && Number(x.innerHTML) > Number(y.innerHTML)
+                    || (!isNumeric && x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase())) {
                     // If so, mark as a switch and break the loop:
                     shouldSwitch = true;
                     break;
-                }
-                //Check tie-breaker
-                else if(xVal === yVal || xVal == yVal) {
-                        x = rows[i].getElementsByTagName("TD")[tieBreakerColumn];
-                        y = rows[i + 1].getElementsByTagName("TD")[tieBreakerColumn];
-                        if(x.innerHTML > y.innerHTML) {
-                            shouldSwitch = true;
-                            break;
-                        }
                 }
             } else if (dir == "desc") {
-                if(xVal < yVal) {
+                if(isNumeric && Number(x.innerHTML) < Number(y.innerHTML)
+                    || (!isNumeric && x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase())) {
                     // If so, mark as a switch and break the loop:
                     shouldSwitch = true;
                     break;
-                }
-                //Check tie-breaker
-                else if(xVal === yVal || xVal == yVal) {
-                    x = rows[i].getElementsByTagName("TD")[tieBreakerColumn];
-                    y = rows[i + 1].getElementsByTagName("TD")[tieBreakerColumn];
-                    if(x.innerHTML > y.innerHTML) {
-                        shouldSwitch = true;
-                        break;
-                    }
                 }
             }
         }
@@ -1147,7 +1046,7 @@ function sortYearTable(sortCol, tableID, direction, isNumeric, tieBreakerColumn)
         rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
         switching = true;
         // Each time a switch is done, increase this count by 1:
-        switchcount++;
+        switchcount ++;
         } else {
             /* If no switching has been done AND the direction is "asc",
             set the direction to "desc" and run the while loop again. */
@@ -1157,7 +1056,7 @@ function sortYearTable(sortCol, tableID, direction, isNumeric, tieBreakerColumn)
             }
         }
     }
-    console.log("Year table sorting complete.");
+    // console.log("Sorting complete.")
 }
 
 
@@ -1168,8 +1067,6 @@ function sortAndPaintSummaryTable() {
     createSummaryTable(); //Establish the proper data in a table structure
     sortTable(lastSortColumn, 'gradreq_table', lastSortDirection, lastSortWasNumeric); //Keep the current sort order
     createSummaryTable(); //Repaint the table in the current defined order
-    expandRowsFromCurrentUnhiddenGradCodesInSummary(); //reset the expanded rows to match
-    reHighlightLastGradReqSelection();
 }
 
 //Be sure the currentStudent value is set before calling this function.
@@ -1177,14 +1074,10 @@ function sortAndPaintSummaryTable(sortCol, tableID, direction, isNumeric) {
     createSummaryTable(); //Establish the proper data in a table structure
     sortTable(sortCol, tableID, direction, isNumeric); //Keep the current sort order
     createSummaryTable(); //Repaint the table in the current defined order
-    expandRowsFromCurrentUnhiddenGradCodesInSummary(); //reset the expanded rows to match
-    reHighlightLastGradReqSelection();
 }
 function sortAndPaintCurrentSummaryTable(sortCol, tableID, direction, isNumeric) {
     sortTable(sortCol, tableID, direction, isNumeric); //Keep the current sort order
     createSummaryTable(); //Repaint the table in the current defined order
-    expandRowsFromCurrentUnhiddenGradCodesInSummary(); //reset the expanded rows to match
-    reHighlightLastGradReqSelection();
 }
 
 var lastSortColumn = 4;
@@ -1318,234 +1211,148 @@ function sortTable(sortCol, tableID, direction, isNumeric) {
 
     // createSummaryTable();
 
-    console.log("Summary table sort complete.")
+    console.log("Sort complete.")
 }
 
-var filterValue_currentGradeLevel = 0; //0 is for all years
-function setGradeLevelFilterValue(gradeLevel) {
-    filterValue_currentGradeLevel = gradeLevel;
-    filterStudentsUsingCurrentValues();
-    updateTotalsArea();
-    clearAndCloseSearchField();
-}
+    var filterValue_currentGradeLevel = 0; //0 is for all years
+    function setGradeLevelFilterValue(gradeLevel) {
+        filterValue_currentGradeLevel = gradeLevel;
+        filterStudentsUsingCurrentValues();
+        updateTotalsArea();
+    }
 
-//Use the individual grade levels or 0 for all years
-function filterStudentsUsingCurrentValues() {
-if(typeof currentCounselor !== 'undefined') { //On startup... this avoids an error being thrown
-    currentStudentList = [];
+    //Use the individual grade levels or 0 for all years
+    function filterStudentsUsingCurrentValues() {
+        currentStudentList = [];
 
-    //Filter out students by counselor first
-    if(currentCounselor.getLastName() === 'All Students') {
-        currentStudentList = studentList;
-    } else if(currentCounselor.getLastName() === 'Unassigned') {
-        currentStudentList = studentList;
-        for(var i = 0; i < counselorList.length; i++) {
-            currentStudentList = currentStudentList.filter(obj => {
-                return obj.getCounselorName() !== counselorList[i].getNameLastFirst();
+        //Filter out students by counselor first
+        if(currentCounselor.getLastName() === 'All Students') {
+            currentStudentList = studentList;
+        } else if(currentCounselor.getLastName() === 'Unassigned') {
+            currentStudentList = studentList;
+            for(var i = 0; i < counselorList.length; i++) {
+                currentStudentList = currentStudentList.filter(obj => {
+                    return obj.getCounselorName() !== counselorList[i].getNameLastFirst();
+                });
+            }
+        }
+        else {
+            currentStudentList = studentList.filter(obj => {
+                return obj.getCounselorName() === currentCounselor.getNameLastFirst();
             });
         }
-    }
-    else {
-        currentStudentList = studentList.filter(obj => {
-            return obj.getCounselorName() === currentCounselor.getNameLastFirst();
-        });
-    }
 
-    //Filter the counselor's students by grade level
-    if(filterValue_currentGradeLevel != 0) {
-        currentStudentList = currentStudentList.filter(obj => {
-            return obj.gradeLevel == filterValue_currentGradeLevel;
-        });
-    }
-
-    //check for students not assigned a grade level
-    // for(var i=0; i < studentList.length; i++)
-    //     if(studentList[i].gradeLevel != 9 && studentList[i].filterValue_currentGradeLevel != 10 && studentList[i].gradeLevel !=11 && studentList[i].gradeLevel != 12)
-    //         console.log("i=" + i+ ": " + studentList[i].gradeLevel + " " + studentList[i].getNameLastFirst())
-    // console.log("Students in grade " + filterValue_currentGradeLevel + " = " + currentStudentList.length);
-    
-    //make GUI changes based on the filter result
-    populateStudentLI();
-    setFirstStudentAsCurrent();
-    sortCurrentStudentList();
-}
-}
-
-document.addEventListener('keydown', function(event){
-    if(event.keyCode == 38 || event.keyCode == 40) {
-        
-        event.preventDefault(); //stop auto scroll with cursor
-        var studentIndex = currentStudentList.findIndex(el => el === currentStudent);
-        if(event.keyCode == 38)
-            studentIndex--;
-        else
-            studentIndex++;
-        //Watch for out of bounds
-        if(studentIndex >= 0 && studentIndex <= currentStudentList.length-1) {
-            selected = document.querySelector('li.selected_student');
-            if(selected) selected.classList.remove('selected_student');
-            var studentUL = document.getElementById('student_list_item_container');
-            
-            //Select and highlight next student
-            var currentStudentLI = studentUL.getElementsByTagName('li')[studentIndex];
-            currentStudentLI.classList.add('selected_student');
-            
-            //Determine the selected student and get their object reference
-            //Students list items are assigned an id of the student id... clever?
-            // var selectedStudentID = currentStudentLI.id;
-            // const studentIndex = currentStudentList.findIndex(el => el.id === selectedStudentID);
-            currentStudent = currentStudentList[studentIndex];
-            
-            //automate the scroll in the list
-            var elDistanceToTop = window.pageYOffset + currentStudentLI.getBoundingClientRect().top;
-            var elDistanceToBottom = window.pageYOffset + currentStudentLI.getBoundingClientRect().bottom;
-            var ulTop = window.pageYOffset + studentUL.getBoundingClientRect().top;
-            var ulBottom = window.pageYOffset + studentUL.getBoundingClientRect().bottom;
-
-            var list = studentUL, targetLi = currentStudentLI; // id tag of the <li> element
-            if(event.keyCode == 38 && elDistanceToTop < ulTop)
-                studentUL.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - currentStudentLI.getBoundingClientRect().height);
-            else if(event.keyCode == 40 && elDistanceToBottom > ulBottom) {
-                studentUL.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) + currentStudentLI.getBoundingClientRect().height);
-            }
-            console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
-
-
-            setCurrentStudentDataFields();
+        //Filter the counselor's students by grade level
+        if(filterValue_currentGradeLevel != 0) {
+            currentStudentList = currentStudentList.filter(obj => {
+                return obj.gradeLevel == filterValue_currentGradeLevel;
+            });
         }
-    }
-});
 
-var currentSortValue = 'alpha'; //options: alpha, gradreqs, credits
-function setSortValue(value) {
-    currentSortValue = value;
-    sortCurrentStudentList();
-    clearAndCloseSearchField();
-}
-
-function sortCurrentStudentList() {
-    if(currentSortValue === 'alpha')
-        currentStudentList.sort(compareUsingLastNameAlphabetical)
-    else if(currentSortValue === 'gradreqs')
-        currentStudentList.sort(compareUsingMissingRequirements)
-    else if(currentSortValue === 'credits')
-        currentStudentList.sort(compareUsingMissingCredits)
-
-    populateStudentLI();
-    setFirstStudentAsCurrent();
-}
-
-function compareUsingLastNameAlphabetical( a, b ) {
-    if ( a.getLastName() < b.getLastName() ){
-        return -1;
-    }
-    if ( a.getLastName() > b.getLastName() ){
-        return 1;
-    }
-    return 0;
-}
-function compareUsingMissingRequirements( a, b ) {
-    if( a.getTotalNumMissingRequirements() > b.getTotalNumMissingRequirements() ){
-        return -1;
-    }
-    if( a.getTotalNumMissingRequirements() < b.getTotalNumMissingRequirements() ){
-        return 1;
-    }
-    return 0;
-}
-function compareUsingMissingCredits( a, b ) {
-    // console.log(a.getCreditsNeeded() + ", " + b.getCreditsNeeded());
-    if ( a.getCreditsNeeded() > b.getCreditsNeeded() ){
-        return -1;
-    }
-    if ( a.getCreditsNeeded() < b.getCreditsNeeded() ){
-        return 1;
-    }
-    // console.log(a.getNameLastFirst() + ", " + b.getNameLastFirst());
-    return compareUsingMissingRequirements( a, b );
-}
-
-
-//SEARCH FILED FUNCTION
-function searchFunction() {
-    // Declare variables
-    var searchField, filter, ul, li, a, i, txtValue;
-    searchField = document.getElementById('myInput');
-    filter = searchField.value.toUpperCase();
-    ul = document.getElementById("student_list_item_container");
-    li = ul.getElementsByTagName('li');
-    
-    // Loop through all list items, and hide those who don't match the search query
-    for (i = 0; i < li.length; i++) {
-        a = li[i];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = '';
-        } else {
-            li[i].style.display = 'none';
-        }
-    }
-    if(searchField.value === '')
-        setSelectedStudentToTopOfList();
-}
-
-function showSearchBox() {
-    var searchField = document.getElementById('myInput');
-    if(searchField.style.display === 'none') {
-        searchField.style.display = '';
-        searchField.focus();
-    }
-    else {
-        clearAndCloseSearchField();
-
-        //Set the scroll to the selected student on top
-        var ul = document.getElementById("student_list_item_container");
-        var selectedStudentLI = ul.querySelector('li.selected_student');
-        // console.log("Current student: " + currentStudent.getNameLastFirst());
+        //check for students not assigned a grade level
+        // for(var i=0; i < studentList.length; i++)
+        //     if(studentList[i].gradeLevel != 9 && studentList[i].filterValue_currentGradeLevel != 10 && studentList[i].gradeLevel !=11 && studentList[i].gradeLevel != 12)
+        //         console.log("i=" + i+ ": " + studentList[i].gradeLevel + " " + studentList[i].getNameLastFirst())
+        console.log("Students in grade " + filterValue_currentGradeLevel + " = " + currentStudentList.length);
         
-        var elDistanceToTop = window.pageYOffset + selectedStudentLI.getBoundingClientRect().top;
-        var elDistanceToBottom = window.pageYOffset + selectedStudentLI.getBoundingClientRect().bottom;
-        var ulTop = window.pageYOffset + ul.getBoundingClientRect().top;
-        var ulBottom = window.pageYOffset + ul.getBoundingClientRect().bottom;
-        
-        var list = ul, targetLi = selectedStudentLI; // id tag of the <li> element
-        // ul.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - selectedStudentLI.getBoundingClientRect().height);
-        // console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
-        var st = elDistanceToBottom - selectedStudentLI.getBoundingClientRect().height - ulTop;
-        // console.log("Calculated top = " + st);
-        var selectedIndex = [].slice.call(selectedStudentLI.parentNode.children).indexOf(selectedStudentLI);
-        // console.log("Selected Student Index = " + selectedIndex);
+        //make GUI changes based on the filter result
+        populateStudentLI();
+        setFirstStudentAsCurrent();
+        sortCurrentStudentList();
+    }
+
+    document.addEventListener('keydown', function(event){
+        if(event.keyCode == 38 || event.keyCode == 40) {
+            
+            event.preventDefault(); //stop auto scroll with cursor
+            var studentIndex = currentStudentList.findIndex(el => el === currentStudent);
+            if(event.keyCode == 38)
+                studentIndex--;
+            else
+                studentIndex++;
+            //Watch for out of bounds
+            if(studentIndex >= 0 && studentIndex <= currentStudentList.length-1) {
+                selected= document.querySelector('li.selected_student');
+                if(selected) selected.classList.remove('selected_student');
+                var studentUL = document.getElementById('student_list_item_container');
                 
-        // ul.scrollTop = selectedStudentLI.getBoundingClientRect().top;
-    }
-}
+                //Select and highlight next student
+                var currentStudentLI = studentUL.getElementsByTagName('li')[studentIndex];
+                currentStudentLI.classList.add('selected_student');
+                
+                //Determine the selected student and get their object reference
+                //Students list items are assigned an id of the student id... clever?
+                // var selectedStudentID = currentStudentLI.id;
+                // const studentIndex = currentStudentList.findIndex(el => el.id === selectedStudentID);
+                currentStudent = currentStudentList[studentIndex];
+                
+                //automate the scroll in the list
+                var elDistanceToTop = window.pageYOffset + currentStudentLI.getBoundingClientRect().top;
+                var elDistanceToBottom = window.pageYOffset + currentStudentLI.getBoundingClientRect().bottom;
+                var ulTop = window.pageYOffset + studentUL.getBoundingClientRect().top;
+                var ulBottom = window.pageYOffset + studentUL.getBoundingClientRect().bottom;
 
-//This is a separate function so it can be called to erase any current search parameters when a counselor is changes or radio is selected
-function clearAndCloseSearchField() {
-    var searchField = document.getElementById('myInput');
-    searchField.style.display = 'none';
-    //Clear the search to bring all names back when the search is closed
-    searchField.value = '';
-    searchFunction();
-    //Reset the scroll to the top
-    setSelectedStudentToTopOfList();
-}
+                var list = studentUL, targetLi = currentStudentLI; // id tag of the <li> element
+                if(event.keyCode == 38 && elDistanceToTop < ulTop)
+                    studentUL.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) - currentStudentLI.getBoundingClientRect().height);
+                else if(event.keyCode == 40 && elDistanceToBottom > ulBottom) {
+                    studentUL.scrollTop = (targetLi.offsetTop - Math.round(elDistanceToTop) + currentStudentLI.getBoundingClientRect().height);
+                }
+                console.log("ScrollTop= " + elDistanceToTop + ", ScrollBottom= " + elDistanceToBottom + ", UL top= " + ulTop + ", UL bottom= " + ulBottom);
 
-function setSelectedStudentToTopOfList() {
-    var ul = document.getElementById("student_list_item_container");
-    // const ulTop = ul.getBoundingClientRect().top;
-    const ulBottom = ul.getBoundingClientRect().bottom;
-    const ulHeight = ul.getBoundingClientRect().height;
-    var selectedStudentLI = ul.querySelector('li.selected_student');
-    // const studentBottom = selectedStudentLI.getBoundingClientRect().bottom;
-    if(selectedStudentLI !== null) {
-        const studentTop = selectedStudentLI.getBoundingClientRect().top;
-        // ul.scrollTop = selectedStudentLI.getBoundingClientRect().top - 52; //58.5;
-        const diff = studentTop - ulBottom;
-        // console.log("DIFF = " + diff);
-        ul.scrollTop = ul.scrollTop + diff + ulHeight;
+
+                setCurrentStudentDataFields();
+            }
+        }
+    });
+
+    var currentSortValue = 'alpha'; //options: alpha, gradreqs, credits
+    function setSortValue(value) {
+        currentSortValue = value;
+        sortCurrentStudentList();
     }
-}
+
+    function sortCurrentStudentList() {
+        if(currentSortValue === 'alpha')
+            currentStudentList.sort(compareUsingLastNameAlphabetical)
+        else if(currentSortValue === 'gradreqs')
+            currentStudentList.sort(compareUsingMissingRequirements)
+        else if(currentSortValue === 'credits')
+            currentStudentList.sort(compareUsingMissingCredits)
+
+        populateStudentLI();
+        setFirstStudentAsCurrent();
+    }
+
+    function compareUsingLastNameAlphabetical( a, b ) {
+        if ( a.getLastName() < b.getLastName() ){
+            return -1;
+        }
+        if ( a.getLastName() > b.getLastName() ){
+            return 1;
+        }
+        return 0;
+    }
+    function compareUsingMissingRequirements( a, b ) {
+        if( a.getTotalNumMissingRequirements() > b.getTotalNumMissingRequirements() ){
+            return -1;
+        }
+        if( a.getTotalNumMissingRequirements() < b.getTotalNumMissingRequirements() ){
+            return 1;
+        }
+        return 0;
+    }
+    function compareUsingMissingCredits( a, b ) {
+        console.log(a.getCreditsNeeded() + ", " + b.getCreditsNeeded());
+        if ( a.getCreditsNeeded() > b.getCreditsNeeded() ){
+            return -1;
+        }
+        if ( a.getCreditsNeeded() < b.getCreditsNeeded() ){
+            return 1;
+        }
+        console.log(a.getNameLastFirst() + ", " + b.getNameLastFirst());
+        return compareUsingMissingRequirements( a, b );
+    }
 
 </script>
 </html>
