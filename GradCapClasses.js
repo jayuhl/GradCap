@@ -327,7 +327,7 @@ function populateStudentArrayFromJSON(json) {
         var studentGradeLevelWhenTaken = Number(json.data[i]['Student GR']);
         var credits = json.data[i]['Credits'];
         var rawRequirementPrimary = json.data[i]['Course Primary Subj'];
-        var rawRequirementSecondary = json.data[i]['CourseSecondarySubj'];
+        var rawRequirementSecondary = json.data[i]['Course Secondary Subj'];
         
         //The requirementCode gets sent as a combination of the primary and secondary as long as the secondary is not "Electives"
         var requirementCode = getCodeFromPrimaryAndSecondarySubjectValues(rawRequirementPrimary, rawRequirementSecondary);
@@ -364,21 +364,22 @@ function populateStudentArrayFromJSON(json) {
 }
 
 function getReqCodeFromRawName(reqName) {
-    if(reqName == 'English/History') return 'ENG/HIST';
-    if(reqName == 'English') return 'ENG';
-    if(reqName == 'Math') return 'MATH';
-    if(reqName == 'Science') return 'SCI';
-    if(reqName == 'World Languages') return 'WL';
-    if(reqName == '21st Century Life & Careers') return 'PA';
-    if(reqName == 'Phys. Ed. - Health') return 'PE';
-    if(reqName == 'Social Studies') return 'HIST';
-    if(reqName == 'Financial Literacy') return 'PFL';
-    if(reqName == 'Visual or Performing Arts') return 'VPA';
+    if(reqName == 'ENSS') return 'ENG/HIST';
+    if(reqName == 'ENG') return 'ENG';
+    if(reqName == 'MTH') return 'MATH';
+    if(reqName == 'SCI') return 'SCI';
+    if(reqName == 'WLA') return 'WL';
+    if(reqName == 'PRA') return 'PA';
+    if(reqName == 'PEH') return 'PE';
+    if(reqName == 'SST') return 'HIST';
+    if(reqName == 'PFL') return 'PFL';
+    if(reqName == 'VPA') return 'VPA';
     return 'ELECT';
 }
 
 function getCodeFromPrimaryAndSecondarySubjectValues(primary, secondary) {
-   if(secondary.toLowerCase().startsWith("elect") || secondary.toLowerCase() === primary.toLowerCase())
+    // console.log('PRIMARY='+primary+', SECONDARY='+secondary);
+   if(secondary.toLowerCase().startsWith("ele") || secondary.toLowerCase() === primary.toLowerCase())
       return getReqCodeFromRawName(primary);
    else
       return getReqCodeFromRawName(primary) + ";" + getReqCodeFromRawName(secondary);
@@ -417,10 +418,13 @@ function populateCounselorArrayFromJSON(json) {
 function populateCounselorListForPH() {
     var counselorLastNames = ['All Students','Casamento','Cherichello','Donnelly','Howard','Petzold','Schneider','Unassigned'];
     var counselorFirstNames = ['','Steven P','Francis','Marin','Jenna','Alexa','Cristina',''];
-    for (var i = 0; i < counselorLastNames.length; i++) {
-        counselorList.push(new Counselor(counselorLastNames[i], counselorFirstNames[i]));
+    //Do not allow multiple "loading" of the counselor data
+    if(counselorList.length == 0) {
+        for (var i = 0; i < counselorLastNames.length; i++) {
+            counselorList.push(new Counselor(counselorLastNames[i], counselorFirstNames[i]));
+        }
+        currentCounselor = counselorList[0];
     }
-    currentCounselor = counselorList[0];
 }
 
 function populateRequirementsFromJSON(json) {
@@ -439,12 +443,14 @@ function populateRequirementsFromJSON(json) {
 }
 
 function populateRequirementsForPVRHSD() {
-    var requirementNames = ['Credits','English','Math','History','Science','Language','Phys. Ed.','Visual or Performing Art','Practical Art','Personal Financial Literacy','Electives'];
-    var requirementCodes = ['CREDITS','ENG','MATH','HIST','SCI','WL','PE','VPA','PA','PFL', 'ELECT'];
-    var requirementPoints = [120,4,3,3,3,2,4,1,1,0.5,0];
-    for (var i = 0; i < requirementNames.length; i++) {
-        graduationRequirementList.push(new GraduationRequirement(requirementNames[i], requirementCodes[i], requirementPoints[i]));
-    }
+    var requirementNames = ['Credits','English','Math','History','Science','Language','Phys. Ed.','Visual or Performing Art','Practical Art','Personal Financial Literacy'];
+    var requirementCodes = ['CREDITS','ENG','MATH','HIST','SCI','WL','PE','VPA','PA','PFL'];
+    var requirementPoints = [120,4,3,3,3,2,4,1,1,0.5];
+    //Do not allow multiple "loading" of the requirement data
+    if(graduationRequirementList.length === 0)
+        for (var i = 0; i < requirementNames.length; i++) {
+            graduationRequirementList.push(new GraduationRequirement(requirementNames[i], requirementCodes[i], requirementPoints[i]));
+        }
 }
 
 //This function needs to be called twice:
@@ -605,37 +611,36 @@ function doRequirementWasSelectedStuff(gradReq, tr) {
     showHideRow('hidden_row_' + gradReq);
     updateExpandedGradRequirementsList(); //keep track of which courses are using the dropdown in order to repaint the same result when changes call for a repaint
 
+    var mainRowDistanceToTop = tr.getBoundingClientRect().top;
+    console.log('CURRENT TR TOP  = ' + mainRowDistanceToTop);
+    var hiddensNowNotHidden = document.getElementsByClassName('hidden_row_' + gradReq);
+    console.log('TOTAL ROWS ADDED = ' + hiddensNowNotHidden.length);
+    const lastUnhiddenRow = hiddensNowNotHidden[hiddensNowNotHidden.length-1];
+    var lastRowDistanceToTop = lastUnhiddenRow.getBoundingClientRect().bottom;
+    var totalHeightAdded = 0;
+    for(var i=0; i < hiddensNowNotHidden.length; i++)
+    totalHeightAdded += hiddensNowNotHidden[i].getBoundingClientRect().height;
+
     checkForScrollOfRequirementTable(tr); //in case this row is low in the list and expanded course summaries are not visibile upon expanding
 }
 
 function checkForScrollOfRequirementTable(tr) {
-    // console.log("SCROLL CHECK: " + tr.getBoundingClientRect().top + " ... " + tr.getBoundingClientRect().bottom + " ... " + window.scrollY);
-    const gradReq = tr.getAttribute('name');
-    // //Get scroll container
-    var tablearea = document.getElementById('summary-content');
-    // var trDistanceToBottom = tr.getBoundingClientRect().bottom;
-    var tableBottom = tablearea.getBoundingClientRect().bottom;
-    var hiddensNowNotHidden = document.getElementsByClassName('hidden_row_' + gradReq);
-    if(hiddensNowNotHidden.length > 0) {
-        // const firstUnhiddenRow = hiddensNowNotHidden[0];
-        // var firstUnhiddenRowBottom = firstUnhiddenRow.getBoundingClientRect().bottom;
-        const lastUnhiddenRow = hiddensNowNotHidden[hiddensNowNotHidden.length-1];
-        // var lastUnhiddenRowTop = lastUnhiddenRow.getBoundingClientRect().top;
-        var lastUnhiddenRowBottom = lastUnhiddenRow.getBoundingClientRect().bottom;
-        // var lastUnhiddenRowHeight = lastUnhiddenRow.getBoundingClientRect().height;
-        // console.log('DIST TO BOTTOM = ' + firstUnhiddenRowBottom);
-        // console.log('CONTAINER BOTTOM = ' + tableBottom);
-        // var totalHeightAdded = 0;
-        // for(var i=0; i < hiddensNowNotHidden.length; i++)
-        //     totalHeightAdded += hiddensNowNotHidden[i].getBoundingClientRect().height;
-        // if(firstUnhiddenRowBottom > tableBottom)
-        //     tablearea.scrollTop = tablearea.scrollTop + totalHeightAdded;
-        var overhang = lastUnhiddenRowBottom - tableBottom;
-        if(overhang > 0)
-            tablearea.scrollTop = tablearea.scrollTop + overhang;
-        console.log("OVERHANG = " + overhang);
-        // console.log("ADDED    = " + totalHeightAdded);
-    }
+    console.log("SCROLL CHECK: " + tr.getBoundingClientRect().top + " ... " + tr.getBoundingClientRect().bottom + " ... " + window.scrollY);
+    //Get scroll container
+    // var tablearea = document.getElementById('summary-content');
+    // console.log('MAIN WINDOW BOTTOM = ' + tablearea.getBoundingClientRect().bottom)
+
+    // const distToMove = tablearea.getBoundingClientRect().bottom - lastRowDistanceToTop;
+    // console.log('MOVE BY = ' + distToMove);
+    // tablearea.scrollTop = mainRowDistanceToTop + distToMove;
+
+    // console.log('Main row dist to top  = ' + mainRowDistanceToTop);
+    // console.log('Last row dist to top  = ' + lastRowDistanceToTop);
+    // console.log('Dist to top  = ' + lastRowDistanceToTop);
+    // console.log('Height added = ' + totalHeightAdded);
+    // console.log('CURRENT TR TOP  = ' + tr.getBoundingClientRect().top);
+
+    tr.scrollTop = 391; //(targetLi.offsetTop - Math.round(elDistanceToTop) - currentStudentLI.getBoundingClientRect().height);
 }
 
 var currentUnhiddenGradCodesInSummary = []; //For keeping courses displayed when repainting
